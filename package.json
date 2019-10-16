@@ -1,0 +1,23 @@
+{
+  "name": "SmartSilo",
+  "version": "1.0.0",
+  "description": "A Dashboard for intelligent aeration / drying instrumentation and control in grain storage silos in a IoT context. Developing as a university research project ",
+  "main": "plotly.min.js",
+  "scripts": {
+    "start": "nodemon backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "johnny-five": "^1.3.1",
+    "jquery": {
+      "version": "3.4.0"
+    },
+    "nodemon": "^1.19.2",
+    "path": "^0.12.7",
+    "socket.io": "^2.2.0"
+  }
+}

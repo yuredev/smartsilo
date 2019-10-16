@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="icon" href="img/smartsilo-icon.png" type="image/jpg">
+    <title>SmartSilo</title>
+</head>
+
+<body>
+    <header id="header">
+        <img src="img/smart.png" alt="logo do SmartSilo">
+    </header>
+    <nav id="menu">
+        <ul>
+            <li onclick="changeGraph(this.innerText)" id="Massa">Massa</li>
+            <li onclick="changeGraph(this.innerText)" id="Temperatura">Temperatura</li>
+            <li onclick="changeGraph(this.innerText)" id="Voltagem">Voltagem</li>
+        </ul>
+    </nav>
+    <div class="container big centralize-content" id="container1">
+        <h1>Monitor de voltagem</h1>
+        <div id="chart"></div>
+        <div class="centralize-content bottom-container">
+            <div class="form-setPoint">
+                <label for="setPoint">Set point: </label>
+                <input type="number" name="setPoint" id="setPoint" min="0" max="5">
+                <button onclick="changeSetPoint()">OK</button>
+            </div>
+            <div id="volts1" class="value">carregando...</div>
+            <div id="volts2" class="value"></div>
+        </div>
+    </div>
+    <div class="centralize-content" id="center-div">
+        <div>
+            <label for="controlBit">Exibir bit de controle: </label>
+            <input type="checkbox" id="controlBit" onclick="switchControlBitGraph()">
+        </div>
+        <button id="pause-resume" onclick="pauseResume()">Pausar</button>
+        <button onclick="changePins()">Mudar canais</button>
+    </div>
+    <div class="container big centralize-content" id="container2">
+        <h1 id="label-control-bit">
+            Bit de controle
+        </h1>
+        <div id="chart2"></div>
+        <div class="bottom-container"></div>
+    </div>
+    <!-- biblioteca para construção de gráficos-->
+    <script src="libs/plotly.min.js"></script>               
+    <!-- socket.io no lado cliente -->
+    <script src="/socket.io/socket.io.js"></script>     
+    <!-- CDN do jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <!-- script do projeto -->
+    <script src="script.js"></script>
+</body>
+
+</html>
