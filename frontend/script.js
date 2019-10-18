@@ -17,8 +17,8 @@ let layout = {                 // layout a ser usado nos gráficos
 };
 
 // array de linhas do primeiro gráfico
-let traces = [new Trace('temperatura', value1, '#D00'),
-new Trace('set point', setPoint, '#00A')
+let traces = [new Trace('temperatura', value1, 'red'),
+new Trace('set point', setPoint, '#00E')
 ];
 // array de linhas do gráfico do bit de controle (CB: Bit Control)
 let traceCB = [new Trace('bit de controle', controlBitValue)];
@@ -111,9 +111,9 @@ function updateGraph() {
     Plotly.extendTraces('chart', { y: [[value1], [setPoint]]}, [0, 1]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 0, 1023);
+    graphRelayout('chart', 'temperatura', 400, 500);
     if (value1 != null)
-        document.getElementById('volts1').innerHTML = `1° potenciômetro: ${value1.toFixed(2)} volts`;
+        document.getElementById('volts1').innerHTML = `Temperatura: ${value1.toFixed(2)}°C`;
 }
 // update do gráfico de bit de controle 
 function updateGraphCB() {
