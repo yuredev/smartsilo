@@ -12,7 +12,7 @@ let pinsWasInit = false
 
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: "COM6" });
-let pot1, pot2;
+let therm;
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	io.on('connection', socket => { 
@@ -29,12 +29,10 @@ arduino.on('ready', () => {
 	});
 });
 // setar canais A0 e A1 por padrão 
-function setPins(pins = ['A0','A1']) {
-	pot1 = new five.Sensor({ pin: pins[0], freq: 250 }); // primeiro potenciômetro
-	pot2 = new five.Sensor({ pin: pins[1], freq: 250 }); // segundo potenciômetro
-	arduino.repl.inject({ pot: pot1 });
-	arduino.repl.inject({ pot: pot2 });
-	console.log(`Canais setados: ${pins[0]} e ${pins[1]}`);
+function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
+	// pins.forEach(v => therm = new five.Sensor({ pin: v}));
+	therm = new five.Sensor({ pin: pins[0]});
+	console.log(`Canal setado: ${pins[0]}`);
 	pinsWasInit = true;
 }
 // começa a mandar os dados para o arduino
@@ -48,18 +46,15 @@ function startSending(socket, clientId) {
 		socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
 		console.log(`Set point mudado para ${setPoint}`);
 	});
-	potSend(socket, pot1, 'v1');
-	potSend(socket, pot2, 'v2');
-	setInterval(() => socket.emit('controlBitValue', (potConv(pot1) > setPoint && potConv(pot2) > setPoint) ? 1 : 0), 400);
+	tempSend(socket, therm, 'newTemperature');
+	setInterval(() => socket.emit('controlBitValue', (therm.value > setPoint && therm.value > setPoint) ? 1 : 0), 400);
 }
-// faz os dados de um potenciômetro começaremm a ser mandados pros clientes via socket.io
-function potSend(socket, pot, socketMsg) {
-	pot.on('data', () => {
-		setInterval(() => socket.emit(socketMsg, potConv(pot)), 400);
+// faz os dados de um potenciômetro começarem a ser mandados pros clientes via socket.io
+function tempSend(socket, therm, socketMsg) {
+	therm.on('change', () => {
+		setInterval(() => {
+			socket.emit(socketMsg, therm.value);
+		}, 400);
 		// setInterval(() => socket.emit(socketMsg, Math.random() * 5), 400);
 	});
-}
-// converte para volts 
-function potConv(pot) {
-	return pot.value * 5 / 1024;
 }
