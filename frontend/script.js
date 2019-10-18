@@ -1,6 +1,6 @@
 const socket = io();           // constante que armazenará o objeto do socket.io
 const startTime = new Date(); // armazenar o tempo inicial ao executar em milisegundos 
-let value1 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
+let value1 = null, value2 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
 let setPoint;         // determina o valor do set point do primeiro gráfico 
 let showBitGraph = false;    // determina se o gráfico do set point será mostrado 
 let pause = false;           // determina se o gráfico está pausado 
@@ -17,7 +17,8 @@ let layout = {                 // layout a ser usado nos gráficos
 };
 
 // array de linhas do primeiro gráfico
-let traces = [new Trace('temperatura', value1, 'red'),
+let traces = [new Trace('temperatura 1', value1, 'red'),
+new Trace('temperatura 2', value1, 'orange'),
 new Trace('set point', setPoint, '#00E')
 ];
 // array de linhas do gráfico do bit de controle (CB: Bit Control)
@@ -36,7 +37,8 @@ function initialize() {
 
 // faz o cliente começar a ouvir os dados do servidor 
 function startSocketListening() {
-    socket.on('newTemperature', receivedData => value1 = receivedData);
+    socket.on('newTemperature1', receivedData => value1 = receivedData);
+    socket.on('newTemperature2', receivedData => value2 = receivedData);
     socket.on('changeSetPoint', newSetPoint => setPoint = newSetPoint);
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
 }
@@ -108,12 +110,14 @@ function passTime() {
 
 // update do primeiro gráfico 
 function updateGraph() {
-    Plotly.extendTraces('chart', { y: [[value1], [setPoint]]}, [0, 1]);
+    Plotly.extendTraces('chart', { y: [[value1], [value2], [setPoint]]}, [0, 1, 2]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 400, 500);
+    graphRelayout('chart', 'temperatura', 420, 520);
     if (value1 != null)
         document.getElementById('volts1').innerHTML = `Temperatura: ${value1.toFixed(2)}°C`;
+    if (value2 != null)
+        document.getElementById('volts1').innerHTML = `Temperatura: ${value2.toFixed(2)}°C`;
 }
 // update do gráfico de bit de controle 
 function updateGraphCB() {

@@ -28,6 +28,21 @@
                         <input type="radio" name="firstPin" value="A5">
                         A5
                     </p>
+                    <p>
+                        <h3>Segundo canal: </h3> 
+                        <input type="radio" name="secondPin" value="A0">
+                        A0
+                        <input type="radio" name="secondPin" value="A1">
+                        A1
+                        <input type="radio" name="secondPin" value="A2">
+                        A2
+                        <input type="radio" name="secondPin" value="A3">
+                        A3
+                        <input type="radio" name="secondPin" value="A4">
+                        A4
+                        <input type="radio" name="secondPin" value="A5">
+                        A5
+                    </p>    
                 </div>
                 <button onclick="setPins()">OK</button>
             </div>
@@ -42,10 +57,15 @@
         function setPins() {
             try{
                 let pin1 = document.querySelector('input[name="firstPin"]:checked').value;
-                socket.emit('setPins', [pin1]);
-                window.location.href = 'index.html';
+                let pin2 = document.querySelector('input[name="secondPin"]:checked').value;
+                if(pin1 == pin2) {
+                    $("h2").text("Você deve selecionar 2 canais diferentes").css('color', 'red').fadeTo(2000);
+                } else {
+                    socket.emit('setPins', [pin1, pin2]);
+                    window.location.href = 'index.html';
+                }
             } catch(e) {
-                $("h2").text("Preencha o canal devidamente").css('color', 'red').fadeTo(2000);
+                $("h2").text("Preencha todos os canais devidamente").css('color', 'red').fadeTo(2000);
             }
         }
     </script>
