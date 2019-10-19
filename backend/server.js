@@ -15,11 +15,11 @@ const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2;
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
-	io.on('connection', socket => { 
-		if(!pinsWasInit)
-			setPins();
+	io.on('connection', socket => {
+		if (!pinsWasInit)
+			setPins();;
 		socket.on('setPins', pins => setPins(pins));
-		startSending(socket, socket.id);	
+		startSending(socket, socket.id);
 	});
 	// ouvir na porta declarada 
 	http.listen(port, () => {
@@ -30,8 +30,8 @@ arduino.on('ready', () => {
 });
 // setar canais A0 e A1 por padrão 
 function setPins(pins = ['A0', 'A1']) {
-	therm1 = new five.Sensor({ pin: pins[0]});
-	therm2 = new five.Sensor({ pin: pins[1]});
+	therm1 = new five.Sensor({ pin: pins[0] });
+	therm2 = new five.Sensor({ pin: pins[1] });
 	console.log(`Canais setados: ${pins[0]} e ${pins[1]}`);
 	pinsWasInit = true;
 }
@@ -48,14 +48,21 @@ function startSending(socket, clientId) {
 	});
 	tempSend(socket, therm1, 'newTemperature1');
 	tempSend(socket, therm2, 'newTemperature2');
-	setInterval(() => socket.emit('controlBitValue', (therm1.value > setPoint && therm2.value > setPoint) ? 1 : 0), 400);
+	setInterval(() => {
+		socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
+	}, 400);
 }
 // faz os dados de um potenciômetro começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
+	// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
 	therm.on('change', () => {
-		setInterval(() => {
-			socket.emit(socketMsg, therm.value);
-		}, 400);
-		// setInterval(() => socket.emit(socketMsg, Math.random() * 5), 400);
+		setInterval(() => socket.emit(socketMsg, therm.value), 400);
 	});
+}
+// converte valor ADC em Celsius
+function toCelsius(rawADC) {
+	let temp = Math.log(((10240000 / rawADC) - 10000));
+	temp = 1 / (0.001129148 + (0.000234125 * temp) + (0.0000000876741 * temp ** 3));
+	temp = temp - 273.15;   // Kelvin para Celsius 
+	return temp;
 }
