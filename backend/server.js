@@ -56,7 +56,7 @@ function startSending(socket, clientId) {
 function tempSend(socket, therm, socketMsg) {
 	// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
 	therm.on('change', () => {
-		setInterval(() => socket.emit(socketMsg, therm.value), 400);
+		setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 400);
 	});
 }
 // converte valor ADC em Celsius
