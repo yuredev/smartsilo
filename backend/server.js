@@ -8,7 +8,7 @@ const path = require('path'); // será utilizado para fazer o express reconhecer
 const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
 let setPoint = null; // valor de setpoint passado pelo usuário  
-let pinsWasInit = false
+let pinsWasInit = false;
 
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: "COM6" });
