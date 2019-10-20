@@ -1,6 +1,6 @@
 const socket = io();           // constante que armazenará o objeto do socket.io
 const startTime = new Date(); // armazenar o tempo inicial ao executar em milisegundos 
-let value1 = null, value2 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
+let t1 = null, t2 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
 let setPoint;         // determina o valor do set point do primeiro gráfico 
 let showBitGraph = false;    // determina se o gráfico do set point será mostrado 
 let pause = false;           // determina se o gráfico está pausado 
@@ -17,14 +17,13 @@ let layout = {                 // layout a ser usado nos gráficos
 };
 
 // array de linhas do primeiro gráfico
-let traces = [new Trace('temperatura 1', value1, 'red'),
-new Trace('temperatura 2', value1, 'orange'),
+let traces = [new Trace('temperatura', t1, 'red'),
 new Trace('set point', setPoint, '#00E')
 ];
 // array de linhas do gráfico do bit de controle (CB: Bit Control)
 let traceCB = [new Trace('bit de controle', controlBitValue)];
 
-window.onload = initialize
+window.onload = initialize;
 
 // inicializar a aplicação
 function initialize() {
@@ -37,8 +36,8 @@ function initialize() {
 
 // faz o cliente começar a ouvir os dados do servidor 
 function startSocketListening() {
-    socket.on('newTemperature1', receivedData => value1 = receivedData);
-    socket.on('newTemperature2', receivedData => value2 = receivedData);
+    socket.on('newTemperature1', receivedData => t1 = receivedData);
+    socket.on('newTemperature2', receivedData => t2 = receivedData);
     socket.on('changeSetPoint', newSetPoint => setPoint = newSetPoint);
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
 }
@@ -52,14 +51,14 @@ function startPloting() {
 }
 
 function changePins() {
-    window.location.href = 'setpins.html'
+    window.location.href = 'setpins.html';
 }
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
     this.name = name;
     this.y = [valueTrace];
     this.type = 'line';
-    this.mode = 'lines',
+    this.mode = 'lines';
     this.line = { color };
 }
 // retorna o tempo passado em segundos 
@@ -110,14 +109,11 @@ function passTime() {
 
 // update do primeiro gráfico 
 function updateGraph() {
-    Plotly.extendTraces('chart', { y: [[value1], [value2], [setPoint]]}, [0, 1, 2]);
+    Plotly.extendTraces('chart', { y: [[(t1 + t2) / 2], [setPoint]] }, [0, 1]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 420, 520);
-    if (value1 != null)
-        document.getElementById('volts1').innerHTML = `Temperatura: ${value1.toFixed(2)}°C`;
-    if (value2 != null)
-        document.getElementById('volts1').innerHTML = `Temperatura: ${value2.toFixed(2)}°C`;
+    graphRelayout('chart', 'temperatura', 0, 50);
+    document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2) / 2).toFixed(2).replace('.', ',')}°C`;
 }
 // update do gráfico de bit de controle 
 function updateGraphCB() {

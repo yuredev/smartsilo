@@ -11,27 +11,27 @@ let setPoint = null; // valor de setpoint passado pelo usuário
 let pinsWasInit = false;
 
 // declarando Arduino na porta ao qual está conectado
-const arduino = new five.Board({ port: "COM6" });
+// const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2;
 // executar quando o arduino estiver pronto
-arduino.on('ready', () => {
-	io.on('connection', socket => {
-		if (!pinsWasInit)
-			setPins();
-		socket.on('setPins', pins => setPins(pins));
-		startSending(socket, socket.id);
-	});
-	// ouvir na porta declarada 
-	http.listen(port, () => {
-		console.log('============ SISTEMA PRONTO ============');
-		console.log(`   Abrir em: http://localhost:${port}`);
-		console.log('>> ========================================');
-	});
+// arduino.on('ready', () => {
+io.on('connection', socket => {
+	if (!pinsWasInit)
+		setPins();
+	socket.on('setPins', pins => setPins(pins));
+	startSending(socket, socket.id);
 });
+// ouvir na porta declarada 
+http.listen(port, () => {
+	console.log('============ SISTEMA PRONTO ============');
+	console.log(`   Abrir em: http://localhost:${port}`);
+	console.log('>> ========================================');
+});
+// });
 // setar canais A0 e A1 por padrão 
 function setPins(pins = ['A0', 'A1']) {
-	therm1 = new five.Sensor({ pin: pins[0] });
-	therm2 = new five.Sensor({ pin: pins[1] });
+	// therm1 = new five.Sensor({ pin: pins[0] });
+	// therm2 = new five.Sensor({ pin: pins[1] });
 	console.log(`Canais setados: ${pins[0]} e ${pins[1]}`);
 	pinsWasInit = true;
 }
@@ -48,16 +48,16 @@ function startSending(socket, clientId) {
 	});
 	tempSend(socket, therm1, 'newTemperature1');
 	tempSend(socket, therm2, 'newTemperature2');
-	setInterval(() => {
-		socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
-	}, 400);
+	// setInterval(() => {
+	// socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
+	// }, 400);
 }
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
-	// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
-	therm.on('change', () => {
-		setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 400);
-	});
+	setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
+	// therm.on('change', () => {
+	// setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 400);
+	// });
 }
 // converte valor ADC em Celsius
 function toCelsius(rawADC) {

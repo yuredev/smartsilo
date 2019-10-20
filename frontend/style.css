@@ -1,6 +1,7 @@
 body{
     background-color: #DDE;
     margin: auto;
+    font-family: Helvetica, sans-serif
 }
 
 .centralize-content{
@@ -82,7 +83,6 @@ ul{
 
 ul li{
     font-size: 1.1rem;
-    font-family: Helvetica, sans-serif, Cochin;
     padding: 10px 10px;
     margin-left: 5px;
     margin-right: 5px;
@@ -155,5 +155,4 @@ input[type="number"]{
     color: white;
     margin-top: 5px;
     margin-bottom: 0px;
-    font-family: Arial, Helvetica, sans-serif, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }

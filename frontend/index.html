@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css" type="text/css">
     <link rel="icon" href="img/smartsilo-icon.png" type="image/jpg">
-    <title>SmartSilo</title>
+    <title>SmartSilo - Monitoramento e controle do processo de secagem de grãos</title>
 </head>
 
 <body>
@@ -30,8 +30,7 @@
                 <input type="number" name="setPoint" id="setPoint">
                 <button onclick="changeSetPoint()">OK</button>
             </div>
-            <div id="volts1" class="value">carregando...</div>
-            <div id="volts2" class="value"></div>
+            <div id="average" class="value">carregando...</div>
         </div>
     </div>
     <div class="centralize-content" id="center-div">
@@ -50,9 +49,9 @@
         <div class="bottom-container"></div>
     </div>
     <!-- biblioteca para construção de gráficos-->
-    <script src="libs/plotly.min.js"></script>               
+    <script src="libs/plotly.min.js"></script>
     <!-- socket.io no lado cliente -->
-    <script src="/socket.io/socket.io.js"></script>     
+    <script src="/socket.io/socket.io.js"></script>
     <!-- CDN do jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
