@@ -17,7 +17,7 @@ let therm1, therm2;
 arduino.on('ready', () => {
 	io.on('connection', socket => {
 		if (!pinsWasInit)
-			setPins();;
+			setPins();
 		socket.on('setPins', pins => setPins(pins));
 		startSending(socket, socket.id);
 	});
@@ -52,7 +52,7 @@ function startSending(socket, clientId) {
 		socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
 	}, 400);
 }
-// faz os dados de um potenciômetro começarem a ser mandados pros clientes via socket.io
+// faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
 	// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
 	therm.on('change', () => {
