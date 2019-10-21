@@ -16,9 +16,10 @@ let therm1, therm2, therm3, therm4, therm5;
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	io.on('connection', socket => {
-		socket.on('setPins', pins => setPins(pins));
 		if (pinIsInit)
 			startSending(socket, socket.id);
+		socket.on('setPins', pins => setPins(pins));
+		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 	});
 	// ouvir na porta declarada 
 	http.listen(port, () => {
@@ -27,6 +28,14 @@ arduino.on('ready', () => {
 		console.log('>> ========================================');
 	});
 });
+
+// mudar o setPoint 
+function setSetPoint(socket, newSetPoint) {
+	setPoint = newSetPoint;
+	socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
+	console.log(`Set point mudado para ${setPoint}`);
+}
+
 // setar canais A0 e A1 por padrão 
 function setPins(pins) {
 	therm1 = new five.Sensor({ pin: pins[0], freq: 500 });
@@ -43,11 +52,6 @@ function startSending(socket, clientId) {
 	// passar o setPoint atual para o novo usuário conectado
 	socket.emit('changeSetPoint', setPoint);
 	// quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
-	socket.on('changingSetPoint', newSetPoint => {
-		setPoint = newSetPoint;
-		socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
-		console.log(`Set point mudado para ${setPoint}`);
-	});
 	tempSend(socket, therm1, 'newTemperature1');
 	tempSend(socket, therm2, 'newTemperature2');
 	tempSend(socket, therm3, 'newTemperature3');

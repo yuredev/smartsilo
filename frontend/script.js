@@ -33,7 +33,6 @@ function initialize() {
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
     $('#controlBit').prop('checked', false); // deixar o checkbox desmarcado por padrão via jquery  
 }
-
 // faz o cliente começar a ouvir os dados do servidor 
 function startSocketListening() {
     socket.on('newTemperature1', receivedData => t1 = receivedData);
@@ -44,7 +43,6 @@ function startSocketListening() {
     socket.on('changeSetPoint', newSetPoint => setPoint = newSetPoint);
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
 }
-
 // começa a plotar os gráficos dinamicamente
 function startPloting() {
     Plotly.plot('chart', traces, layout);      // plotar primeiro gráfico 
@@ -52,7 +50,7 @@ function startPloting() {
     executingGraph = setInterval(updateGraph, 100);
     executingGraphCB = setInterval(updateGraphCB, 100);
 }
-
+// redirecionar para outra página 
 function changePins() {
     window.location.href = 'setpins.html';
 }
@@ -128,13 +126,12 @@ function updateGraphCB() {
     Plotly.extendTraces('chart2', { y: [[controlBitValue]] }, [0]);
     graphRelayout('chart2', 'bit de controle', -0.5, 1.5);
 }
-
 // faz o redesenho de um gráfico
 function graphRelayout(divName, graphName, rangeMin, rangeMax) {
     Plotly.relayout(divName, {
         xaxis: {
             showticklabels: false,
-            title: `tempo percorrido: ${minutes}:${secP < 60 ? secP : secP - cntSec}`,
+            title: `tempo decorrido: ${minutes}:${secP < 60 ? secP : secP - cntSec}`,
             range: [x - 150, x],
         },
         yaxis: {
