@@ -8,7 +8,7 @@ const path = require('path'); // será utilizado para fazer o express reconhecer
 const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
 let setPoint = null; // valor de setpoint passado pelo usuário  
-let pinsWasInit = false;
+let pinIsInit = false;
 
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: "COM6" });
@@ -17,7 +17,7 @@ let therm1, therm2, therm3, therm4, therm5;
 arduino.on('ready', () => {
 	io.on('connection', socket => {
 		socket.on('setPins', pins => setPins(pins));
-		if (pinsWasInit)
+		if (pinIsInit)
 			startSending(socket, socket.id);
 	});
 	// ouvir na porta declarada 
@@ -29,13 +29,13 @@ arduino.on('ready', () => {
 });
 // setar canais A0 e A1 por padrão 
 function setPins(pins) {
-	therm1 = new five.Sensor({ pin: pins[0] });
-	therm2 = new five.Sensor({ pin: pins[1] });
-	therm3 = new five.Sensor({ pin: pins[2] });
-	therm4 = new five.Sensor({ pin: pins[3] });
-	therm5 = new five.Sensor({ pin: pins[4] });
+	therm1 = new five.Sensor({ pin: pins[0], freq: 500 });
+	therm2 = new five.Sensor({ pin: pins[1], freq: 500 });
+	therm3 = new five.Sensor({ pin: pins[2], freq: 500 });
+	therm4 = new five.Sensor({ pin: pins[3], freq: 500 });
+	therm5 = new five.Sensor({ pin: pins[4], freq: 500 });
 	console.log(`Canais setados: ${pins}`);
-	pinsWasInit = true;
+	pinIsInit = true;
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
