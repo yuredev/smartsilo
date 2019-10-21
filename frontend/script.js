@@ -1,6 +1,6 @@
 const socket = io();           // constante que armazenará o objeto do socket.io
 const startTime = new Date(); // armazenar o tempo inicial ao executar em milisegundos 
-let t1 = null, t2 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
+let t1 = null, t2 = null, t3 = null, t4 = null, t5 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
 let setPoint;         // determina o valor do set point do primeiro gráfico 
 let showBitGraph = false;    // determina se o gráfico do set point será mostrado 
 let pause = false;           // determina se o gráfico está pausado 
@@ -38,6 +38,9 @@ function initialize() {
 function startSocketListening() {
     socket.on('newTemperature1', receivedData => t1 = receivedData);
     socket.on('newTemperature2', receivedData => t2 = receivedData);
+    socket.on('newTemperature3', receivedData => t3 = receivedData);
+    socket.on('newTemperature4', receivedData => t4 = receivedData);
+    socket.on('newTemperature5', receivedData => t5 = receivedData);
     socket.on('changeSetPoint', newSetPoint => setPoint = newSetPoint);
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
 }
@@ -97,7 +100,6 @@ function pauseResume() {
         executingGraphCB = setInterval(updateGraphCB, 100); // retoma segundo gráfico 
     }
 }
-
 // função para fazer o tempo passar, será utilizada para fazer o tempo ser exibido abaixo dos gráficos 
 function passTime() {
     secP = secondsPassed();
@@ -106,15 +108,20 @@ function passTime() {
         minutes++;
     }
 }
-
 // update do primeiro gráfico 
 function updateGraph() {
-    Plotly.extendTraces('chart', { y: [[(t1 + t2) / 2], [setPoint]] }, [0, 1]);
+    Plotly.extendTraces('chart', { y: [[(t1 + t2 + t3 + t4 + t5) / 5], [setPoint]] }, [0, 1]);
     x++;
     passTime();
     graphRelayout('chart', 'temperatura', 10, 40);
-    if (t1 != null && t2 != null)
-        document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2) / 2).toFixed(2).replace('.', ',')}°C`;
+    if (t1 != null && t2 != null && t3 != null && t4 != null && t5 != null) {
+        document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2 + t3 + t4 + t5) / 5).toFixed(2).replace('.', ',')}°C`;
+        // console.log('\n\n\n\n\n\nTemperatura 1: ', t1);
+        // console.log('Temperatura 2: ', t2);
+        // console.log('Temperatura 3: ', t3);
+        // console.log('Temperatura 4: ', t4);
+        // console.log('Temperatura 5: ', t5);
+    }
 }
 // update do gráfico de bit de controle 
 function updateGraphCB() {
@@ -128,7 +135,7 @@ function graphRelayout(divName, graphName, rangeMin, rangeMax) {
         xaxis: {
             showticklabels: false,
             title: `tempo percorrido: ${minutes}:${secP < 60 ? secP : secP - cntSec}`,
-            range: [x - 50, x],
+            range: [x - 150, x],
         },
         yaxis: {
             title: graphName,

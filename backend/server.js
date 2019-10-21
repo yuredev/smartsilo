@@ -12,7 +12,7 @@ let pinsWasInit = false;
 
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: "COM6" });
-let therm1, therm2;
+let therm1, therm2, therm3, therm4, therm5;
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	io.on('connection', socket => {
@@ -28,10 +28,13 @@ arduino.on('ready', () => {
 	});
 });
 // setar canais A0 e A1 por padrão 
-function setPins(pins = ['A0', 'A1']) {
+function setPins(pins) {
 	therm1 = new five.Sensor({ pin: pins[0] });
 	therm2 = new five.Sensor({ pin: pins[1] });
-	console.log(`Canais setados: ${pins[0]} e ${pins[1]}`);
+	therm3 = new five.Sensor({ pin: pins[2] });
+	therm4 = new five.Sensor({ pin: pins[3] });
+	therm5 = new five.Sensor({ pin: pins[4] });
+	console.log(`Canais setados: ${pins}`);
 	pinsWasInit = true;
 }
 // começa a mandar os dados para o arduino
@@ -47,6 +50,10 @@ function startSending(socket, clientId) {
 	});
 	tempSend(socket, therm1, 'newTemperature1');
 	tempSend(socket, therm2, 'newTemperature2');
+	tempSend(socket, therm3, 'newTemperature3');
+	tempSend(socket, therm4, 'newTemperature4');
+	tempSend(socket, therm5, 'newTemperature5');
+
 	setInterval(() => {
 		socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
 	}, 400);

@@ -45,6 +45,51 @@
                     <input type="radio" name="secondPin" value="A5">
                     A5
                 </p>
+                <p>
+                    <h3>Terceiro canal: </h3>
+                    <input type="radio" name="thirdPin" value="A0">
+                    A0
+                    <input type="radio" name="thirdPin" value="A1">
+                    A1
+                    <input type="radio" name="thirdPin" value="A2">
+                    A2
+                    <input type="radio" name="thirdPin" value="A3">
+                    A3
+                    <input type="radio" name="thirdPin" value="A4">
+                    A4
+                    <input type="radio" name="thirdPin" value="A5">
+                    A5
+                </p>
+                <p>
+                    <h3>Quarto canal: </h3>
+                    <input type="radio" name="fourthPin" value="A0">
+                    A0
+                    <input type="radio" name="fourthPin" value="A1">
+                    A1
+                    <input type="radio" name="fourthPin" value="A2">
+                    A2
+                    <input type="radio" name="fourthPin" value="A3">
+                    A3
+                    <input type="radio" name="fourthPin" value="A4">
+                    A4
+                    <input type="radio" name="fourthPin" value="A5">
+                    A5
+                </p>
+                <p>
+                    <h3>Quinto canal: </h3>
+                    <input type="radio" name="fifthPin" value="A0">
+                    A0
+                    <input type="radio" name="fifthPin" value="A1">
+                    A1
+                    <input type="radio" name="fifthPin" value="A2">
+                    A2
+                    <input type="radio" name="fifthPin" value="A3">
+                    A3
+                    <input type="radio" name="fifthPin" value="A4">
+                    A4
+                    <input type="radio" name="fifthPin" value="A5">
+                    A5
+                </p>
             </div>
             <button onclick="setPins()">OK</button>
         </div>
@@ -60,16 +105,22 @@
             try {
                 let pin1 = document.querySelector('input[name="firstPin"]:checked').value;
                 let pin2 = document.querySelector('input[name="secondPin"]:checked').value;
-                if (pin1 == pin2) {
-                    $("h2").text("Você deve selecionar 2 canais diferentes").css('color', 'red').fadeTo(2000);
+                let pin3 = document.querySelector('input[name="thirdPin"]:checked').value;
+                let pin4 = document.querySelector('input[name="fourthPin"]:checked').value;
+                let pin5 = document.querySelector('input[name="fifthPin"]:checked').value;
+
+                if (isEqual(pin1, pin2, pin3, pin4, pin5)) {
+                    $("h2").text("Você deve selecionar canais diferentes").css('color', 'red').fadeTo(2000);
                 } else {
-                    socket.emit('setPins', [pin1, pin2]);
+                    socket.emit('setPins', [pin1, pin2, pin3, pin4, pin5]);
                     window.location.href = 'index.html';
                 }
             } catch (e) {
                 $("h2").text("Preencha todos os canais devidamente").css('color', 'red').fadeTo(2000);
             }
         }
+        const isEqual = (pin1, pin2, pin3, pin4, pin5) => (pin1 == pin2 || pin2 == pin3 || pin3 == pin4 || pin4 == pin5);
+
     </script>
 </body>
 
