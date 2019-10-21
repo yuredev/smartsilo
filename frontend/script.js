@@ -112,8 +112,9 @@ function updateGraph() {
     Plotly.extendTraces('chart', { y: [[(t1 + t2) / 2], [setPoint]] }, [0, 1]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 0, 50);
-    document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2) / 2).toFixed(2).replace('.', ',')}°C`;
+    graphRelayout('chart', 'temperatura', 10, 40);
+    if (t1 != null && t2 != null)
+        document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2) / 2).toFixed(2).replace('.', ',')}°C`;
 }
 // update do gráfico de bit de controle 
 function updateGraphCB() {
