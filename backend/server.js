@@ -9,7 +9,8 @@ const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
 let setPoint = null; // valor de setpoint passado pelo usuário  
 let pinIsInit = false;
-
+let u;
+let iant = 0, eant = 0;
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2, therm3, therm4, therm5;
@@ -20,6 +21,12 @@ arduino.on('ready', () => {
 			startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
+		setInterval(() => {
+			let media = toCelsius(therm1.value) + toCelsius(therm1.value) +
+				toCelsius(therm1.value) + toCelsius(therm1.value) +
+				toCelsius(therm1.value) / 5;
+			u = generatePID(media, setPoint, iant, eant);
+		}, 500);
 	});
 	// ouvir na porta declarada 
 	http.listen(port, () => {
@@ -56,9 +63,7 @@ function startSending(socket, clientId) {
 	tempSend(socket, therm4, 'newTemperature4');
 	tempSend(socket, therm5, 'newTemperature5');
 
-	setInterval(() => {
-		socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
-	}, 400);
+	setInterval(() => socket.emit('controlBitValue', u), 400);
 }
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
@@ -71,4 +76,26 @@ function toCelsius(rawADC) {
 	temp = 1 / (0.001129148 + (0.000234125 * temp) + (0.0000000876741 * temp ** 3));
 	temp = temp - 273.15;   // Kelvin para Celsius 
 	return temp;
+}
+// gerar o PID
+function generatePID(temp, setPoint, iant, eant) {
+	const KP = 50, KI = 35, H = 70, IMAX = 5, KD = 100;
+	let e = temp - setPoint;
+	let p = KP * e;
+	let i = iant + (KI * H) * (e + eant);
+	if (i > IMAX) {
+		i = IMAX;
+	} else if (i < - IMAX) {
+		i = - IMAX;
+	}
+	let d = (KD / H) * (e - eant);
+	let u = p + i + d;
+	if (u > IMAX) {
+		u = IMAX;
+	} else if (u < - IMAX) {
+		u = - IMAX;
+	}
+	eant = e;
+	iant = i;
+	return u;
 }

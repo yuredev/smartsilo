@@ -111,7 +111,7 @@ function updateGraph() {
     Plotly.extendTraces('chart', { y: [[(t1 + t2 + t3 + t4 + t5) / 5], [setPoint]] }, [0, 1]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 10, 40);
+    graphRelayout('chart', 'temperatura', 15, 35);
     if (t1 != null && t2 != null && t3 != null && t4 != null && t5 != null) {
         document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2 + t3 + t4 + t5) / 5).toFixed(2).replace('.', ',')}°C`;
         // console.log('\n\n\n\n\n\nTemperatura 1: ', t1);
