@@ -15,7 +15,6 @@ let layout = {                 // layout a ser usado nos gráficos
     autosize: true,
     margin: { b: 50, t: 30 }
 };
-
 // array de linhas do primeiro gráfico
 let traces = [new Trace('temperatura', t1, 'red'),
 new Trace('set point', setPoint, '#00E')
@@ -124,7 +123,7 @@ function updateGraph() {
 // update do gráfico de bit de controle 
 function updateGraphCB() {
     Plotly.extendTraces('chart2', { y: [[controlBitValue]] }, [0]);
-    graphRelayout('chart2', 'bit de controle', -0.5, 1.5);
+    graphRelayout('chart2', 'bit de controle', 0, 255);
 }
 // faz o redesenho de um gráfico
 function graphRelayout(divName, graphName, rangeMin, rangeMax) {

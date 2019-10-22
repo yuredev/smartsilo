@@ -21,12 +21,6 @@ arduino.on('ready', () => {
 			startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
-		setInterval(() => {
-			let media = toCelsius(therm1.value) + toCelsius(therm1.value) +
-				toCelsius(therm1.value) + toCelsius(therm1.value) +
-				toCelsius(therm1.value) / 5;
-			u = generatePID(media, setPoint, iant, eant);
-		}, 500);
 	});
 	// ouvir na porta declarada 
 	http.listen(port, () => {
@@ -53,6 +47,12 @@ function setPins(pins) {
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
+	setInterval(() => {
+		let media = toCelsius(therm1.value) + toCelsius(therm1.value) +
+			toCelsius(therm1.value) + toCelsius(therm1.value) +
+			toCelsius(therm1.value) / 5;
+		u = generatePID(media, setPoint, iant, eant);
+	}, 500);
 	console.log('Mandando dados para ' + clientId);
 	// passar o setPoint atual para o novo usuário conectado
 	socket.emit('changeSetPoint', setPoint);
@@ -79,7 +79,7 @@ function toCelsius(rawADC) {
 }
 // gerar o PID
 function generatePID(temp, setPoint, iant, eant) {
-	const KP = 50, KI = 35, H = 70, IMAX = 5, KD = 100;
+	const KP = 1 / 0.6, KI = KP / 1.77, H = 7, IMAX = 255, KD = KP * 6;
 	let e = temp - setPoint;
 	let p = KP * e;
 	let i = iant + (KI * H) * (e + eant);
