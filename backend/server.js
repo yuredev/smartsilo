@@ -27,50 +27,48 @@ arduino.on('ready', () => {
 		console.log(`   Abrir em: http://localhost:${port}`);
 		console.log('>> ========================================');
 	});
-});
+	// });
+	// mudar o setPoint 
+	function setSetPoint(socket, newSetPoint) {
+		setPoint = newSetPoint;
+		socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
+		console.log(`Set point mudado para ${setPoint}`);
+	}
+	// setar canais A0 e A1 por padrão 
+	function setPins(pins) {
+		therm1 = new five.Sensor({ pin: pins[0], freq: 500 });
+		therm2 = new five.Sensor({ pin: pins[1], freq: 500 });
+		therm3 = new five.Sensor({ pin: pins[2], freq: 500 });
+		therm4 = new five.Sensor({ pin: pins[3], freq: 500 });
+		therm5 = new five.Sensor({ pin: pins[4], freq: 500 });
+		console.log(`Canais setados: ${pins}`);
+		pinIsInit = true;
+	}
+	// começa a mandar os dados para o arduino
+	function startSending(socket, clientId) {
+		console.log('Mandando dados para ' + clientId);
+		// passar o setPoint atual para o novo usuário conectado
+		socket.emit('changeSetPoint', setPoint);
+		// quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
+		tempSend(socket, therm1, 'newTemperature1');
+		tempSend(socket, therm2, 'newTemperature2');
+		tempSend(socket, therm3, 'newTemperature3');
+		tempSend(socket, therm4, 'newTemperature4');
+		tempSend(socket, therm5, 'newTemperature5');
 
-// mudar o setPoint 
-function setSetPoint(socket, newSetPoint) {
-	setPoint = newSetPoint;
-	socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
-	console.log(`Set point mudado para ${setPoint}`);
-}
-
-// setar canais A0 e A1 por padrão 
-function setPins(pins) {
-	therm1 = new five.Sensor({ pin: pins[0], freq: 500 });
-	therm2 = new five.Sensor({ pin: pins[1], freq: 500 });
-	therm3 = new five.Sensor({ pin: pins[2], freq: 500 });
-	therm4 = new five.Sensor({ pin: pins[3], freq: 500 });
-	therm5 = new five.Sensor({ pin: pins[4], freq: 500 });
-	console.log(`Canais setados: ${pins}`);
-	pinIsInit = true;
-}
-// começa a mandar os dados para o arduino
-function startSending(socket, clientId) {
-	console.log('Mandando dados para ' + clientId);
-	// passar o setPoint atual para o novo usuário conectado
-	socket.emit('changeSetPoint', setPoint);
-	// quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
-	tempSend(socket, therm1, 'newTemperature1');
-	tempSend(socket, therm2, 'newTemperature2');
-	tempSend(socket, therm3, 'newTemperature3');
-	tempSend(socket, therm4, 'newTemperature4');
-	tempSend(socket, therm5, 'newTemperature5');
-
-	setInterval(() => {
-		socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
-	}, 400);
-}
-// faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
-function tempSend(socket, therm, socketMsg) {
-	// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
-	therm.on('change', () => socket.emit(socketMsg, toCelsius(therm.value)));
-}
-// converte valor ADC em Celsius
-function toCelsius(rawADC) {
-	let temp = Math.log(((10240000 / rawADC) - 10000));
-	temp = 1 / (0.001129148 + (0.000234125 * temp) + (0.0000000876741 * temp ** 3));
-	temp = temp - 273.15;   // Kelvin para Celsius 
-	return temp;
-}
+		setInterval(() => {
+			socket.emit('controlBitValue', (toCelsius(therm1.value) > setPoint && toCelsius(therm2.value) > setPoint) ? 1 : 0);
+		}, 400);
+	}
+	// faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
+	function tempSend(socket, therm, socketMsg) {
+		// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
+		therm.on('change', () => socket.emit(socketMsg, toCelsius(therm.value)));
+	}
+	// converte valor ADC em Celsius
+	function toCelsius(rawADC) {
+		let temp = Math.log(((10240000 / rawADC) - 10000));
+		temp = 1 / (0.001129148 + (0.000234125 * temp) + (0.0000000876741 * temp ** 3));
+		temp = temp - 273.15;   // Kelvin para Celsius 
+		return temp;
+	}
