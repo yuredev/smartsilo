@@ -12,10 +12,17 @@ let pinIsInit = false;
 let u;
 let iant = 0, eant = 0;
 // declarando Arduino na porta ao qual está conectado
+
 const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2, therm3, therm4, therm5;
+let output
+
+const analogWrite = n => output.brightness(scaleValue(n));
+
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
+	output = new five.Led(11)
+
 	io.on('connection', socket => {
 		if (pinIsInit)
 			startSending(socket, socket.id);
@@ -98,4 +105,12 @@ function generatePID(temp, setPoint, iant, eant) {
 	eant = e;
 	iant = i;
 	return u;
+}
+
+// retorna correspondente do valor em outra escala  
+function scaleValue(value) {
+	let from = [0, 5], to = [0, 255];
+	var scale = (to[1] - to[0]) / (from[1] - from[0]);
+	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+	return (capped * scale + to[0]);
 }
