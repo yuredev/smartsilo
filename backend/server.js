@@ -8,7 +8,7 @@ const path = require('path'); // será utilizado para fazer o express reconhecer
 const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
 let setPoint = null; // valor de setpoint passado pelo usuário  
-let pinIsInit = false;
+let pinWasInit = false;
 let u;
 let iant = 0, eant = 0;
 // declarando Arduino na porta ao qual está conectado
@@ -19,17 +19,12 @@ let therm1, therm2, therm3, therm4, therm5;
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	arduino.pinMode(9, five.Pin.PWM);
-	if (pinIsInit)
-		arduino.analogWrite(9, scaleValue(generatePID(
-			(therm1.value + therm2.value +
-				therm3.value + therm4.value +
-				therm5.value) / 5,
-			setPoint,
-			iant,
-			eant
-		)));
+	if (pinWasInit) {
+		// coloca no pino 9 do Arduino o valor gerado pelo PID 
+		arduino.analogWrite(9, scaleValue(generatePID(getTemp())));
+	}
 	io.on('connection', socket => {
-		if (pinIsInit)
+		if (pinWasInit)
 			startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
@@ -43,9 +38,11 @@ arduino.on('ready', () => {
 });
 
 // retorna a temperatura media
-// function getTemp() {
-// 	return 
-// }
+function getTemp() {
+	return (therm1.value + therm2.value +
+		therm3.value + therm4.value +
+		therm5.value) / 5
+}
 
 // mudar o setPoint 
 function setSetPoint(socket, newSetPoint) {
@@ -61,7 +58,7 @@ function setPins(pins) {
 	therm4 = new five.Sensor({ pin: pins[3], freq: 500 });
 	therm5 = new five.Sensor({ pin: pins[4], freq: 500 });
 	console.log(`Canais setados: ${pins}`);
-	pinIsInit = true;
+	pinWasInit = true;
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
@@ -97,7 +94,7 @@ function toCelsius(rawADC) {
 	return temp;
 }
 // gerar o PID
-function generatePID(temp, setPoint, iant, eant) {
+function generatePID(temp) {
 	const KP = 1 / 0.6, KI = KP / 1.77, H = 7, IMAX = 5, KD = KP * 6;
 	let e = temp - setPoint;
 	let p = KP * e;
