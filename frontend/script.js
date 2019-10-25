@@ -123,7 +123,7 @@ function updateGraph() {
 // update do gráfico de bit de controle 
 function updateGraphCB() {
     Plotly.extendTraces('chart2', { y: [[controlBitValue]] }, [0]);
-    graphRelayout('chart2', 'bit de controle', 0, 255);
+    graphRelayout('chart2', 'bit de controle', 0, 5);
 }
 // faz o redesenho de um gráfico
 function graphRelayout(divName, graphName, rangeMin, rangeMax) {

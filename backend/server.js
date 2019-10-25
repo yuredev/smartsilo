@@ -15,14 +15,19 @@ let iant = 0, eant = 0;
 
 const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2, therm3, therm4, therm5;
-let output
-
-const analogWrite = n => output.brightness(scaleValue(n));
 
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
-	output = new five.Led(11)
-
+	arduino.pinMode(9, five.Pin.PWM);
+	if (pinIsInit)
+		arduino.analogWrite(9, scaleValue(generatePID(
+			(therm1.value + therm2.value +
+				therm3.value + therm4.value +
+				therm5.value) / 5,
+			setPoint,
+			iant,
+			eant
+		)));
 	io.on('connection', socket => {
 		if (pinIsInit)
 			startSending(socket, socket.id);
@@ -36,6 +41,12 @@ arduino.on('ready', () => {
 		console.log('>> ========================================');
 	});
 });
+
+// retorna a temperatura media
+// function getTemp() {
+// 	return 
+// }
+
 // mudar o setPoint 
 function setSetPoint(socket, newSetPoint) {
 	setPoint = newSetPoint;
@@ -59,6 +70,7 @@ function startSending(socket, clientId) {
 			toCelsius(therm1.value) + toCelsius(therm1.value) +
 			toCelsius(therm1.value) / 5;
 		u = generatePID(media, setPoint, iant, eant);
+		socket.emit('controlBitValue', u);
 	}, 500);
 	console.log('Mandando dados para ' + clientId);
 	// passar o setPoint atual para o novo usuário conectado
@@ -86,7 +98,7 @@ function toCelsius(rawADC) {
 }
 // gerar o PID
 function generatePID(temp, setPoint, iant, eant) {
-	const KP = 1 / 0.6, KI = KP / 1.77, H = 7, IMAX = 255, KD = KP * 6;
+	const KP = 1 / 0.6, KI = KP / 1.77, H = 7, IMAX = 5, KD = KP * 6;
 	let e = temp - setPoint;
 	let p = KP * e;
 	let i = iant + (KI * H) * (e + eant);
@@ -106,11 +118,10 @@ function generatePID(temp, setPoint, iant, eant) {
 	iant = i;
 	return u;
 }
-
 // retorna correspondente do valor em outra escala  
 function scaleValue(value) {
 	let from = [0, 5], to = [0, 255];
 	var scale = (to[1] - to[0]) / (from[1] - from[0]);
 	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
-	return (capped * scale + to[0]);
+	return Math.floor(capped * scale + to[0]);
 }
