@@ -68,8 +68,6 @@ function startSending(socket, clientId) {
 	tempSend(socket, therm3, 'newTemperature3');
 	tempSend(socket, therm4, 'newTemperature4');
 	tempSend(socket, therm5, 'newTemperature5');
-
-	setInterval(() => socket.emit('controlBitValue', u), 400);
 }
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
