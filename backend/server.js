@@ -44,7 +44,7 @@ function setSetPoint(socket, newSetPoint) {
 	socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
 	console.log(`Set point mudado para ${setPoint}`);
 }
-// setar canais A0 e A1 por padrão 
+// setar canais do A5 ao A1 por padrão 
 function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 	therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
 	therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
