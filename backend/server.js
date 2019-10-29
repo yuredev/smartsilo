@@ -16,13 +16,22 @@ let iant = 0, eant = 0;
 const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2, therm3, therm4, therm5;
 
+
+
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	arduino.pinMode(9, five.Pin.PWM);
-	if (pinWasInit) {
-		// coloca no pino 9 do Arduino o valor gerado pelo PID 
-		arduino.analogWrite(9, scaleValue(generatePID(getTemp())));
-	}
+
+	therm1 = new five.Sensor({ pin: 'A5', freq: 100 });
+	therm2 = new five.Sensor({ pin: 'A4', freq: 100 });
+	therm3 = new five.Sensor({ pin: 'A3', freq: 100 });
+	therm4 = new five.Sensor({ pin: 'A2', freq: 100 });
+	therm5 = new five.Sensor({ pin: 'A1', freq: 100 });
+
+	setInterval(() => arduino.analogWrite(9, scaleValue(generatePID(getTemp()))), 100);
+
+	// arduino.analogWrite(9, 255);
+
 	io.on('connection', socket => {
 		if (pinWasInit)
 			startSending(socket, socket.id);
@@ -39,9 +48,8 @@ arduino.on('ready', () => {
 
 // retorna a temperatura media
 function getTemp() {
-	return (therm1.value + therm2.value +
-		therm3.value + therm4.value +
-		therm5.value) / 5
+	return ((toCelsius(therm1.value) + toCelsius(therm2.value) +
+		toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5);
 }
 
 // mudar o setPoint 
@@ -52,11 +60,11 @@ function setSetPoint(socket, newSetPoint) {
 }
 // setar canais A0 e A1 por padrão 
 function setPins(pins) {
-	therm1 = new five.Sensor({ pin: pins[0], freq: 500 });
-	therm2 = new five.Sensor({ pin: pins[1], freq: 500 });
-	therm3 = new five.Sensor({ pin: pins[2], freq: 500 });
-	therm4 = new five.Sensor({ pin: pins[3], freq: 500 });
-	therm5 = new five.Sensor({ pin: pins[4], freq: 500 });
+	therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
+	therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
+	therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
+	therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
+	therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
 	console.log(`Canais setados: ${pins}`);
 	pinWasInit = true;
 }
@@ -95,22 +103,28 @@ function toCelsius(rawADC) {
 }
 // gerar o PID
 function generatePID(temp) {
-	const KP = 1 / 0.6, KI = KP / 1.77, H = 7, IMAX = 5, KD = KP * 6;
+	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
+	// const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, IMAX = 5, KD = KP * 6;
 	let e = temp - setPoint;
 	let p = KP * e;
 	let i = iant + (KI * H) * (e + eant);
 	if (i > IMAX) {
 		i = IMAX;
-	} else if (i < - IMAX) {
-		i = - IMAX;
+	} else if (i < 0) {
+		i = 0;
 	}
 	let d = (KD / H) * (e - eant);
-	let u = p + i + d;
-	if (u > IMAX) {
-		u = IMAX;
-	} else if (u < - IMAX) {
-		u = - IMAX;
-	}
+	let u;
+	console.log(e);
+
+	if (e > 1) u = 0;
+	else if (e < -1) u = 5;
+	// let u = p + i + d;
+	// if (u > IMAX) {
+	// 	u = IMAX;
+	// } else if (u < 0) {
+	// 	u = 0;
+	// }
 	eant = e;
 	iant = i;
 	return u;
