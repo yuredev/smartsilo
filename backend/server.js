@@ -7,8 +7,7 @@ const path = require('path'); // será utilizado para fazer o express reconhecer
 
 const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
-let setPoint = null; // valor de setpoint passado pelo usuário  
-let pinWasInit = false;
+let setPoint = 30; // valor de setpoint passado pelo usuário  
 let u;
 let iant = 0, eant = 0;
 // declarando Arduino na porta ao qual está conectado
@@ -19,18 +18,13 @@ let therm1, therm2, therm3, therm4, therm5;
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	setPins();
-
 	arduino.pinMode(9, five.Pin.PWM);
 	setInterval(() => arduino.analogWrite(9, scaleValue(generatePID(getTemp()))), 100);
-	// arduino.analogWrite(9, 255);
-
 	io.on('connection', socket => {
-		if (pinWasInit)
-			startSending(socket, socket.id);
+		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 	});
-	// ouvir na porta declarada 
 	http.listen(port, () => {
 		console.log('============ SISTEMA PRONTO ============');
 		console.log(`   Abrir em: http://localhost:${port}`);
@@ -58,7 +52,6 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 	therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
 	therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
 	console.log(`Canais setados: ${pins}`);
-	pinWasInit = true;
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
@@ -106,7 +99,7 @@ function generatePID(temp) {
 	// let u;
 	// console.log(e);
 
-	if (e > 1) {
+	if (e > 0.2) {
 		u = 0;
 	} else if (e < -1) {
 		u = 5;

@@ -1,8 +1,8 @@
 const socket = io();           // constante que armazenará o objeto do socket.io
 const startTime = new Date(); // armazenar o tempo inicial ao executar em milisegundos 
 let t1 = null, t2 = null, t3 = null, t4 = null, t5 = null, controlBitValue = null; // valores de y inseridos nos gráficos  
-let setPoint;         // determina o valor do set point do primeiro gráfico 
-let showBitGraph = false;    // determina se o gráfico do set point será mostrado 
+let setPoint = 30;         // determina o valor do set point do primeiro gráfico 
+let showBitGraph = true;    // determina se o gráfico do set point será mostrado 
 let pause = false;           // determina se o gráfico está pausado 
 let x = 0;                   // x representa os pontos no eixo x do gráfico
 let cntSec = 0;              // cntSec conta os segundos passados a cada minuto ele ganha 60
@@ -30,7 +30,7 @@ function initialize() {
     startPloting();
     startSocketListening();
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
-    $('#controlBit').prop('checked', false); // deixar o checkbox desmarcado por padrão via jquery  
+    $('#controlBit').prop('checked', true); // deixar o checkbox desmarcado por padrão via jquery  
 }
 // faz o cliente começar a ouvir os dados do servidor 
 function startSocketListening() {
@@ -39,7 +39,10 @@ function startSocketListening() {
     socket.on('newTemperature3', receivedData => t3 = receivedData);
     socket.on('newTemperature4', receivedData => t4 = receivedData);
     socket.on('newTemperature5', receivedData => t5 = receivedData);
-    socket.on('changeSetPoint', newSetPoint => setPoint = newSetPoint);
+    socket.on('changeSetPoint', newSetPoint => {
+        setPoint = newSetPoint
+        document.getElementById('setPoint').value = setPoint;
+    });
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
 }
 // começa a plotar os gráficos dinamicamente
