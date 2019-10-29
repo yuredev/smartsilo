@@ -16,20 +16,12 @@ let iant = 0, eant = 0;
 const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2, therm3, therm4, therm5;
 
-
-
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
+	setPins();
+
 	arduino.pinMode(9, five.Pin.PWM);
-
-	therm1 = new five.Sensor({ pin: 'A5', freq: 100 });
-	therm2 = new five.Sensor({ pin: 'A4', freq: 100 });
-	therm3 = new five.Sensor({ pin: 'A3', freq: 100 });
-	therm4 = new five.Sensor({ pin: 'A2', freq: 100 });
-	therm5 = new five.Sensor({ pin: 'A1', freq: 100 });
-
 	setInterval(() => arduino.analogWrite(9, scaleValue(generatePID(getTemp()))), 100);
-
 	// arduino.analogWrite(9, 255);
 
 	io.on('connection', socket => {
@@ -59,7 +51,7 @@ function setSetPoint(socket, newSetPoint) {
 	console.log(`Set point mudado para ${setPoint}`);
 }
 // setar canais A0 e A1 por padrão 
-function setPins(pins) {
+function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 	therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
 	therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
 	therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
@@ -71,10 +63,7 @@ function setPins(pins) {
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
 	setInterval(() => {
-		let media = toCelsius(therm1.value) + toCelsius(therm1.value) +
-			toCelsius(therm1.value) + toCelsius(therm1.value) +
-			toCelsius(therm1.value) / 5;
-		u = generatePID(media, setPoint, iant, eant);
+		u = generatePID(getTemp());
 		socket.emit('controlBitValue', u);
 	}, 500);
 	console.log('Mandando dados para ' + clientId);
@@ -114,11 +103,14 @@ function generatePID(temp) {
 		i = 0;
 	}
 	let d = (KD / H) * (e - eant);
-	let u;
-	console.log(e);
+	// let u;
+	// console.log(e);
 
-	if (e > 1) u = 0;
-	else if (e < -1) u = 5;
+	if (e > 1) {
+		u = 0;
+	} else if (e < -1) {
+		u = 5;
+	}
 	// let u = p + i + d;
 	// if (u > IMAX) {
 	// 	u = IMAX;
