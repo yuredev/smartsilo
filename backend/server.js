@@ -4,20 +4,24 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http); // importando Socket.io
 const five = require("johnny-five"); // importando o Johnny-five
 const path = require('path'); // será utilizado para fazer o express reconhecer o caminho 
+const fs = require('fs');
 
 const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
 let setPoint = 30; // valor de setpoint passado pelo usuário  
 let u;
 let iant = 0, eant = 0;
+let e;
 // declarando Arduino na porta ao qual está conectado
 
 const arduino = new five.Board({ port: "COM6" });
 let therm1, therm2, therm3, therm4, therm5;
+let hist = fs.readFileSync(path.resolve(__dirname + "/../hist.txt"), 'utf-8');
 
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	setPins();
+	startSaving();
 	arduino.pinMode(9, five.Pin.PWM);
 	setInterval(() => arduino.analogWrite(9, scaleValue(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
@@ -31,6 +35,16 @@ arduino.on('ready', () => {
 		console.log('>> ========================================');
 	});
 });
+
+// comecça a salvar em arquivo txt 
+function startSaving() {
+	setInterval(() => {
+		hist += `t: ${getTemp().toFixed(2)}, u:${u.toFixed(2)}, e:${e.toFixed(2)}\n`;
+		fs.writeFile(path.resolve(__dirname + '/../hist.txt'), hist, error => {
+			if (error) console.log(error);
+		});
+	}, 500);
+}
 
 // retorna a temperatura media
 function getTemp() {
@@ -72,7 +86,7 @@ function startSending(socket, clientId) {
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
 	// setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
-	therm.on('change', () => socket.emit(socketMsg, toCelsius(therm.value)));
+	therm.on('data', () => socket.emit(socketMsg, toCelsius(therm.value)));
 }
 // converte valor ADC em Celsius
 function toCelsius(rawADC) {
@@ -85,7 +99,7 @@ function toCelsius(rawADC) {
 function generatePID(temp) {
 	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
 	// const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, IMAX = 5, KD = KP * 6;
-	let e = temp - setPoint;
+	e = temp - setPoint;
 	let p = KP * e;
 	let i = iant + (KI * H) * (e + eant);
 	if (i > IMAX) {
