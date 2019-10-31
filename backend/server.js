@@ -1,8 +1,8 @@
-const express = require("express"); // importando o Express 
+const express = require('express'); // importando o Express 
 const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http); // importando Socket.io
-const five = require("johnny-five"); // importando o Johnny-five
+const http = require('http').createServer(app);
+const io = require('socket.io')(http); // importando Socket.io
+const five = require('johnny-five'); // importando o Johnny-five
 const path = require('path'); // será utilizado para fazer o express reconhecer o caminho 
 const fs = require('fs');
 
