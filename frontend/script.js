@@ -16,8 +16,9 @@ let layout = {                 // layout a ser usado nos gráficos
     margin: { b: 50, t: 30 }
 };
 // array de linhas do primeiro gráfico
-let traces = [new Trace('temperatura', t1, 'red'),
-new Trace('set point', setPoint, '#00E')
+let traces = [
+    new Trace('temperatura', t1, 'red'),
+    new Trace('set point', setPoint, '#00E')
 ];
 // array de linhas do gráfico do bit de controle (CB: Bit Control)
 let traceCB = [new Trace('bit de controle', controlBitValue)];
@@ -114,14 +115,16 @@ function updateGraph() {
     x++;
     passTime();
     graphRelayout('chart', 'temperatura', 15, 35);
-    if (t1 != null && t2 != null && t3 != null && t4 != null && t5 != null) {
-        document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2 + t3 + t4 + t5) / 5).toFixed(2).replace('.', ',')}°C`;
-        // console.log('\n\n\n\n\n\nTemperatura 1: ', t1);
-        // console.log('Temperatura 2: ', t2);
-        // console.log('Temperatura 3: ', t3);
-        // console.log('Temperatura 4: ', t4);
-        // console.log('Temperatura 5: ', t5);
-    }
+    document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2 + t3 + t4 + t5) / 5).toFixed(2).replace('.', ',')}°C`;
+    // printTemps();
+}
+// função para printar as temperaturas para conferir se estão ok 
+function printTemps() {
+    console.log('\n\n\n\n\n\nTemperatura 1: ', t1);
+    console.log('Temperatura 2: ', t2);
+    console.log('Temperatura 3: ', t3);
+    console.log('Temperatura 4: ', t4);
+    console.log('Temperatura 5: ', t5);
 }
 // update do gráfico de bit de controle 
 function updateGraphCB() {
