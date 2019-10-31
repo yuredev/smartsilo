@@ -35,7 +35,6 @@ arduino.on('ready', () => {
 		console.log('>> ========================================');
 	});
 });
-
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
@@ -45,13 +44,11 @@ function startSaving() {
 		});
 	}, 500);
 }
-
 // retorna a temperatura media
 function getTemp() {
 	return ((toCelsius(therm1.value) + toCelsius(therm2.value) +
 		toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5);
 }
-
 // mudar o setPoint 
 function setSetPoint(socket, newSetPoint) {
 	setPoint = newSetPoint;
