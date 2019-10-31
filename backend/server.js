@@ -92,6 +92,13 @@ function toCelsius(rawADC) {
 	temp = temp - 273.15;   // Kelvin para Celsius 
 	return temp;
 }
+// retorna correspondente do valor em outra escala  
+function scaleValue(value) {
+	let from = [0, 5], to = [0, 255];
+	var scale = (to[1] - to[0]) / (from[1] - from[0]);
+	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+	return Math.floor(capped * scale + to[0]);
+}
 // gerar o PID
 function generatePID(temp) {
 	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
@@ -122,11 +129,4 @@ function generatePID(temp) {
 	eant = e;
 	iant = i;
 	return u;
-}
-// retorna correspondente do valor em outra escala  
-function scaleValue(value) {
-	let from = [0, 5], to = [0, 255];
-	var scale = (to[1] - to[0]) / (from[1] - from[0]);
-	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
-	return Math.floor(capped * scale + to[0]);
 }
