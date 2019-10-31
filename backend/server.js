@@ -39,7 +39,7 @@ arduino.on('ready', () => {
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
-		hist += `t: ${getTemp().toFixed(2)}, u:${u.toFixed(2)}, e:${e.toFixed(2)}\n`;
+		hist += `t: ${getTemp().toFixed(2)}, u: ${u.toFixed(2)}, e: ${e.toFixed(2)}\n`;
 		fs.writeFile(path.resolve(__dirname + '/../hist.txt'), hist, error => {
 			if (error) console.log(error);
 		});
