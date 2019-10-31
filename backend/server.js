@@ -14,9 +14,9 @@ let iant = 0, eant = 0;
 let e;
 // declarando Arduino na porta ao qual está conectado
 
-const arduino = new five.Board({ port: "COM6" });
+const arduino = new five.Board({ port: 'COM6' });
 let therm1, therm2, therm3, therm4, therm5;
-let hist = fs.readFileSync(path.resolve(__dirname + "/../hist.txt"), 'utf-8');
+let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8');
 
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
@@ -40,7 +40,7 @@ arduino.on('ready', () => {
 function startSaving() {
 	setInterval(() => {
 		hist += `t: ${getTemp().toFixed(2)}, u: ${u.toFixed(2)}, e: ${e.toFixed(2)}\n`;
-		fs.writeFile(path.resolve(__dirname + '/../hist.txt'), hist, error => {
+		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
 	}, 500);
