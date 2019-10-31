@@ -12,8 +12,8 @@ let setPoint = 30; // valor de setpoint passado pelo usuário
 let u;
 let iant = 0, eant = 0;
 let e;
-// declarando Arduino na porta ao qual está conectado
 
+// declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: 'COM6' });
 let therm1, therm2, therm3, therm4, therm5;
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8');
