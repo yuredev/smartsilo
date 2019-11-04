@@ -28,22 +28,22 @@ function controlDryer() {
 	// 							k_p, k_i, k_d, dt
 	let control = new Controller(KP, KI, KD, 1);
 
-	// if (state == true) {
-	control.setTarget(setPoint);
-	let output = getTemp();
-	e = getTemp() - setPoint;
-	u = control.update(output);
-	if (u > 255)
-		u = 255
-	else if (u < 0)
-		u = 0
-	// }
-	// if (getTemp() <= setPoint - 1) {
-	state = true;
-	// } else if (getTemp() >= setPoint + 1) {
-	// u = 0;
-	state = false;
-	// }
+	if (state == true) {
+		control.setTarget(setPoint);
+		let output = getTemp();
+		e = getTemp() - setPoint;
+		u = control.update(output);
+		if (u > 255)
+			u = 255
+		else if (u < 30)
+			u = 30
+	}
+	if (getTemp() <= setPoint - 1) {
+		state = true;
+	} else if (getTemp() >= setPoint + 1) {
+		u = 0;
+		state = false;
+	}
 	arduino.analogWrite(9, u);
 }
 
@@ -131,34 +131,34 @@ function scale(value, inverse = false) {
 	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
 	return (capped * scale + to[0]);
 }
-// gerar o PID
-function generatePID(temp) {
-	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
-	// const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, IMAX = 5, KD = KP * 6;
-	e = temp - setPoint;
-	let p = KP * e;
-	let i = iant + (KI * H) * (e + eant);
-	if (i > IMAX) {
-		i = IMAX;
-	} else if (i < 0) {
-		i = 0;
-	}
-	let d = (KD / H) * (e - eant);
-	// let u;
-	// console.log(e);
+// // gerar o PID
+// function generatePID(temp) {
+// 	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
+// 	// const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, IMAX = 5, KD = KP * 6;
+// 	e = temp - setPoint;
+// 	let p = KP * e;
+// 	let i = iant + (KI * H) * (e + eant);
+// 	if (i > IMAX) {
+// 		i = IMAX;
+// 	} else if (i < 0) {
+// 		i = 0;
+// 	}
+// 	let d = (KD / H) * (e - eant);
+// 	// let u;
+// 	// console.log(e);
 
-	if (e > 0.2) {
-		u = 0;
-	} else if (e < -1) {
-		u = 5;
-	}
-	// let u = p + i + d;
-	// if (u > IMAX) {
-	// 	u = IMAX;
-	// } else if (u < 0) {
-	// 	u = 0;
-	// }
-	eant = e;
-	iant = i;
-	return u;
-}
+// 	if (e > 0.2) {
+// 		u = 0;
+// 	} else if (e < -1) {
+// 		u = 5;
+// 	}
+// 	// let u = p + i + d;
+// 	// if (u > IMAX) {
+// 	// 	u = IMAX;
+// 	// } else if (u < 0) {
+// 	// 	u = 0;
+// 	// }
+// 	eant = e;
+// 	iant = i;
+// 	return u;
+// }
