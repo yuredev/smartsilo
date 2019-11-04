@@ -5,6 +5,7 @@ const io = require('socket.io')(http); // importando Socket.io
 const five = require('johnny-five'); // importando o Johnny-five
 const path = require('path'); // será utilizado para fazer o express reconhecer o caminho 
 const fs = require('fs');
+const Controller = require('node-pid-controller');
 
 const port = 8080;
 app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
@@ -12,18 +13,47 @@ let setPoint = 30; // valor de setpoint passado pelo usuário
 let u;
 let iant = 0, eant = 0;
 let e;
+let state = true;
 
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: 'COM6' });
+
+
 let therm1, therm2, therm3, therm4, therm5;
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8');
+
+// começa a mandar valores para o secador de grãos 
+function controlDryer() {
+	const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, KD = KP * 6;
+	// 							k_p, k_i, k_d, dt
+	let control = new Controller(KP, KI, KD, 1);
+
+	// if (state == true) {
+	control.setTarget(setPoint);
+	let output = getTemp();
+	e = getTemp() - setPoint;
+	u = control.update(output);
+	if (u > 255)
+		u = 255
+	else if (u < 0)
+		u = 0
+	// }
+	// if (getTemp() <= setPoint - 1) {
+	state = true;
+	// } else if (getTemp() >= setPoint + 1) {
+	// u = 0;
+	state = false;
+	// }
+	arduino.analogWrite(9, u);
+}
 
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	setPins();
 	startSaving();
 	arduino.pinMode(9, five.Pin.PWM);
-	setInterval(() => arduino.analogWrite(9, scaleValue(generatePID(getTemp()))), 100);
+	setInterval(controlDryer, 100);
+	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
@@ -38,7 +68,7 @@ arduino.on('ready', () => {
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
-		hist += `t: ${getTemp().toFixed(2)}, u: ${u.toFixed(2)}, e: ${e.toFixed(2)}\n`;
+		hist += `t: ${getTemp().toFixed(2)}, u: ${scale(u, 'inverse').toFixed(2)}, e: ${e.toFixed(2)}, s: ${setPoint.toFixed(2)}\n`;
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
@@ -51,7 +81,7 @@ function getTemp() {
 }
 // mudar o setPoint 
 function setSetPoint(socket, newSetPoint) {
-	setPoint = newSetPoint;
+	setPoint = Number(newSetPoint); // garantir que será um número
 	socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
 	console.log(`Set point mudado para ${setPoint}`);
 }
@@ -66,10 +96,7 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
-	setInterval(() => {
-		u = generatePID(getTemp());
-		socket.emit('controlBitValue', u);
-	}, 500);
+	setInterval(() => socket.emit('controlBitValue', scale(u, 'inverse')), 500);
 	console.log('Mandando dados para ' + clientId);
 	// passar o setPoint atual para o novo usuário conectado
 	socket.emit('changeSetPoint', setPoint);
@@ -93,11 +120,16 @@ function toCelsius(rawADC) {
 	return temp;
 }
 // retorna correspondente do valor em outra escala  
-function scaleValue(value) {
-	let from = [0, 5], to = [0, 255];
+function scale(value, inverse = false) {
+	let from;
+	if (!inverse) {
+		from = [0, 5], to = [0, 255];
+	} else {
+		from = [0, 255], to = [0, 5];
+	}
 	var scale = (to[1] - to[0]) / (from[1] - from[0]);
 	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
-	return Math.floor(capped * scale + to[0]);
+	return (capped * scale + to[0]);
 }
 // gerar o PID
 function generatePID(temp) {

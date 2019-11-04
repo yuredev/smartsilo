@@ -114,7 +114,7 @@ function updateGraph() {
     Plotly.extendTraces('chart', { y: [[(t1 + t2 + t3 + t4 + t5) / 5], [setPoint]] }, [0, 1]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 15, 35);
+    graphRelayout('chart', 'temperatura', 15, 40);
     document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2 + t3 + t4 + t5) / 5).toFixed(2).replace('.', ',')}°C`;
     // printTemps();
 }
@@ -129,7 +129,7 @@ function printTemps() {
 // update do gráfico de bit de controle 
 function updateGraphCB() {
     Plotly.extendTraces('chart2', { y: [[controlBitValue]] }, [0]);
-    graphRelayout('chart2', 'bit de controle', 0, 5);
+    graphRelayout('chart2', 'sinal de controle', 0, 5);
 }
 // faz o redesenho de um gráfico
 function graphRelayout(divName, graphName, rangeMin, rangeMax) {
