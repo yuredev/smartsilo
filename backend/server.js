@@ -35,10 +35,10 @@ function controlDryer() {
 		u = control.update(output);
 		if (u > 255)
 			u = 255
-		else if (u < 30)
-			u = 30
+		else if (u < 40)
+			u += 40
 	}
-	if (getTemp() <= setPoint - 1) {
+	if (getTemp() <= setPoint - 0.5) {
 		state = true;
 	} else if (getTemp() >= setPoint + 1) {
 		u = 0;
