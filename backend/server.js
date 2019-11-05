@@ -60,26 +60,22 @@ function startSaving() {
 // começa a controlar o secador de grãos através de PID 
 function startControling() {
 	setInterval(() => {
-		const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, KD = KP * 6;
+		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 		// 							k_p, k_i, k_d, dt
-		let control = new Controller(KP, KI, KD, 1);
-
-		if (state) {
-			control.setTarget(setPoint);
-			let output = getTemp();
-			e = getTemp() - setPoint;
-			u = control.update(output);
-			if (u > 255)
-				u = 255;
-			else if (u < 40)
-				u *= 2.2;
-		}
-		if (getTemp() <= setPoint - 0.25) {
-			state = true;
-		} else if (getTemp() >= setPoint + 0.25) {
+		let control = new Controller(KP, KI, KD, H);
+		control.setTarget(setPoint);
+		let output = getTemp();
+		e = getTemp() - setPoint;
+		u = control.update(output);
+		if (u > 255)
+			u = 255;
+		else if (u < 0)
 			u = 0;
-			state = false;
+
+		if (getTemp() > 32) {
+			u *= 1.1;
 		}
+
 		arduino.analogWrite(9, u);
 	}, 100);
 }
