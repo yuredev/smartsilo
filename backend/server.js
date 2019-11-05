@@ -8,51 +8,23 @@ const fs = require('fs');
 const Controller = require('node-pid-controller');
 
 const port = 8080;
-app.use(express.static(path.resolve(__dirname + "/../frontend"))); // atender requisições com pasta a frontend
-let setPoint = 30; // valor de setpoint passado pelo usuário  
-let u;
-let iant = 0, eant = 0;
-let e;
-let state = true;
-
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: 'COM6' });
+let setPoint = 30; // valor do setpoint   
+let u, e;    // valor de saída e valor do erro 
+let state = true;   // determina se o controlador deve estar ligado 
+let therm1, therm2, therm3, therm4, therm5;  // sensores 
+let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
+// let iant = 0, eant = 0;
 
-
-let therm1, therm2, therm3, therm4, therm5;
-let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8');
-
-// começa a mandar valores para o secador de grãos 
-function controlDryer() {
-	const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, KD = KP * 6;
-	// 							k_p, k_i, k_d, dt
-	let control = new Controller(KP, KI, KD, 1);
-
-	if (state == true) {
-		control.setTarget(setPoint);
-		let output = getTemp();
-		e = getTemp() - setPoint;
-		u = control.update(output);
-		if (u > 255)
-			u = 255
-		else if (u < 40)
-			u += 40
-	}
-	if (getTemp() <= setPoint - 0.5) {
-		state = true;
-	} else if (getTemp() >= setPoint + 1) {
-		u = 0;
-		state = false;
-	}
-	arduino.analogWrite(9, u);
-}
-
+// atender requisições com pasta a frontend
+app.use(express.static(path.resolve(__dirname + "/../frontend")));
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	setPins();
 	startSaving();
 	arduino.pinMode(9, five.Pin.PWM);
-	setInterval(controlDryer, 100);
+	startControling();
 	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
@@ -65,6 +37,17 @@ arduino.on('ready', () => {
 		console.log('>> ========================================');
 	});
 });
+// função para setar novos canais no Arduino
+// setar canais do A5 ao A1 por padrão 
+function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
+	therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
+	therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
+	therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
+	therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
+	therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
+	console.log(`Canais setados: ${pins}`);
+}
+
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
@@ -73,6 +56,32 @@ function startSaving() {
 			if (error) console.log(error);
 		});
 	}, 500);
+}
+// começa a controlar o secador de grãos através de PID 
+function startControling() {
+	setInterval(() => {
+		const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, KD = KP * 6;
+		// 							k_p, k_i, k_d, dt
+		let control = new Controller(KP, KI, KD, 1);
+
+		if (state) {
+			control.setTarget(setPoint);
+			let output = getTemp();
+			e = getTemp() - setPoint;
+			u = control.update(output);
+			if (u > 255)
+				u = 255;
+			else if (u < 40)
+				u *= 2.2;
+		}
+		if (getTemp() <= setPoint - 0.25) {
+			state = true;
+		} else if (getTemp() >= setPoint + 0.25) {
+			u = 0;
+			state = false;
+		}
+		arduino.analogWrite(9, u);
+	}, 100);
 }
 // retorna a temperatura media
 function getTemp() {
@@ -84,15 +93,6 @@ function setSetPoint(socket, newSetPoint) {
 	setPoint = Number(newSetPoint); // garantir que será um número
 	socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
 	console.log(`Set point mudado para ${setPoint}`);
-}
-// setar canais do A5 ao A1 por padrão 
-function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
-	therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
-	therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
-	therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
-	therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
-	therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
-	console.log(`Canais setados: ${pins}`);
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
