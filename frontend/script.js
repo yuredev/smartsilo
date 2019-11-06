@@ -62,7 +62,7 @@ function redirectToReport() {
     socket.emit('plotChart', null);
     setTimeout(() => {
         window.location.href = 'report.html'
-    }, 2000);
+    }, 4000);
 }
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {

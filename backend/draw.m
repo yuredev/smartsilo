@@ -14,7 +14,7 @@ ylabel('oC');
 
 %print(fh, "img.pdf", "-dpdflatexstandalone");
 %system("pdflatex img");
-print -dpng "chart.png";
+print -dpng "../frontend/img/chart.png";
 
 close(fh); % destruir janela
 

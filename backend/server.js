@@ -8,7 +8,6 @@ const fs = require('fs');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 
-
 const port = 8080;
 const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30; // valor do setpoint   
@@ -23,9 +22,7 @@ app.use(express.static(path.resolve(__dirname + "/../frontend")));
 arduino.on('ready', () => {
 	setPins();
 	startSaving();
-	arduino.pinMode(9, five.Pin.PWM);
 	startControling();
-	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
@@ -61,10 +58,10 @@ function startSaving() {
 }
 // começa a controlar o secador de grãos através do PID 
 function startControling() {
+	const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
+	const control = new Controller(KP, KI, KD, H);
+	arduino.pinMode(9, five.Pin.PWM);
 	setInterval(() => {
-		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
-		// 							k_p, k_i, k_d, dt
-		let control = new Controller(KP, KI, KD, H);
 		control.setTarget(setPoint);
 		let output = getTemp();
 		e = getTemp() - setPoint;
