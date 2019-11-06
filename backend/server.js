@@ -8,7 +8,6 @@ const fs = require('fs');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 
-// cmd.get('octave-cli draw.m', (e, dt) => console.log(e ? e : dt));
 
 const port = 8080;
 const arduino = new five.Board({ port: 'COM6' });
@@ -31,6 +30,9 @@ arduino.on('ready', () => {
 		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
+		socket.on('plotChart', () => {
+			cmd.get('octave-cli draw.m', (e, dt) => console.log(e ? e : dt));
+		});
 	});
 	http.listen(port, () => {
 		console.log('============ SISTEMA PRONTO ============');

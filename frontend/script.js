@@ -59,9 +59,11 @@ function redirectToPins() {
 }
 // redirecionar para a página do relatório 
 function redirectToReport() {
-    window.href.location = 'report.html'
+    socket.emit('plotChart', null);
+    setTimeout(() => {
+        window.location.href = 'report.html'
+    }, 2000);
 }
-
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
     this.name = name;
@@ -70,7 +72,6 @@ function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
     this.mode = 'lines';
     this.line = { color };
 }
-
 // retorna o tempo passado em segundos 
 function secondsPassed() {
     let endTime = new Date();
