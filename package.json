@@ -16,6 +16,7 @@
     "jquery": {
       "version": "3.4.0"
     },
+    "node-cmd": "^3.0.0",
     "node-pid-controller": "^1.0.1",
     "nodemon": "^1.19.2",
     "path": "^0.12.7",
