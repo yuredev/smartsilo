@@ -53,10 +53,15 @@ function startPloting() {
     executingGraph = setInterval(updateGraph, 100);
     executingGraphCB = setInterval(updateGraphCB, 100);
 }
-// redirecionar para outra página 
-function changePins() {
+// redirecionar para a página de setar os canais 
+function redirectToPins() {
     window.location.href = 'setpins.html';
 }
+// redirecionar para a página do relatório 
+function redirectToReport() {
+    window.href.location = 'report.html'
+}
+
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
     this.name = name;
@@ -65,6 +70,7 @@ function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
     this.mode = 'lines';
     this.line = { color };
 }
+
 // retorna o tempo passado em segundos 
 function secondsPassed() {
     let endTime = new Date();
