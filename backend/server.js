@@ -9,15 +9,12 @@ const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 
 const port = 80;
-// declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30; // valor do setpoint   
 let u, e = 0;    // valor de saída e valor do erro 
 let state = true;   // determina se o controlador deve estar ligado 
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
-let saving;
-// let iant = 0, eant = 0;
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + "/../frontend")));
@@ -33,12 +30,15 @@ arduino.on('ready', () => {
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 		socket.on('plotChart', () => {
-			clearInterval(saving);
+			let error;
 			cmd.get('octave-cli backend/draw.m', (e, dt) => {
-				console.log(e ? e : '')
-				if (!e) socket.emit('chartReady', null);
+				if (e) {
+					console.log(e);
+				} else {
+					console.log('Gráfico gerado');
+					socket.emit('chartReady', null);
+				}
 			});
-			startSaving();
 		});
 	});
 	http.listen(port, () => {
@@ -59,12 +59,12 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 }
 // comecça a salvar em arquivo txt 
 function startSaving() {
-	saving = setInterval(() => {
+	setInterval(() => {
 		hist += `${getTemp().toFixed(2)}, ${scale(u, 'inverse').toFixed(2)}, ${e.toFixed(2)}, ${setPoint.toFixed(2)}\n`;
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
-	}, 100);
+	}, 250);
 }
 // começa a controlar o secador de grãos através de PID 
 function startControling() {
