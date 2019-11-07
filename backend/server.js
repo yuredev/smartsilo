@@ -33,6 +33,7 @@ arduino.on('ready', () => {
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 		socket.on('plotChart', () => {
 			cmd.get('octave-cli backend/draw.m', (e, dt) => console.log(e ? e : dt));
+			socket.emit('chartReady', null);
 		});
 	});
 	http.listen(port, () => {
@@ -51,7 +52,6 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 	therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
 	console.log(`Canais setados: ${pins}`);
 }
-
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
