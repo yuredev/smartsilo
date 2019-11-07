@@ -16,6 +16,7 @@ let u, e = 0;    // valor de saída e valor do erro
 let state = true;   // determina se o controlador deve estar ligado 
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
+let saving;
 // let iant = 0, eant = 0;
 
 // atender requisições com pasta a frontend
@@ -25,15 +26,19 @@ arduino.on('ready', () => {
 	setPins();
 	arduino.pinMode(9, five.Pin.PWM);
 	startControling();
-	startSaving();
+	setTimeout(() => startSaving(), 100);
 	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 		socket.on('plotChart', () => {
-			cmd.get('octave-cli backend/draw.m', (e, dt) => console.log(e ? e : dt));
-			socket.emit('chartReady', null);
+			clearInterval(saving);
+			cmd.get('octave-cli backend/draw.m', (e, dt) => {
+				console.log(e ? e : '')
+				if (!e) socket.emit('chartReady', null);
+			});
+			startSaving();
 		});
 	});
 	http.listen(port, () => {
@@ -54,12 +59,12 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 }
 // comecça a salvar em arquivo txt 
 function startSaving() {
-	setInterval(() => {
+	saving = setInterval(() => {
 		hist += `${getTemp().toFixed(2)}, ${scale(u, 'inverse').toFixed(2)}, ${e.toFixed(2)}, ${setPoint.toFixed(2)}\n`;
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
-	}, 250);
+	}, 100);
 }
 // começa a controlar o secador de grãos através de PID 
 function startControling() {

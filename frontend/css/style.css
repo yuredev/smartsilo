@@ -138,10 +138,9 @@ ul li:hover{
     font-size: 1.1rem;
 }
 
-/* .img-fluid{
-    width: 100%;
-    max-height: ;
-} */
+.img-fluid{
+    width: 75%;
+}
 
 input[type="number"]{
     width: 55px;

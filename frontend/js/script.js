@@ -60,8 +60,7 @@ function redirectToPins() {
 // redirecionar para a página do relatório quando a imagem com o relatório estiver 
 function redirectToReport() {
     socket.emit('plotChart', null);
-    setTimeout(() => { }, 1000)
-    window.location.href = 'html/report.html'
+    socket.on('chartReady', window.location.href = 'html/report.html');
 }
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
