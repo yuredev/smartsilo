@@ -54,11 +54,11 @@ header img{
 
 @media (min-width: 900px) {
     .small{
-        width: 65%;
+        width: 50%;
     }
     
     .big{
-        width: 80%;
+        width: 78%;
     }
     ul{
         justify-content: right;
@@ -138,9 +138,10 @@ ul li:hover{
     font-size: 1.1rem;
 }
 
-.img-fluid{
+/* .img-fluid{
     width: 100%;
-}
+    max-height: ;
+} */
 
 input[type="number"]{
     width: 55px;

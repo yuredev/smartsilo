@@ -55,14 +55,13 @@ function startPloting() {
 }
 // redirecionar para a página de setar os canais 
 function redirectToPins() {
-    window.location.href = 'setpins.html';
+    window.location.href = 'html/setpins.html';
 }
 // redirecionar para a página do relatório quando a imagem com o relatório estiver 
 function redirectToReport() {
     socket.emit('plotChart', null);
-    socket.on('chartReady', () => {
-        window.location.href = 'report.html'
-    });
+    setTimeout(() => { }, 1000)
+    window.location.href = 'html/report.html'
 }
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
@@ -87,8 +86,13 @@ function changeGraph(optionName) {
 }
 // função para mudar o setPoint 
 function changeSetPoint() {
-    setPoint = document.getElementById('setPoint').value;
-    socket.emit('changingSetPoint', setPoint); // mandar set point para o servidor
+    let value = document.getElementById('setPoint').value
+    if (value <= 45) {
+        setPoint = document.getElementById('setPoint').value;
+        socket.emit('changingSetPoint', setPoint); // mandar set point para o servidor
+    } else {
+        alert(`Digite um valor mais baixo, ${value}°c pode acabar danificando os componentes`);
+    }
 }
 // função para mostrar ou ocultar o segundo gráfico 
 function switchControlBitGraph() {
@@ -121,7 +125,7 @@ function updateGraph() {
     Plotly.extendTraces('chart', { y: [[(t1 + t2 + t3 + t4 + t5) / 5], [setPoint]] }, [0, 1]);
     x++;
     passTime();
-    graphRelayout('chart', 'temperatura', 15, 40);
+    graphRelayout('chart', 'temperatura', 10, 50);
     document.getElementById('average').innerHTML = `Temperatura: ${((t1 + t2 + t3 + t4 + t5) / 5).toFixed(2).replace('.', ',')}°C`;
     // printTemps();
 }

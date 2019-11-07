@@ -8,11 +8,11 @@ const fs = require('fs');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 
-const port = 8080;
+const port = 80;
 // declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30; // valor do setpoint   
-let u, e;    // valor de saída e valor do erro 
+let u, e = 0;    // valor de saída e valor do erro 
 let state = true;   // determina se o controlador deve estar ligado 
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
@@ -23,9 +23,9 @@ app.use(express.static(path.resolve(__dirname + "/../frontend")));
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	setPins();
-	startSaving();
 	arduino.pinMode(9, five.Pin.PWM);
 	startControling();
+	startSaving();
 	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
@@ -59,7 +59,7 @@ function startSaving() {
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
-	}, 100);
+	}, 250);
 }
 // começa a controlar o secador de grãos através de PID 
 function startControling() {
@@ -71,14 +71,14 @@ function startControling() {
 		let output = getTemp();
 		e = getTemp() - setPoint;
 		u = control.update(output);
+
+		if (u < 2 && setPoint > 30) {
+			u *= 1.1;
+		}
 		if (u > 255)
 			u = 255;
 		else if (u < 0)
 			u = 0;
-
-		if (getTemp() > 32) {
-			u *= 1.05;
-		}
 
 		arduino.analogWrite(9, u);
 	}, 100);

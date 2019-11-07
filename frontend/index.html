@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
     <link rel="icon" href="img/smartsilo-icon.png" type="image/jpg">
     <title>SmartSilo - Monitoramento e controle do processo de secagem de grãos</title>
 </head>
@@ -27,7 +27,7 @@
         <div class="centralize-content bottom-container">
             <div class="form-setPoint">
                 <label for="setPoint">Set point: </label>
-                <input type="number" name="setPoint" id="setPoint">
+                <input type="number" name="setPoint" id="setPoint" max="45">
                 <button onclick="changeSetPoint()">OK</button>
             </div>
             <div id="average" class="value">Carregando temperatura...</div>
@@ -50,14 +50,14 @@
         <div class="bottom-container"></div>
     </div>
     <!-- biblioteca para construção de gráficos-->
-    <script src="libs/plotly.min.js"></script>
+    <script src="js/plotly.min.js"></script>
     <!-- socket.io no lado cliente -->
     <script src="/socket.io/socket.io.js"></script>
     <!-- CDN do jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
     <!-- script do projeto -->
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>

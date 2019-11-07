@@ -1,5 +1,5 @@
 x = load('D:/Documentos/ProjetosWeb/SmartSilo/backend/hist.txt');
-h = 0.1;
+h = 0.25;
 nAmostras = length(x(:,1));
 tMax = nAmostras*h;
 t = 0:h:tMax-h; % for t = 0; t <= tMax; t+=h                                         
