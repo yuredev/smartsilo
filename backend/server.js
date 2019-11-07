@@ -59,7 +59,7 @@ function startSaving() {
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
-	}, 500);
+	}, 100);
 }
 // começa a controlar o secador de grãos através de PID 
 function startControling() {
@@ -131,34 +131,3 @@ function scale(value, inverse = false) {
 	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
 	return (capped * scale + to[0]);
 }
-// // gerar o PID
-// function generatePID(temp) {
-// 	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
-// 	// const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, IMAX = 5, KD = KP * 6;
-// 	e = temp - setPoint;
-// 	let p = KP * e;
-// 	let i = iant + (KI * H) * (e + eant);
-// 	if (i > IMAX) {
-// 		i = IMAX;
-// 	} else if (i < 0) {
-// 		i = 0;
-// 	}
-// 	let d = (KD / H) * (e - eant);
-// 	// let u;
-// 	// console.log(e);
-
-// 	if (e > 0.2) {
-// 		u = 0;
-// 	} else if (e < -1) {
-// 		u = 5;
-// 	}
-// 	// let u = p + i + d;
-// 	// if (u > IMAX) {
-// 	// 	u = IMAX;
-// 	// } else if (u < 0) {
-// 	// 	u = 0;
-// 	// }
-// 	eant = e;
-// 	iant = i;
-// 	return u;
-// }
