@@ -1,4 +1,4 @@
-x = load('hist.txt');
+x = load('D:/Documentos/ProjetosWeb/SmartSilo/backend/hist.txt');
 h = 0.1;
 nAmostras = length(x(:,1));
 tMax = nAmostras*h;
@@ -14,7 +14,7 @@ ylabel('oC');
 
 %print(fh, "img.pdf", "-dpdflatexstandalone");
 %system("pdflatex img");
-print -dpng "../frontend/img/chart.png";
+print -dpng "D:/Documentos/ProjetosWeb/SmartSilo/frontend/img/chart.png";
 
 close(fh); % destruir janela
 

@@ -9,12 +9,14 @@ const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 
 const port = 8080;
+// declarando Arduino na porta ao qual está conectado
 const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30; // valor do setpoint   
 let u, e;    // valor de saída e valor do erro 
 let state = true;   // determina se o controlador deve estar ligado 
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
+// let iant = 0, eant = 0;
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + "/../frontend")));
@@ -22,13 +24,15 @@ app.use(express.static(path.resolve(__dirname + "/../frontend")));
 arduino.on('ready', () => {
 	setPins();
 	startSaving();
+	arduino.pinMode(9, five.Pin.PWM);
 	startControling();
+	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 		socket.on('plotChart', () => {
-			cmd.get('octave-cli draw.m', (e, dt) => console.log(e ? e : dt));
+			cmd.get('octave-cli backend/draw.m', (e, dt) => console.log(e ? e : dt));
 		});
 	});
 	http.listen(port, () => {
@@ -47,33 +51,35 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 	therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
 	console.log(`Canais setados: ${pins}`);
 }
+
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
-		hist += `${getTemp()},${scale(u, 'inverse')},${e}, s: ${setPoint}\n`;
+		hist += `${getTemp().toFixed(2)}, ${scale(u, 'inverse').toFixed(2)}, ${e.toFixed(2)}, ${setPoint.toFixed(2)}\n`;
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
 	}, 500);
 }
-// começa a controlar o secador de grãos através do PID 
+// começa a controlar o secador de grãos através de PID 
 function startControling() {
-	const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
-	const control = new Controller(KP, KI, KD, H);
-	arduino.pinMode(9, five.Pin.PWM);
 	setInterval(() => {
+		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
+		// 							k_p, k_i, k_d, dt
+		let control = new Controller(KP, KI, KD, H);
 		control.setTarget(setPoint);
 		let output = getTemp();
 		e = getTemp() - setPoint;
 		u = control.update(output);
-		if (u > 255) {
+		if (u > 255)
 			u = 255;
-		} else if (u < 0) {
+		else if (u < 0)
 			u = 0;
-		}
+
 		if (getTemp() > 32) {
-			u *= 1.1;
+			u *= 1.05;
 		}
+
 		arduino.analogWrite(9, u);
 	}, 100);
 }
@@ -115,7 +121,7 @@ function toCelsius(rawADC) {
 }
 // retorna correspondente do valor em outra escala  
 function scale(value, inverse = false) {
-	let from, to;
+	let from;
 	if (!inverse) {
 		from = [0, 5], to = [0, 255];
 	} else {
@@ -125,3 +131,34 @@ function scale(value, inverse = false) {
 	var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
 	return (capped * scale + to[0]);
 }
+// // gerar o PID
+// function generatePID(temp) {
+// 	const KP = 10, KI = 5, H = 0.1, IMAX = 5, KD = 0;
+// 	// const KP = 1 / 0.6, KI = KP / 1.77, H = 0.1, IMAX = 5, KD = KP * 6;
+// 	e = temp - setPoint;
+// 	let p = KP * e;
+// 	let i = iant + (KI * H) * (e + eant);
+// 	if (i > IMAX) {
+// 		i = IMAX;
+// 	} else if (i < 0) {
+// 		i = 0;
+// 	}
+// 	let d = (KD / H) * (e - eant);
+// 	// let u;
+// 	// console.log(e);
+
+// 	if (e > 0.2) {
+// 		u = 0;
+// 	} else if (e < -1) {
+// 		u = 5;
+// 	}
+// 	// let u = p + i + d;
+// 	// if (u > IMAX) {
+// 	// 	u = IMAX;
+// 	// } else if (u < 0) {
+// 	// 	u = 0;
+// 	// }
+// 	eant = e;
+// 	iant = i;
+// 	return u;
+// }
