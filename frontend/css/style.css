@@ -22,12 +22,21 @@ body{
     align-items: center;
 }
 
-#center-div{
+.inline{
+    display: inline;
+}
+
+.controls{
     width: 75%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     margin: 5px auto auto auto;
+}
+
+.margin-spacing{
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 header img{

@@ -26,14 +26,14 @@
         <div id="chart"></div>
         <div class="centralize-content bottom-container">
             <div class="form-setPoint">
-                <label for="setPoint">Set point: </label>
+                <label for="setPoint">Setpoint: </label>
                 <input type="number" name="setPoint" id="setPoint" max="45">
                 <button onclick="changeSetPoint()">OK</button>
             </div>
             <div id="average" class="value">Carregando temperatura...</div>
         </div>
     </div>
-    <div class="centralize-content" id="center-div">
+    <div class="centralize-content controls">
         <div>
             <label for="controlBit">Exibir sinal de controle: </label>
             <input type="checkbox" id="controlBit" onclick="switchControlBitGraph()">
@@ -48,6 +48,21 @@
         </h1>
         <div id="chart2"></div>
         <div class="bottom-container"></div>
+    </div>
+    <div class="centralize-content controls">
+        <div>
+            <div class="inline margin-spacing">
+                <label for="enableControl">Habilitar controle: </label>
+                <input type="checkbox" id="enableControl" onclick="">
+            </div>
+            <div class="inline margin-spacing" id="control-mode-div">
+                <label for="controlMode">Modo de controle: </label>
+                <select value="" id="controlMode">
+                    <option name="" id="">PID</option>
+                    <option name="" id="">Liga/Desliga</option>
+                </select>
+            </div>
+        </div>
     </div>
     <!-- biblioteca para construção de gráficos-->
     <script src="js/plotly.min.js"></script>
