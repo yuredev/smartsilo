@@ -10,7 +10,7 @@ function setPins() {
             errorMsg();
         } else {
             socket.emit('setPins', [pin1, pin2, pin3, pin4, pin5]);
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
         }
     } catch (e) {
         errorMsg();

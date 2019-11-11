@@ -27,7 +27,6 @@ window.onload = initialize;
 
 // inicializar a aplicação
 function initialize() {
-    socket.on('connect', () => socket.emit('clientReady', socket.id))
     startPloting();
     startSocketListening();
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
