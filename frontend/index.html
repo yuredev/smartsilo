@@ -40,14 +40,12 @@
             <input type="checkbox" id="controlBit" onclick="switchControlBitGraph()">
         </div>
         <div>
-            <label for="controlEnable">Controle:</label>
-            <input type="checkbox" name="" id="controlEnable">
-        </div>
-        <div>
-            <label for="controlMode">Modo: </label>
+            <label for="controlMode">Modo de controle:</label>
             <select id="controlMode">
                 <option onclick="changeControlMode(this.innerText)">PID</option>
                 <option onclick="changeControlMode(this.innerText)">ON/OFF</option>
+                <option onclick="changeControlMode(this.innerText)">Desligado</option>
+
             </select>
         </div>
         <button id="pause-resume" onclick="pauseResume()">Pausar</button>

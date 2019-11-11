@@ -30,7 +30,8 @@ function initialize() {
     startPloting();
     startSocketListening();
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
-    $('#controlBit').prop('checked', true); // deixar o checkbox desmarcado por padrão via jquery  
+    $('#controlBit').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
+    $('#controlEnable').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
 }
 // faz o cliente começar a ouvir os dados do servidor 
 function startSocketListening() {
@@ -54,6 +55,7 @@ function startPloting() {
 }
 
 function changeControlMode(controlMode) {
+    currentControlMode = controlMode;
     socket.emit('changingControlMode', controlMode);
 }
 

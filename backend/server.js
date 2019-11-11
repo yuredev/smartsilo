@@ -7,14 +7,14 @@ const path = require('path'); // será utilizado para fazer o express reconhecer
 const fs = require('fs');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
-
 const port = 80;
 const arduino = new five.Board({ port: 'COM6' });
+let controlState = true;
 let setPoint = 30; // valor do setpoint   
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
-let pidInterval, onOffInterval;
+let pidInterval, onOffInterval, offInterval;
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + "/../frontend")));
@@ -33,7 +33,19 @@ arduino.on('ready', () => {
 			console.log('Modo de controle mudado para ' + controlMode);
 			clearInterval(onOffInterval);
 			clearInterval(pidInterval);
+			clearInterval(offInterval);
 			startControling(controlMode);
+		});
+		socket.on('changingControlState', currentControlMode => {
+			controlState = !controlState;
+			if (!controlState) {
+				clearInterval(onOffInterval);
+				clearInterval(pidInterval);
+				startControling('OFF');
+			} else {
+				clearInterval(offInterval);
+				startControling(currentControlMode);
+			}
 		});
 		socket.on('plotChart', () => {
 			let error;
@@ -74,11 +86,18 @@ function startSaving() {
 }
 // começa a controlar o secador de grãos através de PID 
 function startControling(mode) {
-	if (mode == 'pid' || mode == 'PID') {
-		pidControling();
-	} else if (mode == 'on/off' || mode == 'ON/OFF') {
-		onOffControling();
+	switch (mode) {
+		case 'PID': pidControling(); break;
+		case 'ON/OFF': onOffControling(); break;
+		case 'Desligado': offControling(); break;
 	}
+}
+
+function offControling() {
+	u = scale(3);
+	offInterval = setInterval(() => {
+		arduino.analogWrite(9, scale(3));
+	}, 100);
 }
 
 function onOffControling() {
@@ -94,8 +113,8 @@ function onOffControling() {
 
 function pidControling() {
 	pidInterval = setInterval(() => {
-		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 		// 							k_p, k_i, k_d, dt
+		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 		let control = new Controller(KP, KI, KD, H);
 		control.setTarget(setPoint);
 		let output = getTemp();
