@@ -11,10 +11,10 @@ const Controller = require('node-pid-controller');
 const port = 80;
 const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30; // valor do setpoint   
-let u, e = 0;    // valor de saída e valor do erro 
-let state = true;   // determina se o controlador deve estar ligado 
+let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
+let pidInterval, onOffInterval;
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + "/../frontend")));
@@ -22,13 +22,18 @@ app.use(express.static(path.resolve(__dirname + "/../frontend")));
 arduino.on('ready', () => {
 	setPins();
 	arduino.pinMode(9, five.Pin.PWM);
-	startControling();
+	startControling('PID');
 	setTimeout(() => startSaving(), 100);
 	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
 		startSending(socket, socket.id);
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
+		socket.on('changingControlMode', controlMode => {
+			clearInterval(onOffInterval);
+			clearInterval(pidInterval);
+			startControling(controlMode);
+		});
 		socket.on('plotChart', () => {
 			let error;
 			cmd.get('octave-cli backend/draw.m', (e, dt) => {
@@ -67,8 +72,27 @@ function startSaving() {
 	}, 250);
 }
 // começa a controlar o secador de grãos através de PID 
-function startControling() {
-	setInterval(() => {
+function startControling(mode) {
+	if (mode == 'pid' || mode == 'PID') {
+		pidControling();
+	} else if (mode == 'on/off' || mode == 'ON/OFF') {
+		onOffControling();
+	}
+	arduino.analogWrite(9, u);
+}
+
+function onOffControling() {
+	onOffInterval = setInterval(() => {
+		if (getTemp() < setPoint) {
+			u = 255;
+		} else {
+			u = 0;
+		}
+	}, 100);
+}
+
+function pidControling() {
+	pidInterval = setInterval(() => {
 		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 		// 							k_p, k_i, k_d, dt
 		let control = new Controller(KP, KI, KD, H);
@@ -76,7 +100,6 @@ function startControling() {
 		let output = getTemp();
 		e = getTemp() - setPoint;
 		u = control.update(output);
-
 		if (u < 2 && setPoint > 30) {
 			u *= 1.1;
 		}
@@ -84,10 +107,9 @@ function startControling() {
 			u = 255;
 		else if (u < 0)
 			u = 0;
-
-		arduino.analogWrite(9, u);
 	}, 100);
 }
+
 // retorna a temperatura media
 function getTemp() {
 	return ((toCelsius(therm1.value) + toCelsius(therm2.value) +
