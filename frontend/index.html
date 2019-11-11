@@ -45,9 +45,9 @@
         </div>
         <div>
             <label for="controlMode">Modo: </label>
-            <select name="" id="controlMode">
-                <option value="">PID</option>
-                <option value="">ON/OFF</option>
+            <select id="controlMode">
+                <option onclick="changeControlMode(this.innerText)">PID</option>
+                <option onclick="changeControlMode(this.innerText)">ON/OFF</option>
             </select>
         </div>
         <button id="pause-resume" onclick="pauseResume()">Pausar</button>

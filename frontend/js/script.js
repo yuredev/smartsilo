@@ -52,6 +52,11 @@ function startPloting() {
     executingGraph = setInterval(updateGraph, 100);
     executingGraphCB = setInterval(updateGraphCB, 100);
 }
+
+function changeControlMode(controlMode) {
+    socket.emit('changingControlMode', controlMode);
+}
+
 // redirecionar para a página de setar os canais 
 function redirectToPins() {
     window.location.href = 'html/setpins.html';

@@ -30,6 +30,7 @@ arduino.on('ready', () => {
 		socket.on('setPins', pins => setPins(pins));
 		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
 		socket.on('changingControlMode', controlMode => {
+			console.log('Modo de controle mudado para ' + controlMode);
 			clearInterval(onOffInterval);
 			clearInterval(pidInterval);
 			startControling(controlMode);
@@ -78,7 +79,6 @@ function startControling(mode) {
 	} else if (mode == 'on/off' || mode == 'ON/OFF') {
 		onOffControling();
 	}
-	arduino.analogWrite(9, u);
 }
 
 function onOffControling() {
@@ -88,6 +88,7 @@ function onOffControling() {
 		} else {
 			u = 0;
 		}
+		arduino.analogWrite(9, u);
 	}, 100);
 }
 
@@ -107,6 +108,7 @@ function pidControling() {
 			u = 255;
 		else if (u < 0)
 			u = 0;
+		arduino.analogWrite(9, u);
 	}, 100);
 }
 
