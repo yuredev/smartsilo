@@ -12,7 +12,6 @@ const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
-let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
 let pidInterval, onOffInterval, offInterval; // será usado para armazenar os setIntervals 
 
 // atender requisições com pasta a frontend
@@ -28,7 +27,7 @@ arduino.on('ready', () => {
 		socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
 		socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
 		socket.on('changingControlMode', modeReceived => setControlMode(modeReceived));  // mudar o modo de controle
-		socket.on('plotChart', __ => octavePlot()); // plotagem do gráfico 
+		socket.on('plotChart', __ => octavePlot(socket)); // plotagem do gráfico 
 	});
 	http.listen(port, () => {
 		console.log('============ SISTEMA PRONTO ============');
@@ -37,15 +36,19 @@ arduino.on('ready', () => {
 	});
 });
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico 
-function octavePlot() {
+function octavePlot(socket) {
+	// let tryPlot = setInterval(() => {
 	cmd.get('octave-cli backend/draw.m', (e, dt) => {
-		if (e) {
-			console.log(e);
-		} else {
+		if (!e) {
 			console.log('Gráfico gerado');
 			socket.emit('chartReady', null); // confirmar pro cliente que o gráfico está pronto
+			// clearInterval(tryPlot);
+		} else {
+			console.log(e);
 		}
 	});
+	// }, 10);
+
 }
 // mudar o modo de controle 
 function setControlMode(controlMode) {
@@ -67,10 +70,7 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
-		hist += `${getTemp().toFixed(2)}, ${scale(u, 'to [0,5]').toFixed(2)}, ${e.toFixed(2)}, ${setPoint.toFixed(2)}\n`;
-		fs.writeFile(__dirname + '/hist.txt', hist, error => {
-			if (error) console.log(error);
-		});
+		cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> backend/hist.txt`);
 	}, 250);
 }
 // começa a controlar o secador de grãos a partir do modo passado 
@@ -109,7 +109,7 @@ function pidControling() {
 		e = getTemp() - setPoint;
 		u = control.update(output);
 		if (u < 2 && setPoint > 30)
-			u *= 1.1;
+			u *= 1.05;
 		if (u > 255)
 			u = 255;
 		else if (u < 0)

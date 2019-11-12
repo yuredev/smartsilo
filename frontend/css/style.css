@@ -22,6 +22,10 @@ body{
     align-items: center;
 }
 
+.chart-area{
+    background-color: #fff;
+}
+
 .controls{
     width: 75%;
     display: flex;
