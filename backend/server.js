@@ -4,7 +4,6 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const five = require('johnny-five');
 const path = require('path');
-const fs = require('fs');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const port = 80;
