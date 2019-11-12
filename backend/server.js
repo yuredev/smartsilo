@@ -1,19 +1,19 @@
-const express = require('express'); // importando o Express 
+const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const io = require('socket.io')(http); // importando Socket.io
-const five = require('johnny-five'); // importando o Johnny-five
-const path = require('path'); // será utilizado para fazer o express reconhecer o caminho 
+const io = require('socket.io')(http);
+const five = require('johnny-five');
+const path = require('path');
 const fs = require('fs');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const port = 80;
 const arduino = new five.Board({ port: 'COM6' });
-let setPoint = 30; // valor do setpoint   
+let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
 let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo de texto 
-let pidInterval, onOffInterval, offInterval;
+let pidInterval, onOffInterval, offInterval; // será usado para armazenar os setIntervals 
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + '/../frontend')));
