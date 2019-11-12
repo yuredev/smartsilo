@@ -8,7 +8,6 @@ t = 0: freq : maxTime-freq;
 
 fh = figure();  
 
-plot(t, x(:,1), t, x(:,4));
 plot(t, x(:,1), 'r', t, x(:,4), 'b');
 
 grid;
