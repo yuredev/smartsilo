@@ -29,6 +29,7 @@ window.onload = initialize;
 function initialize() {
     startPloting();
     startSocketListening();
+    $("#setPoint").on("keypress", evt => evt.keyCode == 13 && changeSetPoint());
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
     $('#controlBit').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
     $('#controlEnable').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
