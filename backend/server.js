@@ -9,7 +9,6 @@ const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const port = 80;
 const arduino = new five.Board({ port: 'COM6' });
-let controlState = true;
 let setPoint = 30; // valor do setpoint   
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
@@ -17,47 +16,19 @@ let hist = fs.readFileSync(__dirname + '/hist.txt', 'utf-8'); // lendo arquivo d
 let pidInterval, onOffInterval, offInterval;
 
 // atender requisições com pasta a frontend
-app.use(express.static(path.resolve(__dirname + "/../frontend")));
+app.use(express.static(path.resolve(__dirname + '/../frontend')));
 // executar quando o arduino estiver pronto
 arduino.on('ready', () => {
 	setPins();
 	arduino.pinMode(9, five.Pin.PWM);
 	startControling('PID');
 	setTimeout(() => startSaving(), 100);
-	// setInterval(() => arduino.analogWrite(9, scale(generatePID(getTemp()))), 100);
 	io.on('connection', socket => {
-		startSending(socket, socket.id);
-		socket.on('setPins', pins => setPins(pins));
-		socket.on('changingSetPoint', newSetPoint => setSetPoint(socket, newSetPoint));
-		socket.on('changingControlMode', controlMode => {
-			console.log('Modo de controle mudado para ' + controlMode);
-			clearInterval(onOffInterval);
-			clearInterval(pidInterval);
-			clearInterval(offInterval);
-			startControling(controlMode);
-		});
-		socket.on('changingControlState', currentControlMode => {
-			controlState = !controlState;
-			if (!controlState) {
-				clearInterval(onOffInterval);
-				clearInterval(pidInterval);
-				startControling('OFF');
-			} else {
-				clearInterval(offInterval);
-				startControling(currentControlMode);
-			}
-		});
-		socket.on('plotChart', () => {
-			let error;
-			cmd.get('octave-cli backend/draw.m', (e, dt) => {
-				if (e) {
-					console.log(e);
-				} else {
-					console.log('Gráfico gerado');
-					socket.emit('chartReady', null);
-				}
-			});
-		});
+		startSending(socket, socket.id);               // começa a mandar os dados para os clientes
+		socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
+		socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
+		socket.on('changingControlMode', modeReceived => setControlMode(modeReceived));  // mudar o modo de controle
+		socket.on('plotChart', __ => octavePlot()); // plotagem do gráfico 
 	});
 	http.listen(port, () => {
 		console.log('============ SISTEMA PRONTO ============');
@@ -65,8 +36,26 @@ arduino.on('ready', () => {
 		console.log('>> ========================================');
 	});
 });
-// função para setar novos canais no Arduino
-// setar canais do A5 ao A1 por padrão 
+// interpreta o script draw.m para o Octave gerar a imagem do gráfico 
+function octavePlot() {
+	cmd.get('octave-cli backend/draw.m', (e, dt) => {
+		if (e) {
+			console.log(e);
+		} else {
+			console.log('Gráfico gerado');
+			socket.emit('chartReady', null); // confirmar pro cliente que o gráfico está pronto
+		}
+	});
+}
+// mudar o modo de controle 
+function setControlMode(controlMode) {
+	console.log('Modo de controle mudado para ' + controlMode);
+	clearInterval(onOffInterval); // limpando todos os controles 
+	clearInterval(pidInterval);
+	clearInterval(offInterval);
+	startControling(controlMode); // iniciando o novo
+}
+// função para setar novos canais no Arduino 
 function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 	therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
 	therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
@@ -78,28 +67,28 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 // comecça a salvar em arquivo txt 
 function startSaving() {
 	setInterval(() => {
-		hist += `${getTemp().toFixed(2)}, ${scale(u, 'inverse').toFixed(2)}, ${e.toFixed(2)}, ${setPoint.toFixed(2)}\n`;
+		hist += `${getTemp().toFixed(2)}, ${scale(u, 'to [0,5]').toFixed(2)}, ${e.toFixed(2)}, ${setPoint.toFixed(2)}\n`;
 		fs.writeFile(__dirname + '/hist.txt', hist, error => {
 			if (error) console.log(error);
 		});
 	}, 250);
 }
-// começa a controlar o secador de grãos através de PID 
+// começa a controlar o secador de grãos a partir do modo passado 
 function startControling(mode) {
 	switch (mode) {
-		case 'PID': pidControling(); break;
-		case 'ON/OFF': onOffControling(); break;
-		case 'Desligado': offControling(); break;
+		case 'PID': pidControling(); break;       // controle por pid
+		case 'ON/OFF': onOffControling(); break;  // controle por liga/desliga
+		case 'Desligado': offControling(); break; // controle desligado, valor constante de 3v
 	}
 }
-
+// controle desligado, valor constante de 3v
 function offControling() {
 	u = scale(3);
 	offInterval = setInterval(() => {
 		arduino.analogWrite(9, scale(3));
 	}, 100);
 }
-
+// controle por liga/desliga 
 function onOffControling() {
 	onOffInterval = setInterval(() => {
 		if (getTemp() < setPoint) {
@@ -110,19 +99,17 @@ function onOffControling() {
 		arduino.analogWrite(9, u);
 	}, 100);
 }
-
+// controle por pid 
 function pidControling() {
 	pidInterval = setInterval(() => {
-		// 							k_p, k_i, k_d, dt
 		const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 		let control = new Controller(KP, KI, KD, H);
 		control.setTarget(setPoint);
 		let output = getTemp();
 		e = getTemp() - setPoint;
 		u = control.update(output);
-		if (u < 2 && setPoint > 30) {
+		if (u < 2 && setPoint > 30)
 			u *= 1.1;
-		}
 		if (u > 255)
 			u = 255;
 		else if (u < 0)
@@ -130,7 +117,6 @@ function pidControling() {
 		arduino.analogWrite(9, u);
 	}, 100);
 }
-
 // retorna a temperatura media
 function getTemp() {
 	return ((toCelsius(therm1.value) + toCelsius(therm2.value) +
@@ -144,7 +130,7 @@ function setSetPoint(socket, newSetPoint) {
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
-	setInterval(() => socket.emit('controlBitValue', scale(u, 'inverse')), 500);
+	setInterval(() => socket.emit('controlBitValue', scale(u, 'to [0,5]')), 500);
 	console.log('Mandando dados para ' + clientId);
 	// passar o setPoint atual para o novo usuário conectado
 	socket.emit('changeSetPoint', setPoint);
