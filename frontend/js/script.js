@@ -10,6 +10,7 @@ let minutes = 0;             // minutes representa os minutos passados
 let secP;                     // armazenar o tempo passado (secP = seconds passed)
 let option = 'Temperatura';        // gráfico a ser exibido 
 let executingGraph, executingGraphCB;  // armazenará dos dois gráficos 
+let currentControlMode = 'Malha aberta'
 let layout = {                 // layout a ser usado nos gráficos 
     height: 250,
     autosize: true,
@@ -29,6 +30,16 @@ window.onload = initialize;
 function initialize() {
     startPloting();
     startSocketListening();
+    $("#controlMode > #off").prop('selected', 'true'); // marcar pid por padrão 
+    document.getElementById('off').addEventListener('click', () => {
+        document.getElementById('buttonSwitch').style.display = 'inline';
+    });
+    document.getElementsByClassName('on')[0].addEventListener('click', () => {
+        document.getElementById('buttonSwitch').style.display = 'none';
+    });
+    document.getElementsByClassName('on')[1].addEventListener('click', () => {
+        document.getElementById('buttonSwitch').style.display = 'none';
+    });
     $("#setPoint").on("keypress", evt => evt.keyCode == 13 && changeSetPoint());
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
     $('#controlBit').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
@@ -47,6 +58,14 @@ function startSocketListening() {
     });
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
 }
+
+// alternar do 0v para 5v 
+function switchOffControling() {
+    let value = document.getElementById('buttonSwitch').innerText;
+    document.getElementById('buttonSwitch').innerText = value == 'Mudar para 3v' ? 'Mudar para 0v' : 'Mudar para 3v';
+    socket.emit('switchOffController', null);
+}
+
 // começa a plotar os gráficos dinamicamente
 function startPloting() {
     Plotly.plot('chart', traces, layout);      // plotar primeiro gráfico 
@@ -55,9 +74,16 @@ function startPloting() {
     executingGraphCB = setInterval(updateGraphCB, 100);
 }
 
+// começa o novo experimento, controlando o secador com o option selecionado e salvando em um novo arquivo
+function startExperiment() {
+    let value = document.getElementById('startExperiment').innerText;
+    document.getElementById('startExperiment').innerText = value == 'Iniciar aquisição' ? 'Parar aquisição' : 'Iniciar aquisição';
+    socket.emit('startExperiment', currentControlMode);
+}
+
+// muda a opção de controle 
 function changeControlMode(controlMode) {
     currentControlMode = controlMode;
-    socket.emit('changingControlMode', controlMode);
 }
 
 // redirecionar para a página de setar os canais 

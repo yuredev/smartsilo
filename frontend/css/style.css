@@ -22,6 +22,10 @@ body{
     align-items: center;
 }
 
+#buttonSwitch{
+    display: none;
+}
+
 .chart-area{
     background-color: #fff;
 }

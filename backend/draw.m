@@ -1,4 +1,11 @@
-x = load("D:/Documentos/ProjetosWeb/SmartSilo/backend/hist.txt");
+args = argv();
+
+txtName = [args{1} ".txt"];
+imgName = [args{1} ".png"];
+
+%arquivo = ["D:/Documentos/ProjetosWeb/SmartSilo/backend/hist.txt" strftime("%Y-%m-%d %H:%M", localtime (time ()))]
+x = load(["D:/Documentos/ProjetosWeb/SmartSilo/backend/" txtName]);
+
 freq = 0.25;
 nSamples = length(x(:,1));
 maxTime = nSamples*freq;
@@ -15,6 +22,6 @@ title('Controle de temperatura interna do silo');
 xlabel('Tempo');
 ylabel('oC');
 
-print -dpng "D:/Documentos/ProjetosWeb/SmartSilo/frontend/img/chart.png";
+print -dpng ["D:/Documentos/ProjetosWeb/SmartSilo/frontend/img/" imgName];
 
 close(fh); % destruir janela

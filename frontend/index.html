@@ -42,10 +42,12 @@
         <div>
             <label for="controlMode">Modo de controle:</label>
             <select id="controlMode">
-                <option onclick="changeControlMode(this.innerText)">PID</option>
-                <option onclick="changeControlMode(this.innerText)">ON/OFF</option>
-                <option onclick="changeControlMode(this.innerText)">Desligado</option>
+                <option id="off" onclick="changeControlMode(this.innerText)">Malha aberta</option>
+                <option class="on" id="pid" onclick="changeControlMode(this.innerText)">PID</option>
+                <option class="on" onclick="changeControlMode(this.innerText)">ON/OFF</option>
             </select>
+            <button id="startExperiment" onclick="startExperiment()">Iniciar aquisição</button>
+            <button id="buttonSwitch" onclick="switchOffControling()">Mudar para 3v</button>
         </div>
         <button id="pause-resume" onclick="pauseResume()">Pausar</button>
         <button onclick="redirectToPins()">Mudar canais</button>
