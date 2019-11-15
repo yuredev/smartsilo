@@ -79,7 +79,7 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 // comecça a salvar em arquivo txt 
 function startSaving(nomeArq) {
     setInterval(() => {
-        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> backend/${nomeArq}.txt`);
+        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/${nomeArq}.txt`);
     }, 250);
 }
 // começa a controlar o secador de grãos a partir do modo passado 

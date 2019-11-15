@@ -3,8 +3,7 @@ args = argv();
 txtName = [args{1} ".txt"];
 imgName = [args{1} ".png"];
 
-%arquivo = ["D:/Documentos/ProjetosWeb/SmartSilo/backend/hist.txt" strftime("%Y-%m-%d %H:%M", localtime (time ()))]
-x = load(["D:/Documentos/ProjetosWeb/SmartSilo/backend/" txtName]);
+x = load(["D:/Documentos/ProjetosWeb/SmartSilo/experiments/" txtName]);
 
 freq = 0.25;
 nSamples = length(x(:,1));
