@@ -35,14 +35,14 @@ arduino.on('ready', () => {
             clearInterval(offInterval);
             clearInterval(onOffInterval);
             clearInterval(pidInterval);
-            setControlMode(controlMode);
+            startControling(controlMode);
         });
         socket.on('stopExperiment', () => {
             clearInterval(offInterval);
             clearInterval(onOffInterval);
             clearInterval(pidInterval);
             clearInterval(savingInterval);
-            setControlMode('Malha aberta');
+            startControling('Malha aberta');
             octavePlot(fileName, socket);
         });
         socket.on('switchOffController', () => {
@@ -67,14 +67,6 @@ function octavePlot(fileName, socket) {
             console.log(e);
         }
     });
-}
-// mudar o modo de controle 
-function setControlMode(controlMode) {
-    console.log('Modo de controle mudado para ' + controlMode);
-    clearInterval(onOffInterval); // limpando todos os controles 
-    clearInterval(pidInterval);
-    clearInterval(offInterval);
-    startControling(controlMode); // iniciando o novo
 }
 // função para setar novos canais no Arduino 
 function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {

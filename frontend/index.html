@@ -25,7 +25,6 @@
         <h1>Monitor de temperatura</h1>
         <div id="chart"></div>
         <div class="centralize-content bottom-container">
-            <button onclick="redirectToReport()">Ver relatório</button>
             <div class="form-setPoint">
                 <label for="setPoint">Setpoint: </label>
                 <input type="number" name="setPoint" id="setPoint" max="45">
@@ -43,8 +42,8 @@
             <label for="controlMode">Modo de controle:</label>
             <select id="controlMode">
                 <option id="off" onclick="changeControlMode(this.innerText)">Malha aberta</option>
-                <option class="on" id="pid" onclick="changeControlMode(this.innerText)">PID</option>
-                <option class="on" onclick="changeControlMode(this.innerText)">ON/OFF</option>
+                <option onclick="changeControlMode(this.innerText)">PID</option>
+                <option onclick="changeControlMode(this.innerText)">ON/OFF</option>
             </select>
             <button id="startExperiment" onclick="startExperiment()">Iniciar aquisição</button>
             <button id="buttonSwitch" onclick="switchOffControling()">Mudar para 3v</button>

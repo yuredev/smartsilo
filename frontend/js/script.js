@@ -30,21 +30,13 @@ window.onload = initialize;
 function initialize() {
     startPloting();
     startSocketListening();
-    $("#controlMode > #off").prop('selected', 'true'); // marcar pid por padrão 
-    document.getElementById('off').addEventListener('click', () => {
-        document.getElementById('buttonSwitch').style.display = 'inline';
-    });
-    document.getElementsByClassName('on')[0].addEventListener('click', () => {
-        document.getElementById('buttonSwitch').style.display = 'none';
-    });
-    document.getElementsByClassName('on')[1].addEventListener('click', () => {
-        document.getElementById('buttonSwitch').style.display = 'none';
-    });
+    $("#controlMode > #off").prop('selected', 'true'); // marcar malha aberta por padrão  
     $("#setPoint").on("keypress", evt => evt.keyCode == 13 && changeSetPoint());
     $('#' + option).addClass('marked');      // marcar a opção atual do gráfico
     $('#controlBit').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
     $('#controlEnable').prop('checked', true); // deixar o checkbox marcado por padrão via jquery  
 }
+
 // faz o cliente começar a ouvir os dados do servidor 
 function startSocketListening() {
     socket.on('newTemperature1', receivedData => t1 = receivedData);
@@ -57,6 +49,7 @@ function startSocketListening() {
         document.getElementById('setPoint').value = setPoint;
     });
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
+    socket.on('chartReady', () => window.location.href = 'html/report.html');
 }
 
 // alternar do 0v para 5v 
@@ -78,11 +71,22 @@ function startPloting() {
 function startExperiment() {
     let value = document.getElementById('startExperiment').innerText;
     document.getElementById('startExperiment').innerText = value == 'Iniciar aquisição' ? 'Parar aquisição' : 'Iniciar aquisição';
-    socket.emit('startExperiment', currentControlMode);
+    if (value == 'Iniciar aquisição') {
+        socket.emit('startExperiment', currentControlMode);
+    } else {
+        socket.emit('stopExperiment', null);
+    }
 }
 
 // muda a opção de controle 
 function changeControlMode(controlMode) {
+    if (controlMode == 'Malha aberta') {
+        document.getElementById('buttonSwitch').style.display = 'inline';
+        document.getElementById('startExperiment').style.display = 'none';
+    } else {
+        document.getElementById('buttonSwitch').style.display = 'none';
+        document.getElementById('startExperiment').style.display = 'inline';
+    }
     currentControlMode = controlMode;
 }
 
@@ -90,11 +94,7 @@ function changeControlMode(controlMode) {
 function redirectToPins() {
     window.location.href = 'html/setpins.html';
 }
-// redirecionar para a página do relatório quando a imagem com o relatório estiver 
-function redirectToReport() {
-    socket.emit('plotChart', null);
-    socket.on('chartReady', () => window.location.href = 'html/report.html');
-}
+
 // função construtora para gerar objetos do tipo linha 
 function Trace(name = 'unnamed trace', valueTrace, color = '#000') {
     this.name = name;
