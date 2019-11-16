@@ -22,7 +22,7 @@ body{
     align-items: center;
 }
 
-#buttonSwitch, #startExperiment{
+#startExperiment{
     display: none;
 }
 

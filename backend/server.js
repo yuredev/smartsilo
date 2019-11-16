@@ -26,30 +26,9 @@ arduino.on('ready', () => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
-        socket.on('startExperiment', controlMode => {
-            const time = new Date();
-            fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()} ${time.getHours()}-${time.getSeconds()}`;
-            if (controlMode != 'Malha aberta') {
-                startSaving(fileName);
-            }
-            clearInterval(offInterval);
-            clearInterval(onOffInterval);
-            clearInterval(pidInterval);
-            startControling(controlMode);
-        });
-        socket.on('stopExperiment', () => {
-            clearInterval(offInterval);
-            clearInterval(onOffInterval);
-            clearInterval(pidInterval);
-            clearInterval(savingInterval);
-            startControling('Malha aberta');
-            octavePlot(fileName, socket);
-        });
-        socket.on('switchOffController', () => {
-            offControlValue = offControlValue == 0 ? 3 : 0;
-            clearInterval(offControling);
-            offControling(offControlValue);
-        })
+        socket.on('startExperiment', controlMode => startExperiment(controlMode));
+        socket.on('stopExperiment', () => stopExperiment(socket));
+        socket.on('switchOffController', () => switchOffController());
     });
     http.listen(port, () => {
         console.log('============ SISTEMA PRONTO ============');
@@ -57,6 +36,37 @@ arduino.on('ready', () => {
         console.log('>> ========================================');
     });
 });
+
+// começa o experimento
+function startExperiment(controlMode) {
+    const time = new Date();
+    fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()} ${time.getHours()}-${time.getSeconds()}`;
+    if (controlMode != 'Malha aberta') {
+        startSaving(fileName);
+    }
+    clearInterval(offInterval);
+    clearInterval(onOffInterval);
+    clearInterval(pidInterval);
+    startControling(controlMode);
+}
+
+// parar experimento 
+function stopExperiment(socket) {
+    clearInterval(offInterval);
+    clearInterval(onOffInterval);
+    clearInterval(pidInterval);
+    clearInterval(savingInterval);
+    startControling('Malha aberta');
+    octavePlot(fileName, socket);
+}
+
+// mudar voltagem de 0 a 3 para malha aberta 
+function switchOffController() {
+    offControlValue = offControlValue == 0 ? 3 : 0;
+    clearInterval(offControling);
+    offControling(offControlValue);
+}
+
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico 
 function octavePlot(fileName, socket) {
     cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
