@@ -22,6 +22,7 @@ xlabel('Tempo');
 ylabel('oC');
 
 print -dpng "frontend/img/chart.png";
-system(["copy frontend\\img\\chart.png " "experiments\\samples\\" imgName]);
+
+system(["copy frontend\\img\\chart.png " "experiments\\samples\\" imgName]) || system(["cp frontend\\img\\chart.png " "experiments\\samples\\" imgName]);
 
 close(fh); % destruir janela
