@@ -11,8 +11,9 @@ const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
-let pidInterval, onOffInterval, offInterval; // será usado para armazenar os setIntervals 
+let pidInterval, onOffInterval, offInterval, savingInterval; // será usado para armazenar os setIntervals 
 let offControlValue = 0;
+let fileName;
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + '/../frontend')));
@@ -25,16 +26,24 @@ arduino.on('ready', () => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
-        socket.on('plotChart', __ => octavePlot(socket)); // plotagem do gráfico 
         socket.on('startExperiment', controlMode => {
             const time = new Date();
+            fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()} ${time.getHours()}-${time.getSeconds()}`;
             if (controlMode != 'Malha aberta') {
-                startSaving(`datahist:${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()} ${time.getHours()}-${time.getSeconds()}`);
+                startSaving(fileName);
             }
             clearInterval(offInterval);
             clearInterval(onOffInterval);
             clearInterval(pidInterval);
             setControlMode(controlMode);
+        });
+        socket.on('stopExperiment', () => {
+            clearInterval(offInterval);
+            clearInterval(onOffInterval);
+            clearInterval(pidInterval);
+            clearInterval(savingInterval);
+            setControlMode('Malha aberta');
+            octavePlot(fileName, socket);
         });
         socket.on('switchOffController', () => {
             offControlValue = offControlValue == 0 ? 3 : 0;
@@ -49,8 +58,8 @@ arduino.on('ready', () => {
     });
 });
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico 
-function octavePlot(socket) {
-    cmd.get('octave-cli backend/draw.m', (e, dt) => {
+function octavePlot(fileName, socket) {
+    cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
         if (!e) {
             console.log('Gráfico gerado');
             socket.emit('chartReady', null); // confirmar pro cliente que o gráfico está pronto
@@ -78,8 +87,8 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 }
 // comecça a salvar em arquivo txt 
 function startSaving(nomeArq) {
-    setInterval(() => {
-        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/${nomeArq}.txt`);
+    savingInterval = setInterval(() => {
+        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/read/${nomeArq}.txt`);
     }, 250);
 }
 // começa a controlar o secador de grãos a partir do modo passado 
