@@ -40,7 +40,7 @@ arduino.on('ready', () => {
 // começa o experimento
 function startExperiment(controlMode) {
     const time = new Date();
-    fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()} ${time.getHours()}-${time.getSeconds()}`;
+    fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getSeconds()}`;
     if (controlMode != 'Malha aberta') {
         startSaving(fileName);
     }

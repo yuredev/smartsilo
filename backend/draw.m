@@ -3,7 +3,7 @@ args = argv();
 txtName = [args{1} ".txt"];
 imgName = [args{1} ".png"];
 
-x = load(["D:/Documentos/ProjetosWeb/SmartSilo/experiments/read/" txtName]);
+x = load(["experiments/read/" txtName]);
 
 freq = 0.25;
 nSamples = length(x(:,1));
@@ -21,7 +21,7 @@ title('Controle de temperatura interna do silo');
 xlabel('Tempo');
 ylabel('oC');
 
-print -dpng ["D:/Documentos/ProjetosWeb/SmartSilo/experiments/samples/" imgName];
-print -dpng ["D:/Documentos/ProjetosWeb/SmartSilo/frontend/img/chart.png"];
+print -dpng "frontend/img/chart.png";
+system(["copy frontend\\img\\chart.png " "experiments\\samples\\" imgName]);
 
 close(fh); % destruir janela
