@@ -3,7 +3,7 @@ args = argv();
 txtName = [args{1} ".txt"];
 imgName = [args{1} ".png"];
 
-x = load(["experiments/read/" txtName]);
+x = load(["experiments/data/" txtName]);
 
 freq = 0.25;
 nSamples = length(x(:,1));
@@ -23,6 +23,7 @@ ylabel('oC');
 
 print -dpng "frontend/img/chart.png";
 
-system(["copy frontend\\img\\chart.png " "experiments\\samples\\" imgName]) || system(["cp frontend\\img\\chart.png " "experiments\\samples\\" imgName]);
+% compatibilidade com Windows e Linux 
+system(["copy frontend\\img\\chart.png " "experiments\\" imgName]) || system(["cp frontend/img/chart.png " "experiments/" imgName]);
 
 close(fh); % destruir janela
