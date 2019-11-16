@@ -63,8 +63,7 @@ header img{
 @media (min-width: 900px) {
     .small{
         width: 50%;
-    }
-    
+    }    
     .big{
         width: 78%;
     }
