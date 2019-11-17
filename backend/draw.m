@@ -24,6 +24,11 @@ ylabel('oC');
 print -dpng "frontend/img/chart.png";
 
 % compatibilidade com Windows e Linux 
-system(["copy frontend\\img\\chart.png " "experiments\\" imgName]) || system(["cp frontend/img/chart.png " "experiments/" imgName]);
+
+if (uname().sysname == 'Linux') 
+    system(["cp frontend/img/chart.png " "experiments/" imgName]);
+else     
+    system(["copy frontend\\img\\chart.png " "experiments\\" imgName]);
+endif    
 
 close(fh); % destruir janela
