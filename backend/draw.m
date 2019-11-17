@@ -23,9 +23,9 @@ ylabel('oC');
 
 print -dpng "frontend/img/chart.png";
 
-% Windows
+% para Linux
 system(["cp frontend/img/chart.png " "experiments/" imgName]);
-% Linux
+% para Windows
 system(["copy frontend\\img\\chart.png " "experiments\\" imgName]);
     
 close(fh); % destruir janela
