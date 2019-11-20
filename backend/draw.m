@@ -15,13 +15,14 @@ t = 0: freq : maxTime-freq;
 fh = figure();  
 
 plot(t, x(:,1), 'r', t, x(:,4), 'b');
+ylim([0 50]);
 
 grid;
 title('Controle de temperatura interna do silo');
 xlabel('Tempo');
 ylabel('oC');
 
-print -dpng "frontend/img/chart.png";
+print('frontend/img/chart.png', '-dpng');
 
 % para Linux
 system(["cp frontend/img/chart.png " "experiments/" imgName]);
