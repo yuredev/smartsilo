@@ -6,7 +6,7 @@ const five = require('johnny-five');
 const path = require('path');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
-const port = 80;
+const port = 8080;
 const arduino = new five.Board({ port: 'COM6' });
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
@@ -90,7 +90,7 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
 // comecça a salvar em arquivo txt 
 function startSaving(nomeArq) {
     savingInterval = setInterval(() => {
-        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/read/${nomeArq}.txt`);
+        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/data/${nomeArq}.txt`);
     }, 250);
 }
 // começa a controlar o secador de grãos a partir do modo passado 
