@@ -7,7 +7,7 @@ const path = require('path');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const port = 8080;
-const arduino = new five.Board({ port: 'COM6' });
+const arduino = new five.Board({ port: '/dev/ttyACM0' });
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
