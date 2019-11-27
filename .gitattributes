@@ -3,4 +3,4 @@
 *.h linguist-vendored=true
 
 
-*.js linguist-language=React
+*.js linguist-language=Vue
