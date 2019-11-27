@@ -1,1 +1,5 @@
-esp32/* linguist-vendored=true
+esp32/ESP_Servo/Servo.cpp linguist-vendored=true
+esp32/ESP_Servo/Servo.h linguist-vendored=true
+esp32/StandardFirmataESP32/StandardFirmataESP32.ino linguist-vendored=true
+esp32/Boards.h linguist-vendored=true
+
