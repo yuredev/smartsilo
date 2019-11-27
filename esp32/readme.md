@@ -1,4 +1,4 @@
-## BEFORE YOU RUN THIS APLICATION YOU NEED TO FOLLOW THE STEPS BELOW 
+## Before you run this application you need to follow this steps below
 
 1° move the Boards.h to the path of Firmata in Arduino IDE overriding the original file
 
