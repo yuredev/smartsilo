@@ -1,3 +1,5 @@
-# *.cpp linguist-vendored=true
+*.cpp linguist-vendored=true
 *.ino linguist-vendored=true
 *.h linguist-vendored=true
+
+ESP32_Servo/ESP32_Servo.h linguist-vendored=false
