@@ -6,7 +6,7 @@ SmartSilo is a university research project from the Federal University of Rio Gr
 
 ### To upload the firmata algorithm to the ESP32 you need to follow this steps below 
 
-#### Configuring the Arduino IDE  
+#### Configuring the Arduino IDE for ESP32 
 
 1° make sure that the ESP32 boart are correctly installed in the Arduino IDE 
 we can do this following the tutorial in https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/
