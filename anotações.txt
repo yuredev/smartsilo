@@ -2,3 +2,10 @@
 
 0v ---->  0.25v
 5v ----> 4.60v
+
+pinos ESP32 
+
+22: Saída 
+23: Saída
+27: Nada 
+32: Nada 
