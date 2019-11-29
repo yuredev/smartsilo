@@ -5,7 +5,7 @@
 
 pinos ESP32 
 
-22: Saída 
-23: Saída
-27: Nada 
-32: Nada 
+22: Saída sim, leitura não
+23: Saída sim, leitura não
+27: saída não, leitura não 
+32: saída não, leitura não 
