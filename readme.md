@@ -8,7 +8,7 @@ SmartSilo is a university research project from the Federal University of Rio Gr
 
 #### Configuring the Arduino IDE for ESP32 
 
-1° make sure that the ESP32 boart are correctly installed in the Arduino IDE 
+1° make sure that the ESP32 board are correctly installed in the Arduino IDE 
 we can do this following the tutorial in https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/
 
 2° move the Boards.h to the path of Firmata in Arduino IDE overriding the original file
