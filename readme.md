@@ -21,3 +21,17 @@ we can do this following the tutorial in https://randomnerdtutorials.com/install
 
 Now finally you can upload the Firmata to ESP. Go to File, then Examples and then Firmata, and now we can see the option 
 StandardFirmataESP32. at that point charge the code into the board. 
+
+## Running the project 
+
+Clone this repository and execute the command 
+
+```
+npm install
+```
+
+Then finally you can start the server writing 
+
+```
+npm start 
+```
