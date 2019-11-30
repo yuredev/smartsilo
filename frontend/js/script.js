@@ -26,6 +26,8 @@ let traceCB = [new Trace('bit de controle', controlBitValue)];
 
 window.onload = initialize;
 
+const switchExpState = () => document.getElementById('startExperiment').innerText = value == 'Iniciar aquisição' ? 'Parar aquisição' : 'Iniciar aquisição';
+
 // inicializar a aplicação
 function initialize() {
     startPloting();
@@ -48,6 +50,8 @@ function startSocketListening() {
         setPoint = newSetPoint
         document.getElementById('setPoint').value = setPoint;
     });
+    socket.on('dryerBusy', () => alert('Secador ocupado!! não foi possível iniciar o experimento'));
+    socket.on('dryerAvaliable', () => switchExpState());
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
     socket.on('chartReady', () => window.location.href = 'html/report.html');
 }
@@ -70,7 +74,6 @@ function startPloting() {
 // começa o novo experimento, controlando o secador com o option selecionado e salvando em um novo arquivo
 function startExperiment() {
     let value = document.getElementById('startExperiment').innerText;
-    document.getElementById('startExperiment').innerText = value == 'Iniciar aquisição' ? 'Parar aquisição' : 'Iniciar aquisição';
     if (value == 'Iniciar aquisição') {
         socket.emit('startExperiment', currentControlMode);
     } else {

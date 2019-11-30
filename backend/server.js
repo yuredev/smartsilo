@@ -14,6 +14,7 @@ let therm1, therm2, therm3, therm4, therm5;  // sensores
 let pidInterval, onOffInterval, offInterval, savingInterval; // será usado para armazenar os setIntervals 
 let offControlValue = 0;
 let fileName;
+let dryerBusy = false;
 
 // atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + '/../frontend')));
@@ -39,19 +40,26 @@ arduino.on('ready', () => {
 
 // começa o experimento
 function startExperiment(controlMode) {
-    const time = new Date();
-    fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getSeconds()}`;
-    if (controlMode != 'Malha aberta') {
-        startSaving(fileName);
+    if (!dryerBusy) {
+        dryertBusy = true;
+        const time = new Date();
+        fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getSeconds()}`;
+        if (controlMode != 'Malha aberta') {
+            startSaving(fileName);
+        }
+        clearInterval(offInterval);
+        clearInterval(onOffInterval);
+        clearInterval(pidInterval);
+        startControling(controlMode);
+        socket.emit('dryerAvaliable')
+    } else {
+        socket.emit('dryerBusy', null);
     }
-    clearInterval(offInterval);
-    clearInterval(onOffInterval);
-    clearInterval(pidInterval);
-    startControling(controlMode);
 }
 
 // parar experimento 
 function stopExperiment(socket) {
+    dryerBusy = false;
     clearInterval(offInterval);
     clearInterval(onOffInterval);
     clearInterval(pidInterval);
