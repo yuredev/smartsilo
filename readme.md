@@ -2,6 +2,8 @@
 
 SmartSilo is a university research project from the Federal University of Rio Grande do Norte. Consists in a a hardware based application for intelligent aeration / drying instrumentation and control in grain storage silos in a IoT context.
 
+Access the project official site: https://smartsilo.netlify.com/
+
 #### This projects uses the following technologies:
 
 JavaScript, HTML, CSS, NodeJS, Johnny-five, Express, Socket.io, PlotlyJS, jQuery, Arduino, Octave.
