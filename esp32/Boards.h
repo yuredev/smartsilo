@@ -828,12 +828,13 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 
 #elif defined(ESP32)
 
-#define TOTAL_ANALOG_PINS       16 //firmata allows a maximum of 16 (esp32 has 18)
-#define TOTAL_PINS              32 // all gpios
+#define TOTAL_ANALOG_PINS       40 //firmata allows a maximum of 16 (esp32 has 18)
+#define TOTAL_PINS              40 // all gpios
+#define TOTAL_PORTS		          40 
 #define PIN_SERIAL_RX           3 //uart0 RX
 #define PIN_SERIAL_TX           1 //uart0 TX
-#define IS_PIN_DIGITAL(p)       ((p) == 2 || ((p) >= 13 && (p) <= 19) || ((p) >= 21 && (p) <= 27) || ((p) == 32 || (p) == 33))
-#define IS_PIN_ANALOG(p)        (((p) >= 32 && (p) <= 39) || ((p) >= 12 && (p) <= 15) || ((p) >= 25 && (p) <= 27))
+#define IS_PIN_DIGITAL(p)       ((p) == 2 || ((p) >= 16 && (p) <= 19) || ((p) >= 21 && (p) <= 27) /*|| ((p) == 32 || (p) == 33)*/)
+#define IS_PIN_ANALOG(p)        (((p) >= 32 && (p) <= 39) || (p)==15 /*|| ((p) >= 12 && (p) <= 15) || */ /*((p) >= 25 && (p) <= 27)*/)
 #define IS_PIN_PWM(p)           digitalPinHasPWM(p) // all gpios in digital
 #define IS_PIN_SERVO(p)         (IS_PIN_DIGITAL(p) && (p) < MAX_SERVOS)
 #define IS_PIN_I2C(p)           ((p) == SDA || (p) == SCL) // or 21 and 22?
