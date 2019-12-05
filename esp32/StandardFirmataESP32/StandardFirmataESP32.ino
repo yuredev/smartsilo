@@ -52,7 +52,9 @@ SerialFirmata serialFeature;
 #endif
 
 /* analog inputs */
-int analogInputsToReport = 0; // bitwise array to store pin reporting
+// int analogInputsToReport = 0; // bitwise array to store pin reporting
+// updated on dec.12.2019 by ind4fibre to handle higher pins (esp32)
+unsigned long long int analogInputsToReport;
 
 /* digital input ports */
 byte reportPINs[TOTAL_PORTS];       // 1 = report this port, 0 = silence
@@ -254,6 +256,13 @@ void checkDigitalInputs(void)
   if (TOTAL_PORTS > 13 && reportPINs[13]) outputPort(13, readPort(13, portConfigInputs[13]), false);
   if (TOTAL_PORTS > 14 && reportPINs[14]) outputPort(14, readPort(14, portConfigInputs[14]), false);
   if (TOTAL_PORTS > 15 && reportPINs[15]) outputPort(15, readPort(15, portConfigInputs[15]), false);
+  /* since other boards such as esp32 has more pins, it is necessary to expand conditions since TOTAL_PORTS*/
+
+  // for(int i = 32; i < TOTAL_PORTS; i++) {
+  //   if (TOTAL_PORTS > i && reportPINs[i]) {
+  //     outputPort(i, readPort(i, portConfigInputs[i]), false);
+  //   }
+  // }
 }
 
 // -----------------------------------------------------------------------------
@@ -464,6 +473,10 @@ void reportAnalogCallback(byte analogPin, int value)
       analogInputsToReport = analogInputsToReport & ~ (1 << analogPin);
     } else {
       analogInputsToReport = analogInputsToReport | (1 << analogPin);
+        /********check if analogInputsReport is correct **********/
+        //Serial.println((int)analogInputsToReport);
+        //if (analogInputsToReport == 32768) digitalWrite(23, HIGH);
+      
       // prevent during system reset or all analog pin values will be reported
       // which may report noise for unconnected analog pins
       if (!isResetting) {
@@ -665,7 +678,8 @@ void sysexCallback(byte command, byte argc, byte *argv)
         }
         if (IS_PIN_ANALOG(pin)) {
           Firmata.write(PIN_MODE_ANALOG);
-          Firmata.write(10); // 10 = 10-bit resolution
+          Firmata.write(12); // default ADC ESP32 resolution
+          //Firmata.write(10); // 10 = 10-bit resolution
         }
         if (IS_PIN_PWM(pin)) {
           Firmata.write(PIN_MODE_PWM);
@@ -738,7 +752,7 @@ void systemResetCallback()
   }
 
   for (byte i = 0; i < TOTAL_PORTS; i++) {
-    reportPINs[i] = false;    // by default, reporting off
+    reportPINs[i] = false;    // by default, reporting off (0)
     portConfigInputs[i] = 0;  // until activated
     previousPINs[i] = 0;
   }
@@ -748,7 +762,11 @@ void systemResetCallback()
     // otherwise, pins default to digital output
     if (IS_PIN_ANALOG(i)) {
       // turns off pullup, configures everything
+      //digitalWrite(23, HIGH);
       setPinModeCallback(i, PIN_MODE_ANALOG);
+      //delay(1000);
+      //digitalWrite(23, LOW);
+      //delay(1000);
     } else if (IS_PIN_DIGITAL(i)) {
       // sets the output to 0, configures portConfigInputs
       setPinModeCallback(i, OUTPUT);
@@ -757,7 +775,9 @@ void systemResetCallback()
     servoPinMap[i] = 255;
   }
   // by default, do not report any analog inputs
-  analogInputsToReport = 0;
+  /* problem - setPinModeCallback and reportAnalogInputsCallback update analogInputsToReport but, then, resets again 
+     commented by Josenalde Oliveira dec.5.2019 */
+  //analogInputsToReport = 0;
 
   detachedServoCount = 0;
   servoCount = 0;
@@ -776,6 +796,11 @@ void systemResetCallback()
 
 void setup()
 {
+  pinMode(22, OUTPUT);
+  pinMode(23, OUTPUT);
+  adcAttachPin(32);
+  pinMode(32,INPUT);
+  //digitalWrite(22, HIGH);
   Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
 
   Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
@@ -826,9 +851,18 @@ void loop()
     for (pin = 0; pin < TOTAL_PINS; pin++) {
       if (IS_PIN_ANALOG(pin) && Firmata.getPinMode(pin) == PIN_MODE_ANALOG) {
         analogPin = PIN_TO_ANALOG(pin);
+        //unsigned long long int tmp = 1 << 15;
+        // if (tmp > 0) digitalWrite(23, HIGH); // amarelo
+        //if (analogInputsToReport == 32768) digitalWrite(23, HIGH);
+        //Serial.println((int)analogInputsToReport);
         if (analogInputsToReport & (1 << analogPin)) {
-          Firmata.sendAnalog(analogPin, analogRead(analogPin));
-        }
+             if (analogPin == 33) {
+               digitalWrite(23, HIGH); // amarelo
+            }
+            int adcRead = analogRead(analogPin);
+            Serial.println(adcRead);
+            Firmata.sendAnalog(analogPin, analogRead(analogPin));
+         }
       }
     }
     // report i2c data for all device with read continuous mode enabled
