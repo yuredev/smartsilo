@@ -27,7 +27,7 @@ arduino.on('ready', () => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
-        socket.on('startExperiment', controlMode => startExperiment(controlMode));
+        socket.on('startExperiment', controlMode => startExperiment(controlMode, socket));
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
     });
@@ -39,7 +39,7 @@ arduino.on('ready', () => {
 });
 
 // começa o experimento
-function startExperiment(controlMode) {
+function startExperiment(controlMode, socket) {
     if (!dryerBusy) {
         dryertBusy = true;
         const time = new Date();
