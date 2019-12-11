@@ -7,6 +7,7 @@ const path = require('path');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const port = 8080;
+// a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 const arduino = new five.Board({ port: '/dev/ttyACM0' });
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
