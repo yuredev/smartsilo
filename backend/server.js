@@ -115,12 +115,8 @@ function offControling(value) {
 }
 // controle por liga/desliga 
 function onOffControling() {
-    onOffInterval = setInterval(() => {
-        if (getTemp() < setPoint) {
-            u = 255;
-        } else {
-            u = 0;
-        }
+    onOffInterval = setInterval(() => {      
+        u = getTemp() < setPoint ? 255 : 0;
         arduino.analogWrite(9, u);
     }, 100);
 }
