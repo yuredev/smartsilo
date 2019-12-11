@@ -16,10 +16,11 @@ let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
-// atender requisições com pasta a frontend
 app.use(express.static(path.resolve(__dirname + '/../frontend')));
-// executar quando o arduino estiver pronto
-arduino.on('ready', () => {
+arduino.on('ready', startApplication);
+
+// função para startar a aplicação
+function startApplication() {
     setPins();
     arduino.pinMode(9, five.Pin.PWM);
     startControling('Malha aberta');
@@ -27,7 +28,7 @@ arduino.on('ready', () => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
-        socket.on('startExperiment', controlMode => startExperiment(controlMode));
+        socket.on('startExperiment', controlMode => startExperiment(controlMode, socket));
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
     });
@@ -36,10 +37,9 @@ arduino.on('ready', () => {
         console.log(`   Abrir em: http://localhost:${port}`);
         console.log('>> ========================================');
     });
-});
-
+}
 // começa o experimento
-function startExperiment(controlMode) {
+function startExperiment(controlMode, socket) {
     if (!dryerBusy) {
         dryertBusy = true;
         const time = new Date();
@@ -56,7 +56,6 @@ function startExperiment(controlMode) {
         socket.emit('dryerBusy', null);
     }
 }
-
 // parar experimento 
 function stopExperiment(socket) {
     dryerBusy = false;
@@ -67,14 +66,12 @@ function stopExperiment(socket) {
     startControling('Malha aberta');
     octavePlot(fileName, socket);
 }
-
 // mudar voltagem de 0 a 3 para malha aberta 
 function switchOffController() {
     offControlValue = offControlValue == 0 ? 3 : 0;
     clearInterval(offControling);
     offControling(offControlValue);
 }
-
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico 
 function octavePlot(fileName, socket) {
     cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
