@@ -20,7 +20,7 @@ let dryerBusy = false;
 app.use(express.static(path.resolve(__dirname + '/../frontend')));
 arduino.on('ready', startApplication);
 
-// função para startar a aplicação
+// função para startar a aplicaçãos
 function startApplication() {
     setPins();
     arduino.pinMode(9, five.Pin.PWM);
