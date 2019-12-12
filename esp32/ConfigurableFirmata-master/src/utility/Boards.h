@@ -826,15 +826,15 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 
 // SPI: 1) mosi=23, miso=19, clk=18, cs=5; 2) 13, 12, 14, 15
 
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
 
-#define TOTAL_ANALOG_PINS       40 //firmata allows a maximum of 16 (esp32 has 18)
+#define TOTAL_ANALOG_PINS       6 //firmata allows a maximum of 16 (esp32 has 18)
 #define TOTAL_PINS              40 // all gpios
 #define TOTAL_PORTS		          40 
 #define PIN_SERIAL_RX           3 //uart0 RX
 #define PIN_SERIAL_TX           1 //uart0 TX
-#define IS_PIN_DIGITAL(p)       ((p) == 2 || ((p) >= 16 && (p) <= 19) || ((p) >= 21 && (p) <= 27) /*|| ((p) == 32 || (p) == 33)*/)
-#define IS_PIN_ANALOG(p)        (((p) >= 32 && (p) <= 39) || (p)==15 /*|| ((p) >= 12 && (p) <= 15) || */ /*((p) >= 25 && (p) <= 27)*/)
+#define IS_PIN_DIGITAL(p)       (((p) >= 15 && (p) <= 19) || ((p) >= 21 && (p) <= 27) /*|| ((p) == 32 || (p) == 33)*/)
+#define IS_PIN_ANALOG(p)        (((p) >= 32 && (p) <= 32 + TOTAL_ANALOG_PINS) /*|| ((p) >= 12 && (p) <= 15) || */ /*((p) >= 25 && (p) <= 27)*/)
 #define IS_PIN_PWM(p)           digitalPinHasPWM(p) // all gpios in digital
 #define IS_PIN_SERVO(p)         (IS_PIN_DIGITAL(p) && (p) < MAX_SERVOS)
 #define IS_PIN_I2C(p)           ((p) == SDA || (p) == SCL) // or 21 and 22?
@@ -842,7 +842,7 @@ writePort(port, value, bitmask):  Write an 8 bit port.
 #define IS_PIN_INTERRUPT(p)     (digitalPinToInterrupt(p) > NOT_AN_INTERRUPT)
 #define IS_PIN_SERIAL(p)        ((p) == PIN_SERIAL_RX || (p) == PIN_SERIAL_TX)
 #define PIN_TO_DIGITAL(p)       (p)
-#define PIN_TO_ANALOG(p)        (p)
+#define PIN_TO_ANALOG(p)        (p) - 32
 #define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
 #define PIN_TO_SERVO(p)         (p)
 #define DEFAULT_PWM_RESOLUTION  8 // 1 to 16 bits
