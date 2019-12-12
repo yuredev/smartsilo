@@ -17,8 +17,7 @@
 #include <ConfigurableFirmata.h>
 #include "AnalogFirmata.h"
 
-boolean handleAnalogFirmataSysex(byte command, byte argc, byte* argv)
-{
+boolean handleAnalogFirmataSysex(byte command, byte argc, byte *argv) {
   if (command == ANALOG_MAPPING_QUERY) {
     Firmata.write(START_SYSEX);
     Firmata.write(ANALOG_MAPPING_RESPONSE);

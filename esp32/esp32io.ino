@@ -25,27 +25,25 @@ FirmataExt firmataExt;
 #include <FirmataReporting.h>
 FirmataReporting reporting;
 
-void systemResetCallback()
-{
+void systemResetCallback() {
   for (byte i = 0; i < TOTAL_PINS; i++) {
     if (IS_PIN_ANALOG(i)) {
       Firmata.setPinMode(i, ANALOG);
-    } else if (IS_PIN_DIGITAL(i)) {
+    }
+    else if (IS_PIN_DIGITAL(i)) {
       Firmata.setPinMode(i, OUTPUT);
     }
   }
   firmataExt.reset();
 }
 
-void initTransport()
-{
+void initTransport() {
   // Uncomment to save a couple of seconds by disabling the startup blink sequence.
   // Firmata.disableBlinkVersion();
   Firmata.begin(57600);
 }
 
-void initFirmata()
-{
+void initFirmata() {
   Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
 
   firmataExt.addFeature(digitalInput);
@@ -57,8 +55,7 @@ void initFirmata()
   Firmata.attach(SYSTEM_RESET, systemResetCallback);
 }
 
-void setup()
-{
+void setup() {
   initFirmata();
 
   initTransport();
@@ -67,19 +64,14 @@ void setup()
   pinMode(23, OUTPUT);
 }
 
-void loop()
-{
+void loop() {
   digitalInput.report();
 
-  while(Firmata.available()) {
+  while (Firmata.available()) {
     Firmata.processInput();
   }
 
   if (reporting.elapsed()) {
-    //test if the readings are ok in firmata
-    int adcRaw = analogRead(32); //GPIO32 is [0] after pin_to_analog
-    if (adcRaw > 500) digitalWrite(23, HIGH);
-    else digitalWrite(23, LOW); 
     analogInput.report();
   }
 }
