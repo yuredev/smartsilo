@@ -51,7 +51,7 @@ function startSocketListening() {
         document.getElementById('setPoint').value = setPoint;
     });
     socket.on('dryerBusy', () => {
-        alert('Secador ocupado!! não foi possível iniciar o experimento'));
+        alert('Secador ocupado!! não foi possível iniciar o experimento');
     });
     socket.on('dryerAvaliable', () => switchExpState());
     socket.on('controlBitValue', newCbValue => controlBitValue = newCbValue);
