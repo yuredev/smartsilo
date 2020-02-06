@@ -8,7 +8,10 @@ const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const port = 8080;
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
-const arduino = new five.Board({ port: '/dev/ttyACM0' });
+
+// descomentar depois 
+// const arduino = new five.Board({ port: '/dev/ttyACM0' });
+
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
@@ -18,12 +21,16 @@ let fileName;
 let dryerBusy = false;
 
 app.use(express.static(path.resolve(__dirname + '/../frontend')));
-arduino.on('ready', startApplication);
+
+// descomentar depois
+// arduino.on('ready', startApplication);
+
+startApplication();
 
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();
-    arduino.pinMode(9, five.Pin.PWM);
+    // arduino.pinMode(9, five.Pin.PWM);
     startControling('Malha aberta');
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
@@ -86,11 +93,27 @@ function octavePlot(fileName, socket) {
 }
 // função para setar novos canais no Arduino 
 function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
-    therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
-    therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
-    therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
-    therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
-    therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
+    
+    // descomentar depois
+    // therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
+    // therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
+    // therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
+    // therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
+    // therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
+
+    // comentar depois 
+    therm1 = {value: undefined};
+    therm2 = {value: undefined};
+    therm3 = {value: undefined};
+    therm4 = {value: undefined};
+    therm5 = {value: undefined};
+
+    setInterval(() => therm1.value = Math.round(Math.random() * 512 + 200), 500);
+    setInterval(() => therm2.value = Math.round(Math.random() * 512 + 200), 500);
+    setInterval(() => therm3.value = Math.round(Math.random() * 512 + 200), 500);
+    setInterval(() => therm4.value = Math.round(Math.random() * 512 + 200), 500);
+    setInterval(() => therm5.value = Math.round(Math.random() * 512 + 200), 500);
+
     console.log(`Canais setados: ${pins}`);
 }
 // comecça a salvar em arquivo txt 
@@ -110,15 +133,19 @@ function startControling(mode) {
 // controle desligado, valor constante de 3v
 function offControling(value) {
     u = scale(value);
-    offInterval = setInterval(() => {
-        arduino.analogWrite(9, scale(value));
-    }, 100);
+
+    // descomentar depois  
+    // offInterval = setInterval(() => {
+    //     arduino.analogWrite(9, scale(value));
+    // }, 100);
 }
 // controle por liga/desliga 
 function onOffControling() {
     onOffInterval = setInterval(() => {
         u = getTemp() < setPoint ? 255 : 0;
-        arduino.analogWrite(9, u);
+
+        // descomentar depois
+        // arduino.analogWrite(9, u);
     }, 100);
 }
 // controle por pid 
@@ -136,7 +163,9 @@ function pidControling() {
             u = 255;
         else if (u < 0)
             u = 0;
-        arduino.analogWrite(9, u);
+
+        // descomentar depois
+        // arduino.analogWrite(9, u);
     }, 100);
 }
 // retorna a temperatura media
@@ -152,21 +181,31 @@ function setSetPoint(socket, newSetPoint) {
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
+
+    // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
     setInterval(() => socket.emit('controlBitValue', scale(u, 'to [0,5]')), 500);
+
     console.log('Mandando dados para ' + clientId);
     // passar o setPoint atual para o novo usuário conectado
     socket.emit('changeSetPoint', setPoint);
     // quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
+
     tempSend(socket, therm1, 'newTemperature1');
     tempSend(socket, therm2, 'newTemperature2');
     tempSend(socket, therm3, 'newTemperature3');
     tempSend(socket, therm4, 'newTemperature4');
     tempSend(socket, therm5, 'newTemperature5');
+
 }
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
 function tempSend(socket, therm, socketMsg) {
     // setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
-    therm.on('data', () => socket.emit(socketMsg, toCelsius(therm.value)));
+
+    // descomentar depois 
+    // therm.on('data', () => socket.emit(socketMsg, toCelsius(therm.value)));
+
+    // comentar depois 
+    setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 500);
 }
 // converte valor ADC em Celsius
 function toCelsius(rawADC) {
