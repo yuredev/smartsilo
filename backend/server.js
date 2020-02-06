@@ -20,7 +20,7 @@ let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
-app.use(express.static(path.resolve(__dirname + '/../frontend')));
+app.use(express.static(path.resolve(__dirname + '/../oldFrontend')));
 
 // descomentar depois
 // arduino.on('ready', startApplication);
