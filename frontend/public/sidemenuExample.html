@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #114;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+body{
+	background-color: black;
+}
+
+.hamburger{
+	font-size:30px;
+    cursor:pointer; 
+    color: white;
+}
+
+#outerHamburger{
+	background-color: "white";	
+}
+
+#menuHamburger{
+	background-color: "white";
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+
+<div id="mySidenav" class="sidenav">
+  <span id="menuHamburger" class="hamburger" onclick="closeNav()">&#9776; close</span>
+  <a href="#">About</a>
+  <a href="#">Services</a>
+  <a href="#">Clients</a>
+  <a href="#">Contact</a>
+</div>
+
+<div id="main">
+  <span id="outerHamburger" class="hamburger" onclick="openNav()">&#9776; open</span>
+</div>
+
+<script>
+
+openNav();
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+  document.getElementById("main").style.marginLeft = "250px";
+  document.getElementById("outerHamburger").style.display = "none"
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+  document.getElementById("outerHamburger").style.display = "inline"
+}
+</script>
+   
+</body>
+</html> 
