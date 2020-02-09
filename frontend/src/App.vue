@@ -9,7 +9,6 @@
     </div> -->
     
     <SideNav @closeNav="closeNav()" :data="styles.sideNavData"/>
-
     <div id="main" :style="styles.mainData">
       <Header />
       <span class="hamburger" :style="styles.outerHamburgerData"  @click="openNav">&#9776; open</span>
