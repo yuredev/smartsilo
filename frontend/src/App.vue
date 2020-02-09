@@ -1,13 +1,5 @@
 <template>
   <div>
-    <!-- <div class="sidenav" :style="styles.sideNavData">
-      <span id="menuHamburger" class="hamburger" @click="closeNav">&#9776; close</span>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Clients</a>
-      <a href="#">Contact</a>
-    </div> -->
-    
     <SideNav @closeNav="closeNav()" :data="styles.sideNavData"/>
     <div id="main" :style="styles.mainData">
       <Navbar @openNav="openNav()" :data="styles.outerHamburgerData"/>
@@ -59,14 +51,10 @@ export default {
 </script>
 
 <style scoped>
-   
-  
-
   #main {
     transition: margin-left .5s;
     margin: 0px;
     padding: 0px;
     border: 0px;
   }
-
 </style>
