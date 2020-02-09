@@ -59,4 +59,13 @@ export default {
     transition: 0.5s;
     padding-top: 60px;
   }
+
+  .hamburger{
+    font-size:30px;
+    cursor:pointer; 
+      cursor:pointer; 
+    cursor:pointer; 
+    color: white;
+  }
+
 </style>
