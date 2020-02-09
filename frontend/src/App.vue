@@ -14,7 +14,6 @@
       <Header />
       <span class="hamburger" :style="styles.outerHamburgerData"  @click="openNav">&#9776; open</span>
     </div>
-
   </div>
 </template>
 
