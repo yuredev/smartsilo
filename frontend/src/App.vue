@@ -10,8 +10,7 @@
     
     <SideNav @closeNav="closeNav()" :data="styles.sideNavData"/>
     <div id="main" :style="styles.mainData">
-      <Header />
-      <span class="hamburger" :style="styles.outerHamburgerData"  @click="openNav">&#9776; open</span>
+      <Navbar @openNav="openNav()" :data="styles.outerHamburgerData"/>
     </div>
   </div>
 </template>
@@ -19,11 +18,11 @@
 <script>
 
 import SideNav from './components/SideNav';
-import Header from './components/Header';
+import Navbar from './components/Navbar';
 
 export default {
   components: {
-    Header,
+    Navbar,
     SideNav
   },
   data() {
@@ -48,12 +47,12 @@ export default {
     closeNav() {
       this.styles.sideNavData.width = '0px';
       this.styles.mainData.marginLeft = '0px';
-      this.styles.outerHamburgerData.display = 'inline';
+      // this.styles.outerHamburgerData.display = 'inline';
     }, 
     openNav() {
       this.styles.sideNavData.width = '250px';
       this.styles.mainData.marginLeft = '250px';
-      this.styles.outerHamburgerData.display = 'none';
+      // this.styles.outerHamburgerData.display = 'none';
     }
   }
 }
@@ -61,11 +60,7 @@ export default {
 
 <style scoped>
    
-  .hamburger{
-    font-size:30px;
-    cursor:pointer; 
-    color: white;
-  }
+  
 
   #main {
     transition: margin-left .5s;

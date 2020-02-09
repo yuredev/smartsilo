@@ -1,10 +1,6 @@
 <template>
   <div class="sidenav" :style="data">
     <span id="menuHamburger" class="hamburger" @click="closeNav">&#9776; close</span>
-    <a href="#">About</a>
-    <a href="#">Services</a>
-    <a href="#">Clients</a>
-    <a href="#">Contact</a>
   </div>
 </template>
 
@@ -27,19 +23,18 @@ export default {
 }
 </script>
 
-
 <style scoped>
   .sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #818181;
+    color: #A8A8A8;
     display: block;
     transition: 0.3s;
   }
 
   .sidenav a:hover {
-    color: #f1f1f1;
+    color: #f7f7f7;
   }
 
   @media screen and (max-height: 450px) {
@@ -54,10 +49,10 @@ export default {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: rgb(39, 44, 73);
+    background-color: #2d3744;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
+    padding-top: 10px;
   }
 
   .hamburger{
