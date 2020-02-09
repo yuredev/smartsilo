@@ -54,7 +54,7 @@ export default {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #114;
+    background-color: rgb(39, 44, 73);
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -62,8 +62,6 @@ export default {
 
   .hamburger{
     font-size:30px;
-    cursor:pointer; 
-      cursor:pointer; 
     cursor:pointer; 
     color: white;
   }
