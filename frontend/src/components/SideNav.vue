@@ -1,5 +1,5 @@
 <template>
-  <div class="sidenav" :style="data">
+  <div class="sidenav" :style="sideNavStyle">
     <span v-show="showHamburger" id="hamburger" @click="closeNav">&#9776;</span>
   </div>
 </template>
@@ -11,7 +11,7 @@ export default {
       type: Boolean,
       required: true
     },
-    data: {
+    sideNavStyle: {
       type: Object,
       default() {
         return {width: '0px'}
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     closeNav() {
-      this.data.width = '0px';
+      this.sideNavStyle.width = '0px';
       this.$emit('closeNav');
     }
   },

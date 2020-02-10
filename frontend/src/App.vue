@@ -1,11 +1,13 @@
 <template>
   <div>
-    <SideNav @closeNav="closeNav(true)" :showHamburger="showHamburger" :data="styles.sideNavData"/>
+    <SideNav @closeNav="closeNav(true)" :showHamburger="showHamburger" :sideNavStyle="styles.sideNavStyle"/>
     <Navbar @openNav="openNav(true)" @chartChange="currentChart = $event"/>
-    <div id="main" :style="styles.mainData">
+    <div id="main" :style="styles.mainContentStyle">
       <Chart :type="currentChart" />
       {{window.height}} x {{window.width}}
     </div>
+
+    <!-- <MainContent : /> -->
   </div>
 </template>
 
@@ -19,10 +21,12 @@
 import Chart from './components/Chart'
 import Navbar from './components/Navbar';
 import SideNav from './components/SideNav';
+// import MainContent from './components/MainContent'
 
 export default {
   components: {
     Chart,
+    // MainContent,
     Navbar,
     SideNav
   },
@@ -36,10 +40,10 @@ export default {
         height: undefined
       },
       styles: {
-        sideNavData: {
+        sideNavStyle: {
           'width': undefined
         },
-        mainData: {
+        mainContentStyle: {
           'margin-left': undefined
         }
       },
@@ -79,15 +83,15 @@ export default {
       if (actionFromButton) {
         this.openNavButtonState = false;
       }
-      this.styles.sideNavData.width = '0px';
-      this.styles.mainData['margin-left'] = '0px';
+      this.styles.sideNavStyle.width = '0px';
+      this.styles.mainContentStyle['margin-left'] = '0px';
     }, 
     openNav(actionFromButton) {
       if (actionFromButton) {
         this.openNavButtonState = true;
       }
-      this.styles.sideNavData.width = '250px';
-      this.styles.mainData['margin-left'] = '250px';
+      this.styles.sideNavStyle.width = '250px';
+      this.styles.mainContentStyle['margin-left'] = '250px';
     },
   }
 }
