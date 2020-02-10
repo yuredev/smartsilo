@@ -1,24 +1,28 @@
 <template>
   <div>
     <SideNav @closeNav="closeNav()" :data="styles.sideNavData"/>
+    <Navbar @openNav="openNav()" :data="styles.outerHamburgerData" @chartChange="currentChart = $event"/>
     <div id="main" :style="styles.mainData">
-      <Navbar @openNav="openNav()" :data="styles.outerHamburgerData"/>
+      <Chart :type="currentChart" />
     </div>
   </div>
 </template>
 
 <script>
 
-import SideNav from './components/SideNav';
+import Chart from './components/Chart'
 import Navbar from './components/Navbar';
+import SideNav from './components/SideNav';
 
 export default {
   components: {
+    Chart,
     Navbar,
     SideNav
   },
   data() {
     return {
+      currentChart: 'Temperatura',
       styles: {
         sideNavData: {
           'width': undefined
@@ -38,12 +42,12 @@ export default {
   methods: {
     closeNav() {
       this.styles.sideNavData.width = '0px';
-      this.styles.mainData.marginLeft = '0px';
+      this.styles.mainData['margin-left'] = '0px';
       // this.styles.outerHamburgerData.display = 'inline';
     }, 
     openNav() {
       this.styles.sideNavData.width = '250px';
-      this.styles.mainData.marginLeft = '250px';
+      this.styles.mainData['margin-left'] = '250px';
       // this.styles.outerHamburgerData.display = 'none';
     }
   }

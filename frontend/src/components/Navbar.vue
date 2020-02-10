@@ -3,10 +3,10 @@
         <span id="hamburger" :style="data"  @click="openNav()">&#9776;</span>
         <ul>
             <li>
-                <a href="">Temperatura</a>
+                <a href="#" @click="setChart('Temperatura')">Temperatura</a>
             </li>
             <li>
-                <a href="">Massa</a>
+                <a href="#" @click="setChart('Massa')">Massa</a>
             </li>
         </ul>
     </nav>
@@ -25,6 +25,9 @@ export default {
     methods: {
         openNav() {
             this.$emit('openNav');
+        },
+        setChart(chart) {
+            this.$emit('chartChange', chart);
         }
     },
 }
