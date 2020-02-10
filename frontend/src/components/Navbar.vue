@@ -1,6 +1,6 @@
 <template>
     <nav class="navbar">
-        <span id="hamburger" :style="data"  @click="openNav()">&#9776;</span>
+        <span id="hamburger" @click="openNav()">&#9776;</span>
         <ul>
             <li>
                 <a href="#" @click="setChart('Temperatura')">Temperatura</a>

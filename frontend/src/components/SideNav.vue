@@ -1,12 +1,16 @@
 <template>
   <div class="sidenav" :style="data">
-    <span id="menuHamburger" class="hamburger" @click="closeNav">&#9776; close</span>
+    <span v-show="showHamburger" id="menuHamburger" class="hamburger" @click="closeNav">&#9776;</span>
   </div>
 </template>
 
 <script>
 export default {
   props: {
+    showHamburger: {
+      type: Boolean,
+      required: true
+    },
     data: {
       type: Object,
       default() {
