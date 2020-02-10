@@ -3,10 +3,10 @@
         <span id="hamburger" @click="openNav()">&#9776;</span>
         <ul>
             <li>
-                <a href="#" @click="setChart('Temperatura')">Temperatura</a>
+                <span @click="setChart('Temperatura')">Temperatura</span>
             </li>
             <li>
-                <a href="#" @click="setChart('Massa')">Massa</a>
+                <span @click="setChart('Massa')">Massa</span>
             </li>
         </ul>
     </nav>
@@ -35,35 +35,43 @@ export default {
 
 <style scoped>
     #hamburger{
-        font-size: 35px;
+        font-size: 28px;
         cursor:pointer; 
-        color: white;
-    }
-    .navbar *{
-        margin: 5px 15px 5px 15px;
-        font-size: 1.3rem;
-        margin: 5px 15px 5px 15px;
-    }
-    ul{
-        padding: 0;
-        display: flex;
-        align-items: center;
-    }
-    ul li{
-        display: inline;
-    }
-    ul li a{
-        text-decoration: none;
         color: #A8A8A8;
         transition: 0.3s;
     }
-    ul li a:hover{
+    #hamburger:hover{
         color: #f7f7f7;
     }
     .navbar{
         z-index: 2;
-        background-color: #2d3744;
+        background-color: #242337;
         display: flex;
         justify-content: space-between;
+        padding: 4px 15px 4px 15px;
+    }
+    /* itens do navbar zeram bordas, padding e margens */
+    .navbar *{
+        padding: 0;
+        margin: 0;
+        border: 0;
+        font-size: 1.3rem;
+    }
+    ul{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 225px;
+    }
+    ul li{
+        display: inline;
+    }
+    ul li span{
+        cursor: pointer;
+        color: #A8A8A8;
+        transition: 0.3s;
+    }
+    ul li span:hover{
+        color: #f7f7f7;
     }
 </style>

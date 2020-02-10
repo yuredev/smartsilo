@@ -10,14 +10,11 @@
 </template>
 
 <script>
-
-    // BOOTSTRAP SIZES 
-    // xs (for phones - screens less than 768px wide)
-    // sm (for tablets - screens equal to or greater than 768px wide)
-    // md (for small laptops - screens equal to or greater than 992px wide)
-    // lg (for laptops and desktops - screens equal to or greater than 1200px wide)
-
-
+// BOOTSTRAP SIZES 
+// xs (for phones - screens less than 768px wide)
+// sm (for tablets - screens equal to or greater than 768px wide)
+// md (for small laptops - screens equal to or greater than 992px wide)
+// lg (for laptops and desktops - screens equal to or greater than 1200px wide)
 
 import Chart from './components/Chart'
 import Navbar from './components/Navbar';
@@ -33,7 +30,7 @@ export default {
     return {
       currentChart: 'Temperatura',
       showHamburger: false,
-      sideNavKeepOpen: undefined,
+      openNavButtonState: undefined,
       window: {
         width: undefined,
         height: undefined
@@ -62,12 +59,12 @@ export default {
   },
   beforeUpdate() {
     if (this.window.width > 992) {
-      this.sideNavKeepOpen = false;
+      this.openNavButtonState = false;
       this.showHamburger = false; 
       this.openNav();
     } else {
       this.closeNav();
-      if (this.sideNavKeepOpen) {
+      if (this.openNavButtonState) {
         this.openNav();
       }
       this.showHamburger = true;
@@ -78,17 +75,16 @@ export default {
       this.window.width = window.innerWidth;
       this.window.height = window.innerHeight;
     },
-    closeNav(a) {
-      if (a) {
-        this.sideNavKeepOpen = false;
+    closeNav(actionFromButton) {
+      if (actionFromButton) {
+        this.openNavButtonState = false;
       }
       this.styles.sideNavData.width = '0px';
       this.styles.mainData['margin-left'] = '0px';
     }, 
-    openNav(a) {
-
-      if (a) {
-        this.sideNavKeepOpen = true;
+    openNav(actionFromButton) {
+      if (actionFromButton) {
+        this.openNavButtonState = true;
       }
       this.styles.sideNavData.width = '250px';
       this.styles.mainData['margin-left'] = '250px';
