@@ -1,6 +1,11 @@
 <template>
   <div class="sidenav" :style="sideNavStyle">
-    <span v-show="showHamburger" id="hamburger" @click="closeNav">&#9776;</span>
+    <div>
+      <span v-show="showHamburger" id="hamburger" @click="closeNav">&#9776;</span>
+      <div id="logoDiv">
+        <img src="../assets/smart.png" alt="logo do sistema" id="logo">
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,9 +34,12 @@ export default {
 
 <style scoped>
   .sidenav *{
-    margin: 0px 0px 0px 15px;
+    margin: 0px 0px 0px 0px;
     border: 0;
     padding: 0;
+  }
+  .sidenav > * {
+    margin: 0px 0px 0px 15px;
   }
 
   .sidenav {
@@ -54,4 +62,17 @@ export default {
     cursor:pointer; 
     color: #f7f7f7;
   }
+
+  #logo{
+    width: 180px;
+    margin-top: 3px;
+    margin-left: 14px;
+  }
+  
+  @media screen and (max-width: 992px){
+    #logo{
+      display: none;
+    }
+  }
+
 </style>

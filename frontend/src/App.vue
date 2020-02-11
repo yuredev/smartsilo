@@ -90,8 +90,12 @@ export default {
       if (actionFromButton) {
         this.openNavButtonState = true;
       }
-      this.styles.sideNavStyle.width = '250px';
-      this.styles.mainContentStyle['margin-left'] = '250px';
+      if (this.window.width < 400) {
+        this.styles.sideNavStyle.width = '100%';
+      } else {
+        this.styles.sideNavStyle.width = '250px';
+        this.styles.mainContentStyle['margin-left'] = '250px';
+      }
     },
   }
 }

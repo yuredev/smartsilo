@@ -14,14 +14,6 @@
 
 <script>
 export default {
-    props: {
-        data: {
-            type: Object,
-            default() {
-                return { display: undefined }
-            }
-        }
-    },
     methods: {
         openNav() {
             this.$emit('openNav');
