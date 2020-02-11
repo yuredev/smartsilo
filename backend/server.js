@@ -20,7 +20,8 @@ let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
-app.use(express.static(path.resolve(__dirname + '/../oldFrontend')));
+
+io.listen(3000);
 
 // descomentar depois
 // arduino.on('ready', startApplication);
@@ -34,6 +35,7 @@ function startApplication() {
     startControling('Malha aberta');
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
+        socket.on('vueConnected', (data) => console.log('Cliente Vue conectado'));
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
         socket.on('startExperiment', controlMode => startExperiment(controlMode, socket));
