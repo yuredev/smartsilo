@@ -6,7 +6,6 @@
       <Chart :type="currentChart" />
       {{window.height}} x {{window.width}}
     </div>
-
     <!-- <MainContent : /> -->
   </div>
 </template>
