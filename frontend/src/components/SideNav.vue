@@ -59,7 +59,8 @@ export default {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #242337;
+    background-color: #292d39;
+    /* background-color: #242337; */
     overflow-x: hidden;
     transition: 0.15s;
   }

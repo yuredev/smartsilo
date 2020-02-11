@@ -89,7 +89,7 @@ export default {
       if (actionFromButton) {
         this.openNavButtonState = true;
       }
-      if (this.window.width < 400) {
+      if (this.window.width < 415) {
         this.styles.sideNavStyle.width = '100%';
       } else {
         this.styles.sideNavStyle.width = '250px';
