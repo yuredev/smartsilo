@@ -73,7 +73,7 @@ export default {
   #logo{
     width: 180px;
     margin-top: 5px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
     margin-left: 17px;
   }
   

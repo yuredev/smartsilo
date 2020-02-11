@@ -1,27 +1,53 @@
 <template>
-    <div class="formsArea">
-      <div class="centralize-self" style="margin-top: 10px;">
-        <label for="setpoint">Setpoint: </label>
-        <input type="number" name="setpoint" id="">
+    <div class="formsDiv">
+      <div class="formsArea">
+        <div class="centralize-self" style="margin-top: 10px;">
+          <label for="setpoint">Setpoint: </label>
+          <input type="number" name="setpoint" id="">
+        </div>
+        <div class="centralize-self">
+          <label for="controlMode">Modo de controle:</label>
+          <select name="controlMode" id="">
+            <option value="">Malha aberta</option>
+            <option value="">PID</option>
+            <option value="">ON/OFF</option>
+          </select>
+        </div>
+        <div class="radioButtonDiv">
+          <input type="radio" name="voltageRadioBtn" id="voltage0v">
+          <label for="voltage0v">0v</label> 
+          <input type="radio" name="voltageRadioBtn" id="voltage3v">
+          <label for="voltage3v">3v</label> 
+        </div>
       </div>
-      <div class="centralize-self">
-        <label for="controlMode">Modo de controle:</label>
-        <select name="controlMode" id="">
-          <option value="">Malha aberta</option>
-          <option value="">PID</option>
-          <option value="">ON/OFF</option>
-        </select>
-      </div>
-      <div class="radioButtonDiv">
-        <input type="radio" name="voltageRadioBtn" id="voltage0v">
-        <label for="voltage0v">0v</label> 
-        <input type="radio" name="voltageRadioBtn" id="voltage3v">
-        <label for="voltage3v">3v</label> 
+      <div class="formsArea" style="margin-top: 40px;">
+        <div class="centralize-self" style="margin-top: 10px">
+          <label>Canais</label>
+          <div v-for="pin of 6" :key="pin">  
+            <label for="">{{pin}}° </label>
+            <select name="" id="pin">
+              <option :key="-n" :value="n" v-for="n of 5">A{{n}}</option>
+            </select>
+          </div>
+          <button>Setar canais</button>
+        </div>
       </div>
     </div>
+
 </template>
 
 <style scoped>
+
+  .formsDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* height: 100%; */
+  }
+
+  label, h2{
+    font-size: 1.0rem;
+  }
   .centralize-self{
     display: flex;
     flex-direction: column;
@@ -30,7 +56,11 @@
   input, select{
     width: 190px;
   }
-  .formsArea{
+  select#pin{
+    width: 167px;
+  }
+
+  .formsArea {
     background-color: #00000021;
     display: flex;
     flex-direction: column;
