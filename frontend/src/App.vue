@@ -4,7 +4,6 @@
     <Navbar @openNav="openNav(true)" @chartChange="currentChart = $event"/>
     <div id="main" :style="styles.mainContentStyle">
       <Chart :type="currentChart" />
-      {{window.height}} x {{window.width}}
     </div>
     <!-- <MainContent : /> -->
   </div>
@@ -34,10 +33,7 @@ export default {
       currentChart: 'Temperatura',
       showHamburger: false,
       openNavButtonState: undefined,
-      window: {
-        width: undefined,
-        height: undefined
-      },
+      screenWidth: undefined,
       styles: {
         sideNavStyle: {
           'width': undefined
@@ -53,7 +49,7 @@ export default {
     this.handleResize();
   },
   mounted() {
-    if (this.window.width > 992) {
+    if (this.screenWidth > 992) {
       this.showHamburger = false; 
       this.openNav();
     } else {
@@ -61,7 +57,7 @@ export default {
     }
   },
   beforeUpdate() {
-    if (this.window.width > 992) {
+    if (this.screenWidth > 992) {
       this.openNavButtonState = false;
       this.showHamburger = false; 
       this.openNav();
@@ -75,7 +71,7 @@ export default {
   },
   methods: {
     handleResize() {
-      this.window.width = window.innerWidth;
+      this.screenWidth = window.innerWidth;
       this.window.height = window.innerHeight;
     },
     closeNav(actionFromButton) {
@@ -89,7 +85,7 @@ export default {
       if (actionFromButton) {
         this.openNavButtonState = true;
       }
-      if (this.window.width < 415) {
+      if (this.screenWidth < 415) {
         this.styles.sideNavStyle.width = '100%';
       } else {
         this.styles.sideNavStyle.width = '250px';
