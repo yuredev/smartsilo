@@ -64,7 +64,7 @@ export default {
       this.window.height = window.innerHeight;
       if (this.window.width > 992) {
         this.openNavButtonState = false;
-        this.showHamburger = true; 
+        this.showHamburger = false; 
         this.openNav();
       } else {
         this.closeNav();
