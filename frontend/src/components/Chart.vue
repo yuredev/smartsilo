@@ -1,11 +1,16 @@
 <template>
     <div>
-        {{type}}: {{value}}
+        {{type}}:
+        <span v-show="false">{{}}</span>
     </div>
 </template>
 
 <script>
+
 export default {
+    create() {
+        // alert(Plotly);
+    },
     data() {
         return {
             value: undefined

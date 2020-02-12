@@ -2,6 +2,7 @@
     <div id="main" :style="mainStyle">
         <Chart :type="currentChart" />
         <ControlPane />
+        <Chart type="Controle" />
     </div>
 </template>
 

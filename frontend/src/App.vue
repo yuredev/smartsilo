@@ -22,6 +22,7 @@ import MainContent from './components/MainContent'
 
 export default {
   components: {
+    // Chart,
     MainContent,
     Navbar,
     SideNav
@@ -31,7 +32,10 @@ export default {
       currentChart: 'Temperatura',
       showHamburger: false,
       openNavButtonState: undefined,
-      screenWidth: undefined,
+      window: {
+        width: undefined,
+        height: undefined
+      },
       styles: {
         sideNavStyle: {
           'width': undefined
@@ -47,29 +51,28 @@ export default {
     this.handleResize();
   },
   mounted() {
-    if (this.screenWidth > 992) {
+    if (this.window.width > 992) {
       this.showHamburger = false; 
       this.openNav();
     } else {
       this.showHamburger = true; 
     }
   },
-  beforeUpdate() {
-    if (this.screenWidth > 992) {
-      this.openNavButtonState = false;
-      this.showHamburger = false; 
-      this.openNav();
-    } else {
-      this.closeNav();
-      if (this.openNavButtonState) {
-        this.openNav();
-      }
-      this.showHamburger = true;
-    }
-  },
   methods: {
     handleResize() {
-      this.screenWidth = window.innerWidth;
+      this.window.width = window.innerWidth;
+      this.window.height = window.innerHeight;
+      if (this.window.width > 992) {
+        this.openNavButtonState = false;
+        this.showHamburger = true; 
+        this.openNav();
+      } else {
+        this.closeNav();
+        if (this.openNavButtonState) {
+          this.openNav();
+        }
+        this.showHamburger = true;
+      }
     },
     closeNav(actionFromButton) {
       if (actionFromButton) {
@@ -82,7 +85,7 @@ export default {
       if (actionFromButton) {
         this.openNavButtonState = true;
       }
-      if (this.screenWidth < 415) {
+      if (this.window.width < 415) {
         this.styles.sideNavStyle.width = '100%';
       } else {
         this.styles.sideNavStyle.width = '250px';

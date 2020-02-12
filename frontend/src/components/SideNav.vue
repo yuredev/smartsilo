@@ -78,9 +78,9 @@ export default {
     margin-left: 17px;
   }
   
-  @media screen and (max-width: 992px){
+  /* @media screen and (max-width: 992px){
     #logo{
       display: none;
     }
-  }
+  } */
 </style>
