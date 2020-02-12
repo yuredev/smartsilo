@@ -2,10 +2,10 @@
   <div>
     <SideNav @closeNav="closeNav(true)" :showHamburger="showHamburger" :sideNavStyle="styles.sideNavStyle"/>
     <Navbar @openNav="openNav(true)" @chartChange="currentChart = $event"/>
-    <div id="main" :style="styles.mainContentStyle">
+    <!-- <div id="main" :style="styles.mainContentStyle">
       <Chart :type="currentChart" />
-    </div>
-    <!-- <MainContent : /> -->
+    </div> -->
+    <MainContent :mainStyle="styles.mainContentStyle" :currentChart="currentChart"/>
   </div>
 </template>
 
@@ -16,15 +16,13 @@
 // md (for small laptops - screens equal to or greater than 992px wide)
 // lg (for laptops and desktops - screens equal to or greater than 1200px wide)
 
-import Chart from './components/Chart'
 import Navbar from './components/Navbar';
 import SideNav from './components/SideNav';
-// import MainContent from './components/MainContent'
+import MainContent from './components/MainContent'
 
 export default {
   components: {
-    Chart,
-    // MainContent,
+    MainContent,
     Navbar,
     SideNav
   },
@@ -72,7 +70,6 @@ export default {
   methods: {
     handleResize() {
       this.screenWidth = window.innerWidth;
-      this.window.height = window.innerHeight;
     },
     closeNav(actionFromButton) {
       if (actionFromButton) {
@@ -97,10 +94,5 @@ export default {
 </script>
 
 <style scoped>
-  #main {
-    transition: margin-left .5s;
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-  }
+ 
 </style>

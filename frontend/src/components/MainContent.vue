@@ -1,23 +1,37 @@
 <template>
-   <div id="main" :style="styles.mainData">
-      <Chart :type="currentChart" />
-      <Controls />
-      <Chart />
+    <div id="main" :style="mainStyle">
+        <Chart :type="currentChart" />
+        <ControlPane />
     </div>
 </template>
 
 <script>
 
 import Chart from './Chart'
-import Controls from './Controls'
+import ControlPane from './ControlPane'
 
 export default {
+    props: {
+        currentChart: {
+            type: String,
+            required: true
+        },
+        mainStyle: {
+            type: Object,
+            required: true
+        }
+    },
     components: {
-        Chart, Controls
+        Chart, ControlPane
     }
 }
 </script>
 
 <style scoped>
-    
+#main {
+    transition: margin-left .5s;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
 </style>
