@@ -32,7 +32,15 @@ export default {
 #main {
     transition: margin-left .5s;
     margin: 0px;
-    padding: 0px;
     border: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: rgb(25,30,51);
+}
+
+#main *{
+    
 }
 </style>

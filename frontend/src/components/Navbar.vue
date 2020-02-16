@@ -38,7 +38,7 @@ export default {
     .navbar{
         z-index: 2;
         /* background-color: #242337; */
-        background-color: #292d39;
+        background-color: rgb(37,42,63);
         display: flex;
         justify-content: space-between;
         padding: 4px 15px 4px 15px;
