@@ -21,7 +21,7 @@ export default {
                 type:"line"
             }],
             layout: {
-                height: 225,
+                height: 235,
                 autosize: true,
                 margin: { b: 50, t: 10 },
                 plot_bgcolor:"rgb(37,42,63)",
@@ -51,21 +51,22 @@ export default {
     },
     methods: {
         updateChart() {
-            if (this.type == 'Controle') {
-                this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
-            } else {
-                this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
-            }
-            this.x++;
-            this.$refs.chart.relayout({
+            let newLayout = {
                 xaxis: {
                     showticklabels: false,
                     range: [this.x - 150, this.x],
                 },
-                yaxis: {
-                    range: [0, 50]
-                }
-            });
+            }
+            if (this.type == 'Controle') {
+                this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
+                newLayout.yaxis = { range: [0, 5] }
+            } else {
+                this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
+                newLayout.yaxis = { range: [0, 45] }
+            }
+            this.x++;
+
+            this.$refs.chart.relayout(newLayout);
         }
     },
     sockets: {
@@ -95,9 +96,10 @@ export default {
     .centralizeSelf{
         display: flex;
         justify-content: center;
+        margin: 0;
     }
     .chartArea{
-        border-radius: 5px;
-        padding: 0px;
+        border-radius: 7px;
+        padding: 1px;
     }
 </style>
