@@ -6,7 +6,7 @@ const five = require('johnny-five');
 const path = require('path');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
-const port = 8080;
+
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 
 // descomentar depois 
@@ -20,8 +20,9 @@ let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
-
-io.listen(3000);
+const port = 3000;
+io.listen(port);
+console.log('websocket funcionando na porta ' + port);
 
 // descomentar depois
 // arduino.on('ready', startApplication);
@@ -42,11 +43,11 @@ function startApplication() {
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
     });
-    http.listen(port, () => {
-        console.log('============ SISTEMA PRONTO ============');
-        console.log(`   Abrir em: http://localhost:${port}`);
-        console.log('>> ========================================');
-    });
+    // http.listen(port, () => {
+    //     console.log('============ SISTEMA PRONTO ============');
+    //     console.log(`   Abrir em: http://localhost:${port}`);
+    //     console.log('>> ========================================');
+    // });
 }
 // começa o experimento
 function startExperiment(controlMode, socket) {
@@ -185,9 +186,10 @@ function setSetPoint(socket, newSetPoint) {
 function startSending(socket, clientId) {
 
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
-    setInterval(() => socket.emit('controlBitValue', scale(u, 'to [0,5]')), 500);
+    setInterval(() => socket.emit('newData', { type: 'Controle', value: scale(u, 'to [0,5]') }), 500);
 
     console.log('Mandando dados para ' + clientId);
+    
     // passar o setPoint atual para o novo usuário conectado
     socket.emit('changeSetPoint', setPoint);
     // quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
