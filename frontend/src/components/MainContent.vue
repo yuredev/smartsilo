@@ -1,6 +1,7 @@
 <template>
     <div id="main" :style="mainStyle">
-        <Chart :type="currentChart" />
+        <Chart type="Temperatura" v-if="currentChart == 'Temperatura'" />
+        <Chart type="Massa" v-else />
         <ControlPane />
         <Chart type="Controle" />
     </div>
@@ -37,7 +38,7 @@ export default {
     flex-direction: column;
     justify-content: space-around;
     padding: 20px;
-    background-color: rgb(25,30,51);
+    background-color: #202537;
 }
 
 #main *{

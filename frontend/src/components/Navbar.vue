@@ -37,13 +37,11 @@ export default {
     }
     .navbar{
         z-index: 2;
-        /* background-color: #242337; */
         background-color: rgb(37,42,63);
         display: flex;
         justify-content: space-between;
         padding: 4px 15px 4px 15px;
     }
-    /* itens do navbar zeram bordas, padding e margens */
     .navbar *{
         padding: 0;
         margin: 0;

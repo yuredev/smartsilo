@@ -2,7 +2,7 @@
     <div class="chartArea color">
         <h2 class="centralizeSelf">{{type}}</h2>
         <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart"></Plotly>
-        <span>{{value}}</span>
+        <span v-if="type">{{value}}</span>
     </div>
 </template>
 
@@ -37,29 +37,36 @@ export default {
             required: true
         }
     },
+    mounted() {
+        setInterval(() => this.updateChart(), 100);
+    },
     methods: {
-        addNumber() {
-        this.value = Math.floor(Math.random() * 50);
-        this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
-        this.x++;
-        this.$refs.chart.relayout({
-            xaxis: {
-                showticklabels: false,
-                range: [this.x - 150, this.x],
-            },
-            yaxis: {
-                range: [0, 50]
-            }
-        });
-    }
+        updateChart() {
+            this.value = Math.floor(Math.random() * 50);
+            this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
+            this.x++;
+            this.$refs.chart.relayout({
+                xaxis: {
+                    showticklabels: false,
+                    range: [this.x - 150, this.x],
+                },
+                yaxis: {
+                    range: [0, 50]
+                }
+            });
+        }
     },
     sockets: {
         connect() {
             this.$socket.emit('vueConnected');
         },
-        newTemperature1(receivedData) {
-            this.value = receivedData; 
-        }
+        newData(newData) {
+            // se o tipo de dado que chegar for do tipo que o gráfico está exibindo
+            // o valor deve ser atualizado
+            if (newData.type == this.type) {
+                this.value = newData.value; 
+            } 
+        },
     }
 }
 </script>

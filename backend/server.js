@@ -104,11 +104,11 @@ function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
     // therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
 
     // comentar depois 
-    therm1 = {value: undefined};
-    therm2 = {value: undefined};
-    therm3 = {value: undefined};
-    therm4 = {value: undefined};
-    therm5 = {value: undefined};
+    therm1 = {value: 0};
+    therm2 = {value: 0};
+    therm3 = {value: 0};
+    therm4 = {value: 0};
+    therm5 = {value: 0};
 
     setInterval(() => therm1.value = Math.round(Math.random() * 512 + 200), 500);
     setInterval(() => therm2.value = Math.round(Math.random() * 512 + 200), 500);
@@ -192,11 +192,15 @@ function startSending(socket, clientId) {
     socket.emit('changeSetPoint', setPoint);
     // quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
 
-    tempSend(socket, therm1, 'newTemperature1');
-    tempSend(socket, therm2, 'newTemperature2');
-    tempSend(socket, therm3, 'newTemperature3');
-    tempSend(socket, therm4, 'newTemperature4');
-    tempSend(socket, therm5, 'newTemperature5');
+    // tempSend(socket, therm1, 'newTemperature1');
+    // tempSend(socket, therm2, 'newTemperature2');
+    // tempSend(socket, therm3, 'newTemperature3');
+    // tempSend(socket, therm4, 'newTemperature4');
+    // tempSend(socket, therm5, 'newTemperature5');
+    setInterval(() => {
+        let temperature = (toCelsius(therm1.value) + toCelsius(therm2.value) + toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5;
+        socket.emit('newData', {type: 'Temperatura', value: temperature});
+    }, 500);
 
 }
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
@@ -207,7 +211,7 @@ function tempSend(socket, therm, socketMsg) {
     // therm.on('data', () => socket.emit(socketMsg, toCelsius(therm.value)));
 
     // comentar depois 
-    setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 500);
+    // setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 500);
 }
 // converte valor ADC em Celsius
 function toCelsius(rawADC) {
