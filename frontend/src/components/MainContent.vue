@@ -37,7 +37,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    padding: 18px;
+    padding: 14px;
     background-color: #202537;
 }
 

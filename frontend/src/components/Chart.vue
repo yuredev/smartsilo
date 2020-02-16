@@ -2,7 +2,12 @@
     <div class="chartArea color">
         <h2 class="centralizeSelf">{{type}}</h2>
         <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart"></Plotly>
-        <span v-if="type">{{value}}</span>
+        <div id="valueDiv" class="centralizeSelf">
+            <span>{{value.toFixed(2)}}</span>
+            <span v-if="type == 'Temperatura'">°C</span>
+            <span v-else-if="type == 'Massa'">g</span>
+            <span v-else>v</span>
+        </div>
     </div>
 </template>
 
@@ -100,6 +105,10 @@ export default {
     }
     .chartArea{
         border-radius: 7px;
-        padding: 1px;
+        padding: 0px 0px 5px 0px;
+    }
+    #valueDiv{
+        font-size: 1.25rem;
+        user-select: none;
     }
 </style>
