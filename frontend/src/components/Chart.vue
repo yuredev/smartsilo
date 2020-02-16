@@ -13,11 +13,12 @@ import { Plotly } from 'vue-plotly';
 export default {
     data() {
         return {
+            setPoint: undefined,
             x: 0,
             value: undefined,
             data: [{
                 y: [],
-                type:"line",
+                type:"line"
             }],
             layout: {
                 height: 225,
@@ -37,13 +38,24 @@ export default {
             required: true
         }
     },
+    created() {
+        if (this.type != 'Controle') {
+            this.data.push({
+                y: [],
+                type:"line"
+            })
+        }
+    },
     mounted() {
         setInterval(() => this.updateChart(), 100);
     },
     methods: {
         updateChart() {
-            this.value = Math.floor(Math.random() * 50);
-            this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
+            if (this.type == 'Controle') {
+                this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
+            } else {
+                this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
+            }
             this.x++;
             this.$refs.chart.relayout({
                 xaxis: {
@@ -57,6 +69,11 @@ export default {
         }
     },
     sockets: {
+        changeSetPoint(newSetPoint) {
+            if (this.type != 'Controle') {
+                this.setPoint = newSetPoint;
+            }
+        },
         connect() {
             this.$socket.emit('vueConnected');
         },
