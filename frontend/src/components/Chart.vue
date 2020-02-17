@@ -25,7 +25,7 @@ export default {
             value: undefined,
             data: [{
                 y: [],
-                type:"line"
+                type:"line",
             }],
             layout: {
                 height: 235,
@@ -61,7 +61,11 @@ export default {
         if (this.type != 'Controle') {
             this.data.push({
                 y: [],
-                type:"line"
+                type:"line",
+                line: {
+                    color: 'rgb(0,160,0)',
+                    width: 3
+                }
             })
         }
     },
