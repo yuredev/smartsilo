@@ -8,6 +8,7 @@
             <span v-else-if="type == 'Massa'">g</span>
             <span v-else>v</span>
         </div>
+        {{paused}}
     </div>
 </template>
 
@@ -18,6 +19,7 @@ import { Plotly } from 'vue-plotly';
 export default {
     data() {
         return {
+            chartInterval: undefined,
             setPoint: undefined,
             x: 0,
             value: undefined,
@@ -38,9 +40,21 @@ export default {
         Plotly
     },
     props: {
+        paused: {
+            type: Boolean,
+        },
         type: {
             type: String,
             required: true
+        }
+    },
+    watch: {
+        paused() {
+            if (this.paused) {
+                clearInterval(this.chartInterval);
+            } else {
+                this.chartInterval = setInterval(() => this.updateChart(), 100);
+            }
         }
     },
     created() {
@@ -52,7 +66,7 @@ export default {
         }
     },
     mounted() {
-        setInterval(() => this.updateChart(), 100);
+        this.chartInterval = setInterval(() => this.updateChart(), 100);
     },
     methods: {
         updateChart() {

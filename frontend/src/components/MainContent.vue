@@ -1,8 +1,8 @@
 <template>
     <div id="main" :style="mainStyle">
-        <Chart type="Temperatura" v-if="currentChart == 'Temperatura'" />
-        <Chart type="Massa" v-else />
-        <ControlPane />
+        <Chart v-if="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
+        <Chart v-else type="Massa" :paused="chartIsPaused" key="chart2" />
+        <ControlPane @pauseChart="pauseChart"/>
         <Chart type="Controle" />
     </div>
 </template>
@@ -13,6 +13,11 @@ import Chart from './Chart'
 import ControlPane from './ControlPane'
 
 export default {
+    data() {
+        return {
+            chartIsPaused: false
+        }
+    },
     props: {
         currentChart: {
             type: String,
@@ -25,6 +30,11 @@ export default {
     },
     components: {
         Chart, ControlPane
+    },
+    methods: {
+        pauseChart() {
+            this.chartIsPaused =! this.chartIsPaused;
+        }
     }
 }
 </script>

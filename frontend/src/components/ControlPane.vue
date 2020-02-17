@@ -4,14 +4,29 @@
             <label for="checkControl">gráfico de controle </label>
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
-        <button>pausar</button>
+        <button @click="pauseChart">{{getButtonText}}</button>
         <button>inicar aquisição</button>
     </div>
 </template>
 
 <script>
 export default {
-    
+    data() {
+        return {
+            buttonIsPaused: false
+        }
+    },
+    computed: {
+        getButtonText() {
+            return this.buttonIsPaused ? 'retomar' : 'pausar';
+        }
+    },
+    methods: {
+        pauseChart() {
+            this.buttonIsPaused =! this.buttonIsPaused;
+            this.$emit('pauseChart');
+        }
+    }
 }
 </script>
 
