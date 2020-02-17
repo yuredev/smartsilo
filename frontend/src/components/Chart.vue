@@ -65,9 +65,12 @@ export default {
             if (this.type == 'Controle') {
                 this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
                 newLayout.yaxis = { range: [0, 5] }
-            } else {
+            } else if (this.type == 'Temperatura'){
                 this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
                 newLayout.yaxis = { range: [0, 45] }
+            } else {
+                this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
+                newLayout.yaxis = { range: [0, 1] }
             }
             this.x++;
 
