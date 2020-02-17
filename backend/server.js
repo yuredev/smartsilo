@@ -43,11 +43,6 @@ function startApplication() {
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
     });
-    // http.listen(port, () => {
-    //     console.log('============ SISTEMA PRONTO ============');
-    //     console.log(`   Abrir em: http://localhost:${port}`);
-    //     console.log('>> ========================================');
-    // });
 }
 // começa o experimento
 function startExperiment(controlMode, socket) {
@@ -202,6 +197,7 @@ function startSending(socket, clientId) {
     setInterval(() => {
         let temperature = (toCelsius(therm1.value) + toCelsius(therm2.value) + toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5;
         socket.emit('newData', {type: 'Temperatura', value: temperature});
+        socket.emit('newData', {type: 'Massa', value: Math.random() * 1});
     }, 500);
 
 }
