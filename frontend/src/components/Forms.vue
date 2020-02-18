@@ -25,7 +25,7 @@
       </div>
       <div class="formsArea" style="margin-top: 40px;">
         <div class="centralize-self" style="margin-top: 10px">
-          <label>Canais</label>
+          <label for="pin">Canais</label>
           <div v-for="pin of 6" :key="pin">  
             <label for="">{{pin}}° </label>
             <select name="" id="pin">

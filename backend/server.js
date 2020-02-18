@@ -33,7 +33,7 @@ startApplication();
 function startApplication() {
     setPins();
     // arduino.pinMode(9, five.Pin.PWM);
-    startControling('Malha aberta');
+    startControling('Malha aberta'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         socket.on('vueConnected', (data) => console.log('Cliente Vue conectado'));
