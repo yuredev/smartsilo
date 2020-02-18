@@ -8,7 +8,6 @@
             <span v-else-if="type == 'Massa'">g</span>
             <span v-else>v</span>
         </div>
-        {{paused}}
     </div>
 </template>
 
@@ -20,7 +19,8 @@ export default {
     data() {
         return {
             chartInterval: undefined,
-            setPoint: undefined,
+            setPointTemp: undefined,
+            setPointMass: undefined,
             x: 0,
             value: undefined,
             data: [{
@@ -63,7 +63,7 @@ export default {
                 y: [],
                 type:"line",
                 line: {
-                    color: 'rgb(0,160,0)',
+                    color: '#13c570',
                     width: 3
                 }
             })
@@ -71,6 +71,7 @@ export default {
     },
     mounted() {
         this.chartInterval = setInterval(() => this.updateChart(), 100);
+        this.$socket.emit('getSetPoint');
     },
     methods: {
         updateChart() {
@@ -80,15 +81,18 @@ export default {
                     range: [this.x - 150, this.x],
                 },
             }
-            if (this.type == 'Controle') {
-                this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
-                newLayout.yaxis = { range: [0, 5] }
-            } else if (this.type == 'Temperatura'){
-                this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
-                newLayout.yaxis = { range: [0, 45] }
-            } else {
-                this.$refs.chart.extendTraces({ y: [[this.value], [this.setPoint]] }, [0, 1]);
-                newLayout.yaxis = { range: [0, 1] }
+            switch (this.type) {
+                case 'Controle':
+                    this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
+                    newLayout.yaxis = { range: [0, 5] }
+                    break;
+                case 'Temperatura': 
+                    this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointTemp]] }, [0, 1]);
+                    newLayout.yaxis = { range: [0, 45] }
+                    break;
+                case 'Massa': 
+                    this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointMass]] }, [0, 1]);
+                    newLayout.yaxis = { range: [0, 1] }
             }
             this.x++;
 
@@ -98,7 +102,7 @@ export default {
     sockets: {
         changeSetPoint(newSetPoint) {
             if (this.type != 'Controle') {
-                this.setPoint = newSetPoint;
+                this.setPointTemp = newSetPoint;
             }
         },
         connect() {

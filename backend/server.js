@@ -38,10 +38,11 @@ function startApplication() {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         socket.on('vueConnected', (data) => console.log('Cliente Vue conectado'));
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
-        socket.on('changingSetPoint', setPointReceived => setSetPoint(socket, setPointReceived)); // mudar o setpoint 
+        socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
         socket.on('startExperiment', controlMode => startExperiment(controlMode, socket));
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
+        socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
     });
 }
 // começa o experimento
@@ -172,9 +173,11 @@ function getTemp() {
         toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5);
 }
 // mudar o setPoint 
-function setSetPoint(socket, newSetPoint) {
+function setSetPoint(newSetPoint, socket) {
+    console.log(newSetPoint);
     setPoint = Number(newSetPoint); // garantir que será um número
-    socket.broadcast.emit('changeSetPoint', setPoint); // enviando para todos clientes exceto o atual 
+    socket.emit('changeSetPoint', setPoint); // enviando para o cliente atual 
+    socket.broadcast.emit('changeSetPoint', setPoint); // enviando o resto dos clientes
     console.log(`Set point mudado para ${setPoint}`);
 }
 // começa a mandar os dados para o arduino

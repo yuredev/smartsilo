@@ -2,8 +2,11 @@
     <div class="formsDiv">
       <div class="formsArea">
         <div class="centralize-self" style="margin-top: 10px;">
-          <label for="setpoint">Setpoint: </label>
-          <input type="number" name="setpoint" id="">
+          <label for="setPoint">Setpoint: </label>
+          <div class="row">
+            <input type="number" id="setPoint" name="setPoint" v-model="setPoint">
+            <button id="buttonOk" @click="setSetPoint">OK</button>
+          </div>
         </div>
         <div class="centralize-self">
           <label for="controlMode">Modo de controle:</label>
@@ -36,7 +39,40 @@
 
 </template>
 
+
+<script>
+export default {
+  data() {
+    return {
+      setPoint: undefined
+    }
+  },
+  methods: {
+    setSetPoint() {
+      if (this.setPoint > 45) {
+        alert('O Valor informado é alto demais, isso pode comprometer o hardware');
+      } else {
+        this.$socket.emit('changingSetPoint', this.setPoint);
+      }
+    }
+  }
+}
+</script>
+
+
 <style scoped>
+  .row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  #buttonOk{
+    display: flex;
+    justify-content: center;
+    width: 30px;
+    margin-left: 1px;
+  }
 
   .formsDiv{
     display: flex;
@@ -53,9 +89,17 @@
     flex-direction: column;
     align-self: center;
   }
+
   input, select{
     width: 190px;
+    border-width: 1px;
   }
+
+  input#setPoint{
+    width: 156px;
+    text-align: right;
+  }
+
   select#pin{
     width: 167px;
   }
