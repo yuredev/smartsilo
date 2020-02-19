@@ -2,7 +2,7 @@
     <div id="main" :style="mainStyle">
         <Chart v-if="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
         <Chart v-else type="Massa" :paused="chartIsPaused" key="chart2" />
-        <ControlPane @pauseChart="pauseChart"/>
+        <ControlPane @pauseChart="pauseChart" :currentControlMode="currentControlMode"/>
         <Chart type="Controle" />
     </div>
 </template>
@@ -19,6 +19,10 @@ export default {
         }
     },
     props: {
+        currentControlMode: {
+            type: String,
+            required: true
+        },
         currentChart: {
             type: String,
             required: true

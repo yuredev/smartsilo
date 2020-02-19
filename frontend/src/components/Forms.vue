@@ -11,10 +11,13 @@
         <div class="centralize-self">
           <label for="controlMode">Modo de controle:</label>
           <select name="controlMode" id="">
-            <option value="">Malha aberta</option>
-            <option value="">PID</option>
-            <option value="">ON/OFF</option>
+
+            <option value="controlMode" v-for="(controlMode, index) of controlModes" :key="index" @click="setControlMode(controlMode)">
+              {{controlMode}}
+            </option>
+
           </select>
+          {{currentControlMode}}
         </div>
         <div class="radioButtonDiv">
           <input type="radio" name="voltageRadioBtn" id="voltage0v">
@@ -44,7 +47,13 @@
 export default {
   data() {
     return {
-      setPoint: undefined
+      currentControlMode: 'Malha aberta',
+      setPoint: undefined,
+      controlModes: [
+        'Malha aberta',
+        'PID',
+        'ON/OFF'
+      ]
     }
   },
   methods: {
@@ -54,6 +63,10 @@ export default {
       } else {
         this.$socket.emit('changingSetPoint', this.setPoint);
       }
+    },
+    setControlMode(controlMode) {
+      this.currentControlMode = controlMode;
+      this.$emit('setControlMode', this.currentControlMode);
     }
   }
 }

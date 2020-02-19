@@ -5,7 +5,12 @@
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
         <button @click="pauseChart">{{getButtonText}}</button>
-        <button>inicar aquisição</button>
+
+        <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
+        <button @click="startExperiment" v-else>inicar aquisição</button>
+
+        {{hardwareIsBusy}}
+
     </div>
 </template>
 
@@ -13,7 +18,14 @@
 export default {
     data() {
         return {
-            buttonIsPaused: false
+            buttonIsPaused: false,
+            hardwareIsBusy: false
+        }
+    },
+    props: {
+        currentControlMode: {
+            required: true,
+            type: String
         }
     },
     computed: {
@@ -21,10 +33,30 @@ export default {
             return this.buttonIsPaused ? 'retomar' : 'pausar';
         }
     },
+    mounted() {
+    },
+    sockets: {
+        connect() {
+            // assim que a conexão websocket com o servidor for concluída é preciso obter o estado do secador
+            // para saber se ele está ou não ocupado
+            this.$socket.emit('getHardwareState');
+        },
+        setHardwareState(hardwareIsBusy) {
+            this.hardwareIsBusy = hardwareIsBusy;
+        }
+    },
     methods: {
         pauseChart() {
             this.buttonIsPaused =! this.buttonIsPaused;
             this.$emit('pauseChart');
+        },
+        startExperiment() {
+            this.hardwareIsBusy = true;
+            this.$socket.emit('startExperiment', this.currentControlMode);
+        },
+        stopExperiment() {
+            this.hardwareIsBusy = false;
+            this.$socket.emit('stopExperiment');
         }
     }
 }
