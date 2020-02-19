@@ -5,12 +5,8 @@
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
         <button @click="pauseChart">{{getButtonText}}</button>
-
         <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
         <button @click="startExperiment" v-else>inicar aquisição</button>
-
-        {{hardwareIsBusy}}
-
     </div>
 </template>
 
