@@ -48,21 +48,16 @@ function startApplication() {
 }
 // começa o experimento
 function startExperiment(controlMode, socket) {
-    if (!dryerBusy) {
-        dryertBusy = true;
-        const time = new Date();
-        fileName = `${time.getDay()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getSeconds()}`;
-        if (controlMode != 'Malha aberta') {
-            startSaving(fileName);
-        }
-        clearInterval(offInterval);
-        clearInterval(onOffInterval);
-        clearInterval(pidInterval);
-        startControling(controlMode);
-        socket.emit('dryerAvaliable')
-    } else {
-        socket.emit('dryerBusy', null);
+    dryertBusy = true;
+    const time = new Date();
+    fileName = `${time.getDate()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getSeconds()}`;
+    if (controlMode != 'Malha aberta') {
+        startSaving(fileName);
     }
+    clearInterval(offInterval);
+    clearInterval(onOffInterval);
+    clearInterval(pidInterval);
+    startControling(controlMode);
 }
 // parar experimento 
 function stopExperiment(socket) {
