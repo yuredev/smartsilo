@@ -36,13 +36,14 @@ function startApplication() {
     startControling('Malha aberta'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
-        socket.on('vueConnected', (data) => console.log('Cliente Vue conectado'));
+        socket.on('vueConnected', () => console.log('Cliente Vue conectado'));
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
         socket.on('startExperiment', controlMode => startExperiment(controlMode, socket));
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
         socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
+        socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
     });
 }
 // começa o experimento
