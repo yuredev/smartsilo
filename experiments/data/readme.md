@@ -1,1 +1,1 @@
-## pasta onde ficará os dados dos experimentos em formato txt com o nome da data do experimento
+## Pasta onde ficará os dados dos experimentos em formato txt com o nome da data do experimento
