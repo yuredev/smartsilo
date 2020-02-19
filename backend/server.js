@@ -50,7 +50,7 @@ function startApplication() {
 function startExperiment(controlMode, socket) {
     dryertBusy = true;
     const time = new Date();
-    fileName = `${time.getDate()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getSeconds()}`;
+    fileName = `${time.getDate()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
     if (controlMode != 'Malha aberta') {
         startSaving(fileName);
     }
