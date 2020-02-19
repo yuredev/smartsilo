@@ -10,14 +10,11 @@
         </div>
         <div class="centralize-self">
           <label for="controlMode">Modo de controle:</label>
-          <select name="controlMode" id="">
-
+          <select name="controlMode" id="" :disabled="optionDisabled">
             <option value="controlMode" v-for="(controlMode, index) of controlModes" :key="index" @click="setControlMode(controlMode)">
               {{controlMode}}
             </option>
-
           </select>
-          {{currentControlMode}}
         </div>
         <div class="radioButtonDiv">
           <input type="radio" name="voltageRadioBtn" id="voltage0v">
@@ -55,6 +52,9 @@ export default {
         'ON/OFF'
       ]
     }
+  },
+  props: {
+    optionDisabled: Boolean
   },
   methods: {
     setSetPoint() {

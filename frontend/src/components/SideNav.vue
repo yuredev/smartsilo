@@ -6,7 +6,7 @@
         <img src="../assets/smart.png" alt="logo do sistema" id="logo">
       </div>
     </div>
-    <Forms @setControlMode="$emit('setControlMode', $event)"/>
+    <Forms @setControlMode="$emit('setControlMode', $event)" :optionDisabled="optionDisabled"/>
   </div>
 </template>
 
@@ -19,6 +19,7 @@ export default {
     Forms
   },
   props: {
+    optionDisabled: Boolean,
     showHamburger: {
       type: Boolean,
       required: true

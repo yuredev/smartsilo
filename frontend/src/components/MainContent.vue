@@ -2,7 +2,7 @@
     <div id="main" :style="mainStyle">
         <Chart v-if="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
         <Chart v-else type="Massa" :paused="chartIsPaused" key="chart2" />
-        <ControlPane @pauseChart="pauseChart" :currentControlMode="currentControlMode"/>
+        <ControlPane @pauseChart="pauseChart" @setOptionDisabled="$emit('setOptionDisabled', $event)" :currentControlMode="currentControlMode"/>
         <Chart type="Controle" />
     </div>
 </template>

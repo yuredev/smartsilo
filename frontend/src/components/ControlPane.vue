@@ -5,8 +5,10 @@
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
         <button @click="pauseChart">{{getButtonText}}</button>
-        <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
-        <button @click="startExperiment" v-else>inicar aquisição</button>
+        <div v-if="currentControlMode != 'Malha aberta'">
+            <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
+            <button @click="startExperiment" v-else>inicar aquisição</button>
+        </div>
     </div>
 </template>
 
@@ -48,10 +50,12 @@ export default {
         },
         startExperiment() {
             this.hardwareIsBusy = true;
+            this.$emit('setOptionDisabled', true);
             this.$socket.emit('startExperiment', this.currentControlMode);
         },
         stopExperiment() {
             this.hardwareIsBusy = false;
+            this.$emit('setOptionDisabled', false);
             this.$socket.emit('stopExperiment');
         }
     }

@@ -1,11 +1,15 @@
 <template>
   <div>
-    <SideNav @closeNav="closeNav(true)" @setControlMode="currentControlMode = $event" :showHamburger="showHamburger" :sideNavStyle="styles.sideNavStyle"/>
+    <SideNav  @closeNav="closeNav(true)" 
+              @setControlMode="currentControlMode = $event"
+              :optionDisabled="optionDisabled" 
+            :showHamburger="showHamburger" 
+            :sideNavStyle="styles.sideNavStyle" />
     <Navbar @openNav="openNav(true)" @chartChange="currentChart = $event"/>
     <!-- <div id="main" :style="styles.mainContentStyle">
       <Chart :type="currentChart" />
     </div> -->
-    <MainContent :mainStyle="styles.mainContentStyle" :currentChart="currentChart" :currentControlMode="currentControlMode"/>
+    <MainContent @setOptionDisabled="optionDisabled = $event" :mainStyle="styles.mainContentStyle" :currentChart="currentChart" :currentControlMode="currentControlMode"/>
   </div>
 </template>
 
@@ -29,6 +33,7 @@ export default {
   },
   data() {
     return {
+      optionDisabled: false,
       currentControlMode: 'Malha aberta',
       currentChart: 'Temperatura',
       showHamburger: false,
