@@ -55,6 +55,7 @@ export default {
         },
         stopExperiment() {
             this.hardwareIsBusy = false;
+            this.$emit('showLoadingScreen');
             this.$emit('setOptionDisabled', false);
             this.$socket.emit('stopExperiment');
         }

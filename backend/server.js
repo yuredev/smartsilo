@@ -22,7 +22,7 @@ let dryerBusy = false;
 
 const port = 3000;
 io.listen(port);
-console.log('websocket funcionando na porta ' + port);
+console.log('Websocket funcionando na porta ' + port);
 
 // descomentar depois
 // arduino.on('ready', startApplication);
@@ -80,7 +80,7 @@ function octavePlot(fileName, socket) {
     cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
         if (!e) {
             console.log('Gráfico gerado');
-            socket.emit('chartReady', null); // confirmar pro cliente que o gráfico está pronto
+            socket.emit('chartReady'); // confirmar pro cliente que o gráfico está pronto
         } else {
             console.log(e);
         }
