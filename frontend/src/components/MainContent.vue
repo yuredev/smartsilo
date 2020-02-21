@@ -79,7 +79,6 @@ button{
     color: #DDDDDD;
     font-family: Helvetica, sans-serif;
 }
-
 button:hover{
     transform: scale(1.02);
     color: #FDFDFD;
