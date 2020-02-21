@@ -5,7 +5,7 @@
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
         <button @click="pauseChart">{{getButtonText}}</button>
-        <div v-if="currentControlMode != 'Malha aberta'">
+        <div>
             <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
             <button @click="startExperiment" v-else>inicar aquisição</button>
         </div>
