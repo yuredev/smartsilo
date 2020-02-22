@@ -194,8 +194,7 @@ function startSending(socket, clientId) {
     // tempSend(socket, therm4, 'newTemperature4');
     // tempSend(socket, therm5, 'newTemperature5');
     setInterval(() => {
-        let temperature = (toCelsius(therm1.value) + toCelsius(therm2.value) + toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5;
-        socket.emit('newData', {type: 'Temperatura', value: temperature});
+        socket.emit('newData', {type: 'Temperatura', value: getTemp()});
         socket.emit('newData', {type: 'Massa', value: Math.random() * 1});
     }, 500);
 

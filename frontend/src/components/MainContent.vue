@@ -6,7 +6,7 @@
         </div>
         <div v-else>
             <div class="centralize-content chartArea" v-if="showLoadingScreen">
-                <img src="../assets/loading.png" alt="">
+                <img src="../assets/load.gif" alt="">
                 <h2>O Servidor está gerando o gráfico, aguarde...</h2>
             </div>
             <div v-else>
