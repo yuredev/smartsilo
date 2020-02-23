@@ -1,11 +1,9 @@
-const express = require('express');
-const app = express();
-const http = require('http').createServer(app);
+const http = require('http');
 const io = require('socket.io')(http);
 const five = require('johnny-five');
-const path = require('path');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
+const fs = require('fs');
 
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 
@@ -20,14 +18,18 @@ let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
-const port = 3000;
-io.listen(port);
-console.log('Websocket funcionando na porta ' + port);
+let server;
+io.listen(3000);
+console.log('Websocket funcionando na porta ' + 3000);
 
 // descomentar depois
 // arduino.on('ready', startApplication);
 
 startApplication();
+
+function sendImage(err, data) {
+    
+}
 
 // função para startar a aplicaçãos
 function startApplication() {
@@ -39,7 +41,7 @@ function startApplication() {
         socket.on('vueConnected', () => console.log('Cliente Vue conectado'));
         socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
         socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
-        socket.on('startExperiment', controlMode => startExperiment(controlMode, socket));
+        socket.on('startExperiment', controlMode => startExperiment(controlMode));
         socket.on('stopExperiment', () => stopExperiment(socket));
         socket.on('switchOffController', () => switchOffController());
         socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
@@ -47,13 +49,11 @@ function startApplication() {
     });
 }
 // começa o experimento
-function startExperiment(controlMode, socket) {
+function startExperiment(controlMode) {
     dryertBusy = true;
     const time = new Date();
     fileName = `${time.getDate()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
-    if (controlMode != 'Malha aberta') {
-        startSaving(fileName);
-    }
+    startSaving(fileName);
     clearInterval(offInterval);
     clearInterval(onOffInterval);
     clearInterval(pidInterval);
@@ -75,17 +75,30 @@ function switchOffController() {
     clearInterval(offControling);
     offControling(offControlValue);
 }
-// interpreta o script draw.m para o Octave gerar a imagem do gráfico 
+// interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 function octavePlot(fileName, socket) {
     cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
         if (!e) {
             console.log('Gráfico gerado');
-            socket.emit('chartReady'); // confirmar pro cliente que o gráfico está pronto
+            fs.readFile('./frontend/src/assets/chart.png', (err, data) => {
+                if (err) throw err;
+                if (server) {
+                    server.close(); 
+                }
+                server = http.createServer( (req, res)  => {
+                  res.writeHead(200, {'Content-Type': 'image/jpeg'});
+                  res.end(data); 
+                }).listen(8124);
+                console.log('The chart can be accessed in: http://localhost:8124/');
+                socket.emit('chartReady');
+            });
         } else {
             console.log(e);
         }
     });
 }
+
+
 // função para setar novos canais no Arduino 
 function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
     

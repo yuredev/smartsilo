@@ -1,7 +1,7 @@
 <template>
     <div id="main" :style="mainStyle">
         <div class="centralize-content chartArea" v-if="showChart">
-            <img src="../assets/chart.png" id="chartResult">
+            <img src="http://localhost:8124" id="chartResult" alt="gráfico gerado">
             <button @click="showChart = false">voltar</button>
         </div>
         <div v-else>
@@ -25,12 +25,14 @@
 
 <script>
 
-import Chart from './Chart'
-import ControlPane from './ControlPane'
+import Chart from './Chart';
+import ControlPane from './ControlPane';
+import chartImage from '../assets/chart.png';
 
 export default {
     data() {
         return {
+            chartImage,
             showChart: false,
             chartIsPaused: false,
             showLoadingScreen: false
