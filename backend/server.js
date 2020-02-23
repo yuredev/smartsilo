@@ -45,6 +45,7 @@ function startApplication() {
         socket.on('switchOffController', () => switchOffController());
         socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
         socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
+
     });
 }
 // começa o experimento

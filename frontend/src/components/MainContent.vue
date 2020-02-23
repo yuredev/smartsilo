@@ -4,14 +4,14 @@
             <img :src="getPlotUrl()" id="chartResult" alt="gráfico gerado">
             <button @click="showChart = false">voltar</button>
         </div>
-        <div v-else>
+        <div v-show="!showChart">
             <div class="centralize-content chartArea" v-if="showLoadingScreen">
                 <img src="../assets/load.gif" alt="">
                 <h2>O Servidor está gerando o gráfico, aguarde...</h2>
             </div>
-            <div v-else>
-                <Chart v-if="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
-                <Chart v-else type="Massa" :paused="chartIsPaused" key="chart2" />
+            <div v-show="!showLoadingScreen">
+                <Chart v-show="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
+                <Chart v-show="currentChart == 'Massa'" type="Massa" :paused="chartIsPaused" key="chart2" />
                 <ControlPane @pauseChart="pauseChart" 
                             @setOptionDisabled="$emit('setOptionDisabled', $event)" 
                             @showLoadingScreen="showLoadingScreen = true"

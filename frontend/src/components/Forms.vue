@@ -4,7 +4,7 @@
         <div class="centralize-self" style="margin-top: 10px;">
           <label for="setPoint">Setpoint: </label>
           <div class="row">
-            <input type="number" id="setPoint" name="setPoint" v-model="setPoint">
+            <input type="number" id="setPoint" name="setPoint" v-model="setPointTemp" @keyup.enter="setSetPoint">
             <button id="buttonOk" @click="setSetPoint">OK</button>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       currentControlMode: 'Malha aberta',
-      setPoint: undefined,
+      setPointTemp: undefined,
       controlModes: [
         'Malha aberta',
         'PID',
@@ -56,12 +56,20 @@ export default {
   props: {
     optionDisabled: Boolean
   },
+  mounted() {
+    this.$socket.emit('getSetPoint');
+  },
+  sockets: {
+    changeSetPoint(newSetPoint) {
+      this.setPointTemp = newSetPoint;
+    },
+  },
   methods: {
     setSetPoint() {
-      if (this.setPoint > 45) {
+      if (this.setPointTemp > 45) {
         alert('O Valor informado é alto demais, isso pode comprometer o hardware');
       } else {
-        this.$socket.emit('changingSetPoint', this.setPoint);
+        this.$socket.emit('changingSetPoint', this.setPointTemp);
       }
     },
     setControlMode(controlMode) {
