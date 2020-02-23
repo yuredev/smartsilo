@@ -22,12 +22,12 @@ title('Controle de temperatura interna do silo');
 xlabel('Tempo');
 ylabel('oC');
 
-% print('oldFrontend/img/chart.png', '-dpng');
-print('./frontend/src/assets/chart.png', '-dpng'); 
+print('./experiments/currentPlot.png', '-dpng');
+% print('./frontend/src/assets/chart.png', '-dpng'); 
 
 % para Linux
-system(["cp oldFrontend/img/chart.png " "experiments/" imgName]);
+system(["cp experiments/currentPlot.png " "experiments/" imgName]);
 % para Windows
-system(["copy oldFrontend\\img\\chart.png " "experiments\\" imgName]);
+system(["copy experiments\\currentPlot.png " "experiments\\" imgName]);
     
 close(fh); % destruir janela

@@ -6,7 +6,6 @@ const Controller = require('node-pid-controller');
 const fs = require('fs');
 
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
-
 // descomentar depois 
 // const arduino = new five.Board({ port: '/dev/ttyACM0' });
 
@@ -80,7 +79,7 @@ function octavePlot(fileName, socket) {
     cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
         if (!e) {
             console.log('Gráfico gerado');
-            fs.readFile('./frontend/src/assets/chart.png', (err, data) => {
+            fs.readFile('./experiments/currentPlot.png', (err, data) => {
                 if (err) throw err;
                 if (server) {
                     server.close(); 

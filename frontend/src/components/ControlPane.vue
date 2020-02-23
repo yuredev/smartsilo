@@ -4,8 +4,9 @@
             <label for="checkControl">gráfico de controle </label>
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
-        <button @click="pauseChart">{{getButtonText}}</button>
-        <div v-if="currentControlMode != 'Malha aberta'">
+        <button @click="pauseChart" v-if="buttonIsPaused">retomar</button>
+        <button v-else @click="pauseChart">pausar</button>
+        <div v-show="currentControlMode != 'Malha aberta'">
             <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
             <button @click="startExperiment" v-else>inicar aquisição</button>
         </div>
@@ -24,11 +25,6 @@ export default {
         currentControlMode: {
             required: true,
             type: String
-        }
-    },
-    computed: {
-        getButtonText() {
-            return this.buttonIsPaused ? 'retomar' : 'pausar';
         }
     },
     mounted() {

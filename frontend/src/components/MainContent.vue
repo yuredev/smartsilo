@@ -1,7 +1,7 @@
 <template>
     <div id="main" :style="mainStyle">
         <div class="centralize-content chartArea" v-if="showChart">
-            <img src="http://localhost:8124" id="chartResult" alt="gráfico gerado">
+            <img :src="getPlotUrl()" id="chartResult" alt="gráfico gerado">
             <button @click="showChart = false">voltar</button>
         </div>
         <div v-else>
@@ -56,6 +56,13 @@ export default {
         Chart, ControlPane
     },
     methods: {
+        getPlotUrl() {
+            // esse valor aleatório serve para forçar o browser a pegar a nova imagem do servidor
+            // sem ele o browser sempre continuará com a mesma imagem
+            // é uma forma dele reconhecer que são imagens diferentes a cada final de experimento 
+            let random = Math.floor(Math.random() * 10000);
+            return 'http://localhost:8124?random&s=' + random;
+        },
         pauseChart() {
             this.chartIsPaused =! this.chartIsPaused;
         }
