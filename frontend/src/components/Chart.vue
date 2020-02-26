@@ -131,6 +131,10 @@ export default {
 </script>
 
 <style scoped>
+    h2{
+        font-size: 1.3rem;
+    }
+
     .color{
         background-color: rgb(37,42,63);
     }
@@ -159,10 +163,10 @@ export default {
     #value-div{
         display: flex;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: 1.20rem;
     }
     #stopwatch{
-        font-size: 1.20rem;
+        font-size: 1.15rem;
         color: rgba(230, 230, 255, 0.9);
         align-self: center;
         display: flex;
