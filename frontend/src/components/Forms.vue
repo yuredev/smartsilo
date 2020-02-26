@@ -26,10 +26,10 @@
       <div class="formsArea" style="margin-top: 40px;">
         <div class="centralize-self" style="margin-top: 10px">
           <label for="pin">Canais</label>
-          <div v-for="pin of 6" :key="pin">  
+          <div v-for="pin of 5" :key="pin">  
             <label for="">{{pin}}° </label>
             <select name="" id="pin">
-              <option :selected="pin == n" v-for="n of 6" :key="-n" @click="addPin(pin, `A${n-1}`)">A{{n-1}}</option>
+              <option :selected="pin == n" v-for="n of 5" :key="-n" @click="addPin(pin, `A${n-1}`)">A{{n-1}}</option>
             </select>
           </div>
           <button @click="setPins">Setar canais</button>
@@ -44,7 +44,7 @@
 export default {
   data() {
     return {
-      pins: ['A0','A1','A2','A3','A4','A5'],
+      pins: ['A0','A1','A2','A3','A4'],
       currentControlMode: 'Malha aberta',
       setPointTemp: undefined,
       controlModes: [
