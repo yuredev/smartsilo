@@ -37,17 +37,21 @@ function startApplication() {
     startControling('Malha aberta'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
-        socket.on('vueConnected', () => console.log('Cliente Vue conectado'));
-        socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
-        socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
-        socket.on('startExperiment', controlMode => startExperiment(controlMode));
-        socket.on('stopExperiment', () => stopExperiment(socket));
-        socket.on('switchOffController', () => switchOffController());
-        socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
-        socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
-
+        startSocketListening(socket);
     });
 }
+
+function startSocketListening(socket) {
+    socket.on('vueConnected', () => console.log('Cliente Vue conectado'));
+    socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
+    socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
+    socket.on('startExperiment', controlMode => startExperiment(controlMode));
+    socket.on('stopExperiment', () => stopExperiment(socket));
+    socket.on('switchOffController', () => switchOffController());
+    socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
+    socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
+}
+
 // começa o experimento
 function startExperiment(controlMode) {
     dryertBusy = true;
@@ -100,7 +104,7 @@ function octavePlot(fileName, socket) {
 
 
 // função para setar novos canais no Arduino 
-function setPins(pins = ['A5', 'A4', 'A3', 'A2', 'A1']) {
+function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
     
     // descomentar depois
     // therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
