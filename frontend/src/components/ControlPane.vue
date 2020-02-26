@@ -1,14 +1,14 @@
 <template>
     <div class="controlPane">
         <div class="checkDiv">
-            <label for="checkControl">gráfico de controle </label>
+            <label for="checkControl">control signal </label>
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
-        <button @click="pauseChart" v-if="buttonIsPaused">retomar</button>
-        <button v-else @click="pauseChart">pausar</button>
+        <button @click="pauseChart" v-if="buttonIsPaused">resume</button>
+        <button v-else @click="pauseChart">pause</button>
         <div v-show="currentControlMode != 'Malha aberta'">
-            <button @click="stopExperiment" v-if="hardwareIsBusy" >parar aquisição</button>
-            <button @click="startExperiment" v-else>inicar aquisição</button>
+            <button @click="stopExperiment" v-if="hardwareIsBusy" >stop acquisition</button>
+            <button @click="startExperiment" v-else>start acquisition</button>
         </div>
     </div>
 </template>

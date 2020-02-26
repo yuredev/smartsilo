@@ -2,11 +2,14 @@
     <div class="chartArea color">
         <h2 class="centralizeSelf">{{type}}</h2>
         <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart"></Plotly>
-        <div id="valueDiv" class="centralizeSelf">
-            <span>{{value.toFixed(2)}}</span>
-            <span v-if="type == 'Temperatura'">°C</span>
-            <span v-else-if="type == 'Massa'">g</span>
-            <span v-else>v</span>
+        <div class="no-user-select" id="info">
+            <span v-if="type != 'Controle'" id="stopwatch">elapsed time: {{time}}</span>
+            <div class="centralizeSelf" id="value-div">
+                <span>{{value.toFixed(2)}}</span>
+                <span v-if="type == 'Temperatura'">°C</span>
+                <span v-else-if="type == 'Massa'">g</span>
+                <span v-else>v</span>
+            </div>
         </div>
     </div>
 </template>
@@ -14,10 +17,13 @@
 <script>
 
 import { Plotly } from 'vue-plotly';
+import Stopwatch from '../Stopwatch';
 
 export default {
     data() {
         return {
+            stopwatch: undefined,
+            time: undefined,
             chartInterval: undefined,
             setPointTemp: undefined,
             setPointMass: undefined,
@@ -52,8 +58,10 @@ export default {
         paused() {
             if (this.paused) {
                 clearInterval(this.chartInterval);
+                this.stopwatch.pause();
             } else {
                 this.chartInterval = setInterval(() => this.updateChart(), 100);
+                this.stopwatch.start();
             }
         }
     },
@@ -72,6 +80,9 @@ export default {
     mounted() {
         this.chartInterval = setInterval(() => this.updateChart(), 100);
         this.$socket.emit('getSetPoint');
+        this.stopwatch = new Stopwatch();
+        this.stopwatch.start();
+        setInterval(() => this.time = this.stopwatch.getTime(), 1000);
     },
     methods: {
         updateChart() {
@@ -126,14 +137,35 @@ export default {
     .centralizeSelf{
         display: flex;
         justify-content: center;
+        align-self: center;
+        display: flex;
         margin: 0;
+    }
+    .flex-evenly{
+        display: flex;
+        justify-content: space-evenly;
     }
     .chartArea{
         border-radius: 7px;
         padding: 0px 0px 5px 0px;
     }
-    #valueDiv{
-        font-size: 1.25rem;
+    .no-user-select{
         user-select: none;
+    }
+    #info{
+        display: flex;
+        justify-content: space-evenly;
+    }
+    #value-div{
+        display: flex;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    #stopwatch{
+        font-size: 1.20rem;
+        color: rgba(230, 230, 255, 0.9);
+        align-self: center;
+        display: flex;
+        justify-content: center;
     }
 </style>
