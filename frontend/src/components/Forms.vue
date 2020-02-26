@@ -29,10 +29,10 @@
           <div v-for="pin of 6" :key="pin">  
             <label for="">{{pin}}° </label>
             <select name="" id="pin">
-              <option :key="-n" :value="n" v-for="n of 5">A{{n}}</option>
+              <option :selected="pin == n" v-for="n of 6" :key="-n" @click="addPin(pin, `A${n-1}`)">A{{n-1}}</option>
             </select>
           </div>
-          <button>Setar canais</button>
+          <button @click="setPins">Setar canais</button>
         </div>
       </div>
     </div>
@@ -44,6 +44,7 @@
 export default {
   data() {
     return {
+      pins: ['A0','A1','A2','A3','A4','A5'],
       currentControlMode: 'Malha aberta',
       setPointTemp: undefined,
       controlModes: [
@@ -58,6 +59,16 @@ export default {
   },
   mounted() {
     this.$socket.emit('getSetPoint');
+    Array.prototype.haveEqualItens = function() {
+      for (let i = 0; i < this.length; i++) {
+        for (let j = i + 1; j < this.length; j++) {
+          if (this[i] == this[j]) {
+              return true;
+          }
+        }
+      }
+      return false;
+    }
   },
   sockets: {
     changeSetPoint(newSetPoint) {
@@ -65,6 +76,17 @@ export default {
     },
   },
   methods: {
+    setPins() {
+      if (this.pins.haveEqualItens()) {
+        alert('Error, there are pins with equal values, each pin must have a different value');
+      } else {
+        alert('Pins successfully exchanged');
+        this.$socket.emit('setPins', this.pins);
+      }
+    },
+    addPin(pin, value) {
+      this.pins.splice(pin-1, 1, value);
+    },
     setSetPoint() {
       if (this.setPointTemp > 45) {
         alert('O Valor informado é alto demais, isso pode comprometer o hardware');
