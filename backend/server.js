@@ -104,7 +104,7 @@ function octavePlot(fileName, socket) {
 
 
 // função para setar novos canais no Arduino 
-function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
+function setPins(pins = ['A1', 'A2', 'A3', 'A4', 'A5']) {
     
     // descomentar depois
     // therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
