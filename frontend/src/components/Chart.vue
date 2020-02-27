@@ -32,6 +32,8 @@ export default {
             data: [{
                 y: [],
                 type:"line",
+                fill: 'tonexty',
+                name: this.type
             }],
             layout: {
                 height: 235,
@@ -70,8 +72,9 @@ export default {
             this.data.push({
                 y: [],
                 type:"line",
+                name: 'setpoint',
                 line: {
-                    color: '#13c570',
+                    color: '#0aec5a',
                     width: 3
                 }
             })
