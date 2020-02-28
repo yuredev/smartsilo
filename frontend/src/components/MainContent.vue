@@ -12,12 +12,13 @@
             <div v-show="!showLoadingScreen">
                 <Chart v-show="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
                 <Chart v-show="currentChart == 'Massa'" type="Massa" :paused="chartIsPaused" key="chart2" />
-                <ControlPane @pauseChart="pauseChart" 
+                <ControlPane @setControlVisibility="showControl = $event"
+                            @pauseChart="pauseChart" 
                             @setOptionDisabled="$emit('setOptionDisabled', $event)" 
                             @showLoadingScreen="showLoadingScreen = true"
                             :currentControlMode="currentControlMode"
                             />
-                <Chart type="Controle" />
+                <Chart type="Controle" v-show="showControl"/>
             </div>
         </div>
     </div>
@@ -33,6 +34,7 @@ export default {
     data() {
         return {
             chartImage,
+            showControl: false,
             showChart: false,
             chartIsPaused: false,
             showLoadingScreen: false

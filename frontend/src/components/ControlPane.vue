@@ -2,7 +2,7 @@
     <div class="controlPane">
         <div class="checkDiv">
             <label for="checkControl">control signal </label>
-            <input type="checkbox" name="checkControl" id="checkControl">
+            <input type="checkbox" name="checkControl" id="checkControl" v-model="showChart">
         </div>
         <button @click="pauseChart" v-if="buttonIsPaused">resume</button>
         <button v-else @click="pauseChart">pause</button>
@@ -17,8 +17,14 @@
 export default {
     data() {
         return {
+            showChart: false,
             buttonIsPaused: false,
             hardwareIsBusy: false
+        }
+    },
+    watch: {
+        showChart() {
+            this.$emit('setControlVisibility', this.showChart);
         }
     },
     props: {
