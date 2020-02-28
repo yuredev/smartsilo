@@ -7,7 +7,7 @@ const fs = require('fs');
 
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
-// const arduino = new five.Board({ port: '/dev/ttyACM0' });
+// const board = new five.Board({ port: '/dev/ttyACM0' });
 
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
@@ -22,7 +22,7 @@ io.listen(3000);
 console.log('Websocket funcionando na porta ' + 3000);
 
 // descomentar depois
-// arduino.on('ready', startApplication);
+// board.on('ready', startApplication);
 
 startApplication();
 
@@ -33,7 +33,7 @@ function sendImage(err, data) {
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();
-    // arduino.pinMode(9, five.Pin.PWM);
+    // board.pinMode(9, five.Pin.PWM);
     startControling('Malha aberta'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
@@ -43,7 +43,7 @@ function startApplication() {
 
 function startSocketListening(socket) {
     socket.on('vueConnected', () => console.log('Cliente Vue conectado'));
-    socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
+    socket.on('setPins', pins => setPins(pins));      // mudar os canais do board 
     socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
     socket.on('startExperiment', controlMode => startExperiment(controlMode));
     socket.on('stopExperiment', () => stopExperiment(socket));
@@ -103,7 +103,7 @@ function octavePlot(fileName, socket) {
 }
 
 
-// função para setar novos canais no Arduino 
+// função para setar novos canais no board 
 function setPins(pins = ['A1', 'A2', 'A3', 'A4', 'A5']) {
     
     // descomentar depois
@@ -148,7 +148,7 @@ function offControling(value) {
 
     // descomentar depois  
     // offInterval = setInterval(() => {
-    //     arduino.analogWrite(9, scale(value));
+    //     board.analogWrite(9, scale(value));
     // }, 100);
 }
 // controle por liga/desliga 
@@ -157,7 +157,7 @@ function onOffControling() {
         u = getTemp() < setPoint ? 255 : 0;
 
         // descomentar depois
-        // arduino.analogWrite(9, u);
+        // board.analogWrite(9, u);
     }, 100);
 }
 // controle por pid 
@@ -177,7 +177,7 @@ function pidControling() {
             u = 0;
 
         // descomentar depois
-        // arduino.analogWrite(9, u);
+        // board.analogWrite(9, u);
     }, 100);
 }
 // retorna a temperatura media
@@ -193,7 +193,7 @@ function setSetPoint(newSetPoint, socket) {
     socket.broadcast.emit('changeSetPoint', setPoint); // enviando o resto dos clientes
     console.log(`Set point mudado para ${setPoint}`);
 }
-// começa a mandar os dados para o arduino
+// começa a mandar os dados para o board
 function startSending(socket, clientId) {
 
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
