@@ -29,12 +29,7 @@ export default {
             setPointMass: undefined,
             x: 0,
             value: undefined,
-            data: [{
-                y: [],
-                type:"line",
-                fill: 'tonexty',
-                name: this.type
-            }],
+            data: undefined,
             layout: {
                 height: 235,
                 autosize: true,
@@ -68,17 +63,7 @@ export default {
         }
     },
     created() {
-        if (this.type != 'Controle') {
-            this.data.push({
-                y: [],
-                type:"line",
-                name: 'setpoint',
-                line: {
-                    color: '#0aec5a',
-                    width: 3
-                }
-            })
-        }
+        this.configTraces();
     },
     mounted() {
         this.chartInterval = setInterval(() => this.updateChart(), 100);
@@ -88,6 +73,66 @@ export default {
         setInterval(() => this.time = this.stopwatch.getTime(), 1000);
     },
     methods: {
+        configTraces() {
+            let traceConfig;
+            switch (this.type) {
+                case 'Controle':
+                    traceConfig = [{
+                        y: [],
+                        type:"line",
+                        name: this.type,
+                        line: {
+                            color: '#EEE',
+                            width: 3
+                        }
+                    }];
+                    break;
+                case 'Temperatura':
+                    traceConfig = [{
+                        y: [],
+                        type:"line",
+                        fill: 'tonexty',
+                        name: 'Temperatura',
+                        fillcolor: '#306bae77',
+                        line: {
+                            color: '#306bae',
+                            width: 3
+                        },     
+                    }, 
+                    {
+                        y: [],
+                        type:"line",
+                        name: 'setpoint',
+                        line: {
+                            color: '#0add77',
+                            width: 3
+                        },     
+                    }];
+                    break;
+                case 'Massa':
+                traceConfig = [{
+                        y: [],
+                        type:"line",
+                        fill: 'tonexty',
+                        name: 'Massa',
+                        line: {
+                            color: '#CCCCCC',
+                            width: 3
+                        },     
+                    }, 
+                    {
+                        y: [],
+                        type:"line",
+                        fill: 'tonexty',
+                        name: 'setpoint',
+                        line: {
+                            color: '#0aec5a',
+                            width: 3
+                        },     
+                    }];
+            }
+            this.data = traceConfig;
+        },
         updateChart() {
             let newLayout = {
                 xaxis: {
