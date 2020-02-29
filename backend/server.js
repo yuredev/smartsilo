@@ -26,10 +26,6 @@ console.log('Websocket funcionando na porta ' + 3000);
 
 startApplication();
 
-function sendImage(err, data) {
-    
-}
-
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();

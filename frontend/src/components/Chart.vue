@@ -3,8 +3,7 @@
         <h2 class="centralizeSelf">{{type}}</h2>
         <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart"></Plotly>
         <div class="no-user-select" id="info">
-            <span v-if="type != 'Controle'" id="stopwatch">elapsed time: {{time}}</span>
-            <div class="centralizeSelf" id="value-div">
+            <div id="value-div">
                 <span>{{value.toFixed(2)}}</span>
                 <span v-if="type == 'Temperatura'">°C</span>
                 <span v-else-if="type == 'Massa'">g</span>
@@ -31,6 +30,11 @@ export default {
             value: undefined,
             data: undefined,
             layout: {
+                font: {
+                    family: 'Helvetica',
+                    size: 18,
+                    color: 'rgb(240,240,240)'
+                },
                 height: 235,
                 autosize: true,
                 margin: { b: 50, t: 10 },
@@ -82,7 +86,7 @@ export default {
                         type:"line",
                         name: this.type,
                         line: {
-                            color: '#EEE',
+                            color: 'rgb(255,150,255)',
                             width: 3
                         }
                     }];
@@ -138,6 +142,14 @@ export default {
                 xaxis: {
                     showticklabels: false,
                     range: [this.x - 150, this.x],
+                    title: {
+                        text: 'elapsed time: ' + this.time,
+                        font: {
+                            family: 'Helvetica',
+                            size: 18,
+                            color: 'rgb(240,240,240)'
+                        }
+                    },
                 },
             }
             switch (this.type) {
@@ -147,7 +159,7 @@ export default {
                     break;
                 case 'Temperatura': 
                     this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointTemp]] }, [0, 1]);
-                    newLayout.yaxis = { range: [0, 45] }
+                    newLayout.yaxis = { range: [0, 50] }
                     break;
                 case 'Massa': 
                     this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointMass]] }, [0, 1]);
@@ -206,18 +218,23 @@ export default {
     }
     #info{
         display: flex;
-        justify-content: space-evenly;
+        justify-content: center;
     }
+
+    #info > *{
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
     #value-div{
         display: flex;
         justify-content: center;
         font-size: 1.20rem;
+        justify-self: center;   
     }
     #stopwatch{
         font-size: 1.15rem;
         color: rgba(230, 230, 255, 0.9);
-        align-self: center;
         display: flex;
-        justify-content: center;
     }
 </style>
