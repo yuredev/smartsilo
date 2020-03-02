@@ -95,7 +95,7 @@ export default {
                     traceConfig = [{
                         y: [],
                         type:"line",
-                        fill: 'tonexty',
+                        // fill: 'tonexty',
                         name: 'Temperatura',
                         fillcolor: '#306bae77',
                         line: {

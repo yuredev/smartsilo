@@ -16,11 +16,30 @@
             </option>
           </select>
         </div>
-        <div class="radioButtonDiv">
+        <div class="radioButtonDiv" v-show="currentControlMode == 'Malha aberta'">
           <input type="radio" name="voltageRadioBtn" id="voltage0v">
           <label for="voltage0v">0v</label> 
           <input type="radio" name="voltageRadioBtn" id="voltage3v">
           <label for="voltage3v">3v</label> 
+        </div>
+        <div class="centralize-self" id="pid-consts" v-show="currentControlMode == 'PID'" style="margin-top: 0px;">
+          <div class="row">
+            <label for="">KP: </label> 
+            <input type="text" name="" v-model="pidConsts.KP">
+          </div>
+          <div class="row">
+            <label for="">KI: </label> 
+            <input type="text" name="" v-model="pidConsts.KI">
+          </div>
+          <div class="row">
+            <label for="">KD: </label> 
+            <input type="text" name="" v-model="pidConsts.KD">
+          </div>
+          <div class="row">
+            <label for="">H: </label> 
+            <input type="text" name="" v-model="pidConsts.H">
+          </div>
+          <button @click="setPidConsts">Set constants</button>
         </div>
       </div>
       <div class="formsArea" style="margin-top: 40px;">
@@ -51,7 +70,13 @@ export default {
         'Malha aberta',
         'PID',
         'ON/OFF'
-      ]
+      ],
+      pidConsts: {
+        KI: 'KP / 1.27',
+        KP: '1 / 0.3',
+        KD: 'KP * 6',
+        H: '0.1'
+      }
     }
   },
   props: {
@@ -76,6 +101,10 @@ export default {
     },
   },
   methods: {
+    setPidConsts() {
+      alert('Constantes de pid alteradas');
+      this.$socket.emit('setPidConsts', this.pidConsts);
+    },
     setPins() {
       if (this.pins.haveEqualItens()) {
         alert('Error, there are pins with equal values, each pin must have a different value');
@@ -121,7 +150,6 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* height: 100%; */
   }
 
   label, h2{
@@ -158,6 +186,15 @@ export default {
   .formsArea > * {
     margin-left: 4px;
   }
+  
+  #pid-consts{
+    width: 86.5%;
+  }
+
+  .row > label{
+    width: 40px;
+  }
+
   .radioButtonDiv{
     display: flex;
     flex-direction: row;
