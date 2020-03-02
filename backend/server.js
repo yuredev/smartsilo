@@ -5,9 +5,10 @@ const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const fs = require('fs');
 
+let KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
-// const board = new five.Board({ port: '/dev/ttyACM0' });
+const board = new five.Board({ port: 'COM3' });
 
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
@@ -22,14 +23,14 @@ io.listen(3000);
 console.log('Websocket funcionando na porta ' + 3000);
 
 // descomentar depois
-// board.on('ready', startApplication);
+board.on('ready', startApplication);
 
-startApplication();
+// startApplication();
 
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();
-    // board.pinMode(9, five.Pin.PWM);
+    board.pinMode(9, five.Pin.PWM);
     startControling('Malha aberta'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
@@ -46,6 +47,22 @@ function startSocketListening(socket) {
     socket.on('switchOffController', () => switchOffController());
     socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
     socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
+    socket.on('setPidConsts', (pidConsts) => setPidConsts(pidConsts));
+}
+
+function setPidConsts (pidConsts) {
+    H = Number(pidConsts.H);
+    KP = eval(pidConsts.KP);
+    KI = eval(pidConsts.KI);
+    KD = eval(pidConsts.KD);
+    
+    console.log('------------------------');
+    console.log('Novas constantes de PID ');
+    console.log('------------------------');
+    console.log('KP: ', KP);
+    console.log('KD: ', KD);
+    console.log('KI: ', KI);
+    console.log('H: ', H);
 }
 
 // começa o experimento
@@ -103,24 +120,11 @@ function octavePlot(fileName, socket) {
 function setPins(pins = ['A1', 'A2', 'A3', 'A4', 'A5']) {
     
     // descomentar depois
-    // therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
-    // therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
-    // therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
-    // therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
-    // therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
-
-    // comentar depois 
-    therm1 = {value: 0};
-    therm2 = {value: 0};
-    therm3 = {value: 0};
-    therm4 = {value: 0};
-    therm5 = {value: 0};
-
-    setInterval(() => therm1.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm2.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm3.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm4.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm5.value = Math.round(Math.random() * 512 + 200), 500);
+    therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
+    therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
+    therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
+    therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
+    therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
 
     console.log(`Canais setados: ${pins}`);
 }
@@ -143,23 +147,20 @@ function offControling(value) {
     u = scale(value);
 
     // descomentar depois  
-    // offInterval = setInterval(() => {
-    //     board.analogWrite(9, scale(value));
-    // }, 100);
+    offInterval = setInterval(() => {
+        board.analogWrite(9, scale(value));
+    }, 100);
 }
 // controle por liga/desliga 
 function onOffControling() {
     onOffInterval = setInterval(() => {
         u = getTemp() < setPoint ? 255 : 0;
-
-        // descomentar depois
-        // board.analogWrite(9, u);
+        board.analogWrite(9, u);
     }, 100);
 }
 // controle por pid 
 function pidControling() {
     pidInterval = setInterval(() => {
-        const KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
         let control = new Controller(KP, KI, KD, H);
         control.setTarget(setPoint);
         let output = getTemp();
@@ -172,8 +173,7 @@ function pidControling() {
         else if (u < 0)
             u = 0;
 
-        // descomentar depois
-        // board.analogWrite(9, u);
+        board.analogWrite(9, u);
     }, 100);
 }
 // retorna a temperatura media
@@ -199,29 +199,14 @@ function startSending(socket, clientId) {
     
     // passar o setPoint atual para o novo usuário conectado
     socket.emit('changeSetPoint', setPoint);
-    // quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
 
-    // tempSend(socket, therm1, 'newTemperature1');
-    // tempSend(socket, therm2, 'newTemperature2');
-    // tempSend(socket, therm3, 'newTemperature3');
-    // tempSend(socket, therm4, 'newTemperature4');
-    // tempSend(socket, therm5, 'newTemperature5');
     setInterval(() => {
         socket.emit('newData', {type: 'Temperatura', value: getTemp()});
         socket.emit('newData', {type: 'Massa', value: Math.random() * 1});
     }, 500);
 
 }
-// faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
-function tempSend(socket, therm, socketMsg) {
-    // setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
 
-    // descomentar depois 
-    // therm.on('data', () => socket.emit(socketMsg, toCelsius(therm.value)));
-
-    // comentar depois 
-    // setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 500);
-}
 // converte valor ADC em Celsius
 function toCelsius(rawADC) {
     let temp = Math.log(((10240000 / rawADC) - 10000));
