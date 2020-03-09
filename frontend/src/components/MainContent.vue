@@ -10,15 +10,15 @@
                 <h2>O Servidor está gerando o gráfico, aguarde...</h2>
             </div>
             <div v-show="!showLoadingScreen">
-                <Chart v-show="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
-                <Chart v-show="currentChart == 'Massa'" type="Massa" :paused="chartIsPaused" key="chart2" />
+                <Chart v-show="currentChart == 'Temperature'" type="Temperature" :paused="chartIsPaused" key="chart1"/>
+                <Chart v-show="currentChart == 'Mass'" type="Mass" :paused="chartIsPaused" key="chart2" />
                 <ControlPane @setControlVisibility="showControl = $event"
                             @pauseChart="pauseChart" 
                             @setOptionDisabled="$emit('setOptionDisabled', $event)" 
                             @showLoadingScreen="showLoadingScreen = true"
                             :currentControlMode="currentControlMode"
                             />
-                <Chart type="Controle" v-show="showControl"/>
+                <Chart type="Control" v-show="showControl"/>
             </div>
         </div>
     </div>

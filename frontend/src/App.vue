@@ -35,7 +35,7 @@ export default {
     return {
       optionDisabled: false,
       currentControlMode: 'Malha aberta',
-      currentChart: 'Temperatura',
+      currentChart: 'Temperature',
       showHamburger: false,
       openNavButtonState: undefined,
       screenWidth: undefined,

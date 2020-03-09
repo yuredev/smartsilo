@@ -9,7 +9,7 @@
           </div>
         </div>
         <div class="centralize-self">
-          <label for="controlMode">Modo de controle:</label>
+          <label for="controlMode">Control Mode:</label>
           <select name="controlMode" id="" :disabled="optionDisabled">
             <option value="controlMode" v-for="(controlMode, index) of controlModes" :key="index" @click="setControlMode(controlMode)">
               {{controlMode}}
@@ -24,34 +24,46 @@
         </div>
         <div class="centralize-self" id="pid-consts" v-show="currentControlMode == 'PID'" style="margin-top: 0px;">
           <div class="row">
-            <label for="">KP: </label> 
-            <input type="text" name="" v-model="pidConsts.KP">
+            <label for="kp">
+              <abbr title="Proportional Band Width">pbw:</abbr>
+            </label> 
+            <input type="text" name="kp" v-model="pidConsts.KP">
           </div>
           <div class="row">
-            <label for="">KI: </label> 
-            <input type="text" name="" v-model="pidConsts.KI">
+            <label for="ki">
+              <abbr title="Integrative Time">it: </abbr>
+            </label> 
+            <input type="text" name="ki" v-model="pidConsts.KI">
           </div>
           <div class="row">
-            <label for="">KD: </label> 
-            <input type="text" name="" v-model="pidConsts.KD">
+            <label for="kd">
+              <abbr title="Derivative Time">
+                dt: 
+              </abbr>
+            </label> 
+            <input type="text" name="kd" v-model="pidConsts.KD">
           </div>
           <div class="row">
-            <label for="">H: </label> 
-            <input type="text" name="" v-model="pidConsts.H">
+            <label for="h">
+              <abbr title="Sampling Time">
+                T: 
+              </abbr>
+            </label> 
+            <input type="text" name="h" v-model="pidConsts.H">
           </div>
           <button @click="setPidConsts">Set constants</button>
         </div>
       </div>
       <div class="formsArea" style="margin-top: 40px;">
         <div class="centralize-self" style="margin-top: 10px">
-          <label for="pin">Canais</label>
+          <label for="pin">Analog Channels</label>
           <div v-for="pin of 5" :key="pin">  
             <label for="">{{pin}}° </label>
             <select name="" id="pin">
               <option :selected="pin == n" v-for="n of 5" :key="-n" @click="addPin(pin, `A${n-1}`)">A{{n-1}}</option>
             </select>
           </div>
-          <button @click="setPins">Setar canais</button>
+          <button @click="setPins">Set Pins</button>
         </div>
       </div>
     </div>
@@ -133,6 +145,19 @@ export default {
 
 
 <style scoped>
+
+  abbr {
+    text-decoration: none;
+  }
+
+  .row > label {
+    margin-right: 5px;
+  }
+
+  .row input{
+    width: 132px;
+  }
+
   .row{
     display: flex;
     flex-direction: row;

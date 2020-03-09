@@ -115,7 +115,6 @@ function octavePlot(fileName, socket) {
     });
 }
 
-
 // função para setar novos canais no board 
 function setPins(pins = ['A1', 'A2', 'A3', 'A4', 'A5']) {
     
@@ -193,7 +192,7 @@ function setSetPoint(newSetPoint, socket) {
 function startSending(socket, clientId) {
 
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
-    setInterval(() => socket.emit('newData', { type: 'Controle', value: scale(u, 'to [0,5]') }), 500);
+    setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
 
     console.log('Mandando dados para ' + clientId);
     
@@ -201,8 +200,8 @@ function startSending(socket, clientId) {
     socket.emit('changeSetPoint', setPoint);
 
     setInterval(() => {
-        socket.emit('newData', {type: 'Temperatura', value: getTemp()});
-        socket.emit('newData', {type: 'Massa', value: Math.random() * 1});
+        socket.emit('newData', {type: 'Temperature', value: getTemp()});
+        socket.emit('newData', {type: 'Mass', value: Math.random() * 1});
     }, 500);
 
 }

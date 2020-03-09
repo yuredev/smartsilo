@@ -5,8 +5,8 @@
         <div class="no-user-select" id="info">
             <div id="value-div">
                 <span>{{value.toFixed(2)}}</span>
-                <span v-if="type == 'Temperatura'">°C</span>
-                <span v-else-if="type == 'Massa'">g</span>
+                <span v-if="type == 'Temperature'">°C</span>
+                <span v-else-if="type == 'Mass'">g</span>
                 <span v-else>v</span>
             </div>
         </div>
@@ -80,7 +80,7 @@ export default {
         configTraces() {
             let traceConfig;
             switch (this.type) {
-                case 'Controle':
+                case 'Control':
                     traceConfig = [{
                         y: [],
                         type:"line",
@@ -91,12 +91,12 @@ export default {
                         }
                     }];
                     break;
-                case 'Temperatura':
+                case 'Temperature':
                     traceConfig = [{
                         y: [],
                         type:"line",
                         // fill: 'tonexty',
-                        name: 'Temperatura',
+                        name: 'Temperature',
                         fillcolor: '#306bae77',
                         line: {
                             color: '#306bae',
@@ -106,19 +106,19 @@ export default {
                     {
                         y: [],
                         type:"line",
-                        name: 'setpoint',
+                        name: 'Setpoint',
                         line: {
                             color: '#0add77',
                             width: 3
                         },     
                     }];
                     break;
-                case 'Massa':
-                traceConfig = [{
+                case 'Mass':
+                    traceConfig = [{
                         y: [],
                         type:"line",
-                        fill: 'tonexty',
-                        name: 'Massa',
+                        // fill: 'tonexty',
+                        name: 'Mass',
                         line: {
                             color: '#CCCCCC',
                             width: 3
@@ -128,7 +128,7 @@ export default {
                         y: [],
                         type:"line",
                         fill: 'tonexty',
-                        name: 'setpoint',
+                        name: 'Setpoint',
                         line: {
                             color: '#0aec5a',
                             width: 3
@@ -153,15 +153,15 @@ export default {
                 },
             }
             switch (this.type) {
-                case 'Controle':
+                case 'Control':
                     this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
                     newLayout.yaxis = { range: [0, 5] }
                     break;
-                case 'Temperatura': 
+                case 'Temperature': 
                     this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointTemp]] }, [0, 1]);
-                    newLayout.yaxis = { range: [0, 50] }
+                    newLayout.yaxis = { range: [10, 50] }
                     break;
-                case 'Massa': 
+                case 'Mass': 
                     this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointMass]] }, [0, 1]);
                     newLayout.yaxis = { range: [0, 1] }
             }
@@ -172,7 +172,7 @@ export default {
     },
     sockets: {
         changeSetPoint(newSetPoint) {
-            if (this.type != 'Controle') {
+            if (this.type != 'Control') {
                 this.setPointTemp = newSetPoint;
             }
         },

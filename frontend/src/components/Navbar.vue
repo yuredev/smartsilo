@@ -3,10 +3,10 @@
         <span id="hamburger" @click="openNav()">&#9776;</span>
         <ul>
             <li>
-                <span @click="setChart('Temperatura')">Temperatura</span>
+                <span @click="setChart('Temperature')">Temperature</span>
             </li>
             <li>
-                <span @click="setChart('Massa')">Massa</span>
+                <span @click="setChart('Mass')">Mass</span>
             </li>
         </ul>
     </nav>
