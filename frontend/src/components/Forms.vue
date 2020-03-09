@@ -27,7 +27,7 @@
             <label for="kp">
               <abbr title="Proportional Band Width">pbw:</abbr>
             </label> 
-            <input type="text" name="kp" v-model="pidConsts.KP">
+            <input type="text" name="kp" v-model="pidConsts.KP" placeholder="em porcentagem">
           </div>
           <div class="row">
             <label for="ki">
@@ -84,9 +84,9 @@ export default {
         'ON/OFF'
       ],
       pidConsts: {
-        KI: 'KP / 1.27',
-        KP: '1 / 0.3',
-        KD: 'KP * 6',
+        KI: '1.27',
+        KP: '30',
+        KD: '6',
         H: '0.1'
       }
     }

@@ -52,9 +52,9 @@ function startSocketListening(socket) {
 
 function setPidConsts (pidConsts) {
     H = Number(pidConsts.H);
-    KP = eval(pidConsts.KP);
-    KI = eval(pidConsts.KI);
-    KD = eval(pidConsts.KD);
+    KP = 1 / (pidConsts.KP / 100);
+    KD = KP * pidConsts.KD;
+    KI = KP / pidConsts.KI;
     
     console.log('------------------------');
     console.log('Novas constantes de PID ');
