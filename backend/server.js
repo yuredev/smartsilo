@@ -10,6 +10,8 @@ let KP = 1 / 0.3, KI = KP / 1.27, H = 0.1, KD = KP * 6;
 // descomentar depois 
 const board = new five.Board({ port: 'COM3' });
 
+const therms = [];
+
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therm1, therm2, therm3, therm4, therm5;  // sensores 
@@ -44,7 +46,7 @@ function startSocketListening(socket) {
     socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
     socket.on('startExperiment', controlMode => startExperiment(controlMode));
     socket.on('stopExperiment', () => stopExperiment(socket));
-    socket.on('switchOffController', () => switchOffController());
+    socket.on('switchOffController', (voltage) => switchOffController(voltage, socket));
     socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
     socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
     socket.on('setPidConsts', (pidConsts) => setPidConsts(pidConsts));
@@ -87,11 +89,12 @@ function stopExperiment(socket) {
     octavePlot(fileName, socket);
 }
 // mudar voltagem de 0 a 3 para malha aberta 
-function switchOffController() {
-    offControlValue = offControlValue == 0 ? 3 : 0;
-    clearInterval(offControling);
+function switchOffController(voltage, socket) {
+    offControlValue = voltage;
+    clearInterval(offInterval);
     offControling(offControlValue);
 }
+
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 function octavePlot(fileName, socket) {
     cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
@@ -116,17 +119,37 @@ function octavePlot(fileName, socket) {
 }
 
 // função para setar novos canais no board 
-function setPins(pins = ['A1', 'A2', 'A3', 'A4', 'A5']) {
-    
-    // descomentar depois
-    therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
-    therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
-    therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
-    therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
-    therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
-
+function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
+    for (let i = 0; i < 5; i++) {
+        therms[i] = new five.Sensor({ pin: pins[i], freq: 100 });
+    }
     console.log(`Canais setados: ${pins}`);
 }
+
+// começa a mandar os dados para o board
+function startSending(socket, clientId) {
+    // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
+    setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
+    console.log('Mandando dados para ' + clientId);
+    // passar o setPoint atual para o novo usuário conectado
+    socket.emit('changeSetPoint', setPoint);
+    setInterval(() => {
+        printTherms();
+        socket.emit('newData', {type: 'Temperature', value: getTemp()});
+        socket.emit('newData', {type: 'Mass', value: Math.random() * 1});
+    }, 500);
+}
+
+// função para printar as temperaturas para conferir
+function printTherms() {
+    console.log('------------------------------------------------');
+    for (let i = 0; i < therms.length; i++) {
+        console.log('A' + i, ': ', toCelsius(therms[i].value));
+    }
+    console.log('------------------------------------------------');
+}
+
+
 // comecça a salvar em arquivo txt 
 function startSaving(nomeArq) {
     savingInterval = setInterval(() => {
@@ -177,8 +200,12 @@ function pidControling() {
 }
 // retorna a temperatura media
 function getTemp() {
-    return ((toCelsius(therm1.value) + toCelsius(therm2.value) +
-        toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5);
+    // recebe arrays com as temperaturas de cada sensor
+    let temp = therms.map(el => el.value); 
+    // recebe a média das temperaturas de todos sensores
+    temp = temp.reduce((total, el) => total + el) / temp.length; 
+    // retorna a temperatura convertida em celsius
+    return toCelsius(temp);
 }
 // mudar o setPoint 
 function setSetPoint(newSetPoint, socket) {
@@ -187,23 +214,6 @@ function setSetPoint(newSetPoint, socket) {
     socket.emit('changeSetPoint', setPoint); // enviando para o cliente atual 
     socket.broadcast.emit('changeSetPoint', setPoint); // enviando o resto dos clientes
     console.log(`Set point mudado para ${setPoint}`);
-}
-// começa a mandar os dados para o board
-function startSending(socket, clientId) {
-
-    // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
-    setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
-
-    console.log('Mandando dados para ' + clientId);
-    
-    // passar o setPoint atual para o novo usuário conectado
-    socket.emit('changeSetPoint', setPoint);
-
-    setInterval(() => {
-        socket.emit('newData', {type: 'Temperature', value: getTemp()});
-        socket.emit('newData', {type: 'Mass', value: Math.random() * 1});
-    }, 500);
-
 }
 
 // converte valor ADC em Celsius

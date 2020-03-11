@@ -17,9 +17,9 @@
           </select>
         </div>
         <div class="radioButtonDiv" v-show="currentControlMode == 'Malha aberta'">
-          <input type="radio" name="voltageRadioBtn" id="voltage0v">
+          <input type="radio" name="voltageRadioBtn" id="voltage0v" :value="0" v-model="currentOpenLoopVoltage">
           <label for="voltage0v">0v</label> 
-          <input type="radio" name="voltageRadioBtn" id="voltage3v">
+          <input type="radio" name="voltageRadioBtn" id="voltage3v" :value="3" v-model="currentOpenLoopVoltage">
           <label for="voltage3v">3v</label> 
         </div>
         <div class="centralize-self" id="pid-consts" v-show="currentControlMode == 'PID'" style="margin-top: 0px;">
@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       pins: ['A0','A1','A2','A3','A4'],
+      currentOpenLoopVoltage: 0,
       currentControlMode: 'Malha aberta',
       setPointTemp: undefined,
       controlModes: [
@@ -89,6 +90,11 @@ export default {
         KD: '6',
         H: '0.1'
       }
+    }
+  },
+  watch: {
+    currentOpenLoopVoltage() {
+      this.$socket.emit('switchOffController', this.currentOpenLoopVoltage);
     }
   },
   props: {
@@ -111,6 +117,9 @@ export default {
     changeSetPoint(newSetPoint) {
       this.setPointTemp = newSetPoint;
     },
+    setOpenLoopVoltage(newOpenLoopVoltage) {
+      this.currentOpenLoopVoltage = newOpenLoopVoltage;
+    }
   },
   methods: {
     setPidConsts() {
