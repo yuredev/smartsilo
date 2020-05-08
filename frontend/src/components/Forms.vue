@@ -41,6 +41,9 @@
 
 
 <script>
+
+import { haveEqualItens } from '../utils/arrayCustomFunctions';
+
 export default {
   data() {
     return {
@@ -59,16 +62,6 @@ export default {
   },
   mounted() {
     this.$socket.emit('getSetPoint');
-    Array.prototype.haveEqualItens = function() {
-      for (let i = 0; i < this.length; i++) {
-        for (let j = i + 1; j < this.length; j++) {
-          if (this[i] == this[j]) {
-              return true;
-          }
-        }
-      }
-      return false;
-    }
   },
   sockets: {
     changeSetPoint(newSetPoint) {
@@ -77,7 +70,7 @@ export default {
   },
   methods: {
     setPins() {
-      if (this.pins.haveEqualItens()) {
+      if (haveEqualItens(this.pins)) {
         alert('Error, there are pins with equal values, each pin must have a different value');
       } else {
         alert('Pins successfully exchanged');
