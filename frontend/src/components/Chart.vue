@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable no-console */
 <template>
     <div class="chartArea color">
         <h2 class="centralizeSelf">{{type}}</h2>
