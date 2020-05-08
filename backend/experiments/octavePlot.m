@@ -26,8 +26,8 @@ print('./experiments/currentPlot.png', '-dpng');
 % print('./frontend/src/assets/chart.png', '-dpng'); 
 
 % para Linux
-system(["cp experiments/currentPlot.png " "experiments/" imgName]);
+system(["cp experiments/currentPlot.png " "experiments/plots/" imgName]);
 % para Windows
-system(["copy experiments\\currentPlot.png " "experiments\\" imgName]);
+system(["copy experiments\\currentPlot.png " "experiments\\plots\\" imgName]);
     
 close(fh); % destruir janela

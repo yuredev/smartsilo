@@ -52,7 +52,7 @@ function startSocketListening(socket) {
 function startExperiment(controlMode) {
     dryertBusy = true;
     const time = new Date();
-    fileName = `${time.getDate()}-${time.getMonth()}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
+    fileName = `${time.getDate()}-${time.getMonth()+1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
     startSaving(fileName);
     clearInterval(offInterval);
     clearInterval(onOffInterval);
@@ -77,7 +77,7 @@ function switchOffController() {
 }
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 function octavePlot(fileName, socket) {
-    cmd.get(`octave-cli backend/draw.m "${fileName}"`, (e, dt) => {
+    cmd.get(`octave-cli ./experiments/octavePlot.m "${fileName}"`, (e, dt) => {
         if (!e) {
             console.log('Gráfico gerado');
             fs.readFile('./experiments/currentPlot.png', (err, data) => {
