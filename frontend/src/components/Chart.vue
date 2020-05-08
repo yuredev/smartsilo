@@ -1,9 +1,11 @@
 <template>
     <div class="chartArea color">
         <h2 class="centralizeSelf">{{type}}</h2>
-        <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart"></Plotly>
+        <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart" />
         <div class="no-user-select" id="info">
-            <span v-if="type != 'Controle'" id="stopwatch">elapsed time: {{time}}</span>
+            <span v-if="type != 'Controle'" id="stopwatch">
+                elapsed time: {{time}}
+            </span>
             <div class="centralizeSelf" id="value-div">
                 <span>{{value.toFixed(2)}}</span>
                 <span v-if="type == 'Temperatura'">°C</span>
