@@ -1,0 +1,27 @@
+{
+  "name": "smartsilo",
+  "version": "1.0.0",
+  "description": "A Dashboard for intelligent aeration / drying instrumentation and control in grain storage silos in a IoT context. Developing as a university research project ",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "nodemon backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yurematias/smartsilo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "johnny-five": "^1.4.0",
+    "node-cmd": "^3.0.0",
+    "node-pid-controller": "^1.0.1",
+    "nodemon": "^1.19.4",
+    "path": "^0.12.7",
+    "socket.io": "^2.2.0",
+    "vue-socket.io": "^3.0.7"
+  }
+}
