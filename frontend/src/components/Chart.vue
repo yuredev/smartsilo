@@ -68,7 +68,6 @@ export default {
     mounted() {
         eventBus.$on('pause-chart', this.pauseChart);
         eventBus.$on('resume-chart', this.resumeChart);
-        
         this.chartInterval = setInterval(() => this.updateChart(), 100);
         this.$socket.emit('getSetPoint');
         this.stopwatch = new Stopwatch();
@@ -105,7 +104,6 @@ export default {
                     newLayout.yaxis = { range: [0, 1] }
             }
             this.x++;
-
             this.$refs.chart.relayout(newLayout);
         }
     },
