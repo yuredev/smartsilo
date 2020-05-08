@@ -29,11 +29,7 @@ startApplication();
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();
-
-    setInterval(() => {
-        io.emit('newData', {type: 'Temperatura', value: getTemp()});
-    }, 100);
-    
+ 
     // arduino.pinMode(9, five.Pin.PWM);
     startControling('Malha aberta'); 
     io.on('connection', socket => {
