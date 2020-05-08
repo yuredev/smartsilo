@@ -4,7 +4,7 @@
             <label for="checkControl">control signal </label>
             <input type="checkbox" name="checkControl" id="checkControl">
         </div>
-        <button @click="pauseChart" v-if="buttonIsPaused">resume</button>
+        <button @click="resumeChart" v-if="buttonIsPaused">resume</button>
         <button v-else @click="pauseChart">pause</button>
         <div v-show="currentControlMode != 'Malha aberta'">
             <button @click="stopExperiment" v-if="hardwareIsBusy" >stop acquisition</button>
@@ -14,6 +14,9 @@
 </template>
 
 <script>
+
+import { eventBus } from '../eventBus';
+
 export default {
     data() {
         return {
@@ -41,8 +44,12 @@ export default {
     },
     methods: {
         pauseChart() {
-            this.buttonIsPaused =! this.buttonIsPaused;
-            this.$emit('pauseChart');
+            this.buttonIsPaused = true;
+            eventBus.$emit('pause-chart');
+        },
+        resumeChart() {
+            this.buttonIsPaused = false;
+            eventBus.$emit('resume-chart');
         },
         startExperiment() {
             this.hardwareIsBusy = true;

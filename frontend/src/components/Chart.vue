@@ -17,18 +17,20 @@
 <script>
 
 import { Plotly } from 'vue-plotly';
-import Stopwatch from '../Stopwatch';
+import { eventBus } from '../eventBus';
+import Stopwatch from '../utils/Stopwatch';
 
 export default {
     data() {
         return {
             stopwatch: undefined,
+            paused: false,
             time: undefined,
             chartInterval: undefined,
             setPointTemp: undefined,
             setPointMass: undefined,
             x: 0,
-            value: undefined,
+            value: 0,
             data: [{
                 y: [],
                 type:"line",
@@ -46,23 +48,9 @@ export default {
         Plotly
     },
     props: {
-        paused: {
-            type: Boolean,
-        },
         type: {
             type: String,
             required: true
-        }
-    },
-    watch: {
-        paused() {
-            if (this.paused) {
-                clearInterval(this.chartInterval);
-                this.stopwatch.pause();
-            } else {
-                this.chartInterval = setInterval(() => this.updateChart(), 100);
-                this.stopwatch.start();
-            }
         }
     },
     created() {
@@ -78,6 +66,9 @@ export default {
         }
     },
     mounted() {
+        eventBus.$on('pause-chart', this.pauseChart);
+        eventBus.$on('resume-chart', this.resumeChart);
+        
         this.chartInterval = setInterval(() => this.updateChart(), 100);
         this.$socket.emit('getSetPoint');
         this.stopwatch = new Stopwatch();
@@ -85,6 +76,14 @@ export default {
         setInterval(() => this.time = this.stopwatch.getTime(), 1000);
     },
     methods: {
+        pauseChart() {
+            clearInterval(this.chartInterval);
+            this.stopwatch.pause();
+        },
+        resumeChart() {
+            this.chartInterval = setInterval(() => this.updateChart(), 100);
+            this.stopwatch.start();
+        },
         updateChart() {
             let newLayout = {
                 xaxis: {
