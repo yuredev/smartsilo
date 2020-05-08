@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "dev": "nodemon ./index.js",
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "johnny-five": "^1.4.0",
+    "node-cmd": "^3.0.0",
+    "node-pid-controller": "^1.0.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  }
+}
