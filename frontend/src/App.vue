@@ -7,9 +7,6 @@
             :sideNavStyle="styles.sideNavStyle"
         />
         <Navbar @openNav="openNav(true)" @chartChange="currentChart = $event" />
-        <!-- <div id="main" :style="styles.mainContentStyle">
-      <Chart :type="currentChart" />
-        </div>-->
         <MainContent
             @setOptionDisabled="optionDisabled = $event"
             :mainStyle="styles.mainContentStyle"

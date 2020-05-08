@@ -26,10 +26,6 @@ console.log('Websocket funcionando na porta ' + 3000);
 
 startApplication();
 
-function sendImage(err, data) {
-    
-}
-
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();
@@ -38,7 +34,6 @@ function startApplication() {
         io.emit('newData', {type: 'Temperatura', value: getTemp()});
     }, 100);
     
-
     // arduino.pinMode(9, five.Pin.PWM);
     startControling('Malha aberta'); 
     io.on('connection', socket => {
@@ -47,8 +42,7 @@ function startApplication() {
     });
 }
 
-function startSocketListening(socket) {
-    socket.on('vueConnected', () => console.log('Cliente Vue conectado'));
+function startSocketListening(socket) {    
     socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
     socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
     socket.on('startExperiment', controlMode => startExperiment(controlMode));

@@ -86,6 +86,7 @@ export default {
             this.stopwatch.start();
         },
         updateChart() {
+            if (!this.$refs.chart) return;
             let newLayout = {
                 xaxis: {
                     showticklabels: false,
@@ -114,9 +115,6 @@ export default {
             if (this.type != 'Controle') {
                 this.setPointTemp = newSetPoint;
             }
-        },
-        connect() {
-            this.$socket.emit('vueConnected');
         },
         newData(newData) {
             // se o tipo de dado que chegar for do tipo que o gráfico está exibindo
