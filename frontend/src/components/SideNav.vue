@@ -6,7 +6,7 @@
         <img src="../assets/smart.png" alt="logo do sistema" id="logo">
       </div>
     </div>
-    <Forms @setControlMode="$emit('setControlMode', $event)" :optionDisabled="optionDisabled"/>
+    <Forms :optionDisabled="optionDisabled"/>
   </div>
 </template>
 

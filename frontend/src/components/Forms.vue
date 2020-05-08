@@ -39,10 +39,10 @@
 
 </template>
 
-
 <script>
 
 import { haveEqualItens } from '../utils/arrayCustomFunctions';
+import { eventBus } from '../eventBus';
 
 export default {
   data() {
@@ -89,7 +89,7 @@ export default {
     },
     setControlMode(controlMode) {
       this.currentControlMode = controlMode;
-      this.$emit('setControlMode', this.currentControlMode);
+      eventBus.$emit('set-control-mode', this.currentControlMode);
     }
   }
 }

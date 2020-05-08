@@ -1,7 +1,6 @@
 <template>
   <div>
     <SideNav  @closeNav="closeNav(true)" 
-              @setControlMode="currentControlMode = $event"
               :optionDisabled="optionDisabled" 
             :showHamburger="showHamburger" 
             :sideNavStyle="styles.sideNavStyle" />
@@ -23,6 +22,7 @@
 import Navbar from './components/Navbar';
 import SideNav from './components/SideNav';
 import MainContent from './components/MainContent'
+import { eventBus } from './eventBus';
 
 export default {
   components: {
@@ -54,6 +54,8 @@ export default {
     this.handleResize();
   },
   mounted() {
+    eventBus.$on('set-control-mode', ctrlMode => this.setControlMode(ctrlMode));
+
     if (this.screenWidth > 992) {
       this.showHamburger = false; 
       this.openNav();
@@ -62,6 +64,9 @@ export default {
     }
   },
   methods: {
+    setControlMode(newControlMode) {
+      this.currentControlMode = newControlMode;
+    },
     handleResize() {
       this.screenWidth = window.innerWidth;
       if (this.screenWidth > 992) {
