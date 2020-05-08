@@ -120,11 +120,11 @@ function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
     therm4 = {value: 0};
     therm5 = {value: 0};
 
-    setInterval(() => therm1.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm2.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm3.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm4.value = Math.round(Math.random() * 512 + 200), 500);
-    setInterval(() => therm5.value = Math.round(Math.random() * 512 + 200), 500);
+    setInterval(() => therm1.value = Math.round(Math.random() * 70 + 400), 500);
+    setInterval(() => therm2.value = Math.round(Math.random() * 70 + 400), 500);
+    setInterval(() => therm3.value = Math.round(Math.random() * 70 + 400), 500);
+    setInterval(() => therm4.value = Math.round(Math.random() * 70 + 400), 500);
+    setInterval(() => therm5.value = Math.round(Math.random() * 70 + 400), 500);
 
     console.log(`Canais setados: ${pins}`);
 }
