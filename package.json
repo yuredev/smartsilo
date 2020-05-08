@@ -4,7 +4,7 @@
   "description": "A Dashboard for intelligent aeration / drying instrumentation and control in grain storage silos in a IoT context. Developing as a university research project ",
   "main": "backend/server.js",
   "scripts": {
-    "start": "nodemon backend/server.js",
+    "start": "node backend/server.js",
     "dev": "nodemon backend/server.js"
   },
   "repository": {
