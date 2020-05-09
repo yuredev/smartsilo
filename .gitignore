@@ -1,7 +1,7 @@
 # ingore the node_modules directory
-node_modules
+backend/node_modules
 
 # ignore the experiments 
-experiments/data/*
+backend/experiments/data/*
 
-experiments/plots/*
+backend/experiments/plots/*
