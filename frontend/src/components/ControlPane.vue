@@ -21,16 +21,12 @@ export default {
     data() {
         return {
             buttonIsPaused: false,
-            hardwareIsBusy: false
-        }
-    },
-    props: {
-        currentControlMode: {
-            required: true,
-            type: String
+            hardwareIsBusy: false,
+            currentControlMode: 'Malha aberta'
         }
     },
     mounted() {
+        eventBus.$on('set-control-mode', this.setControlMode);
     },
     sockets: {
         connect() {
@@ -43,6 +39,9 @@ export default {
         }
     },
     methods: {
+        setControlMode(newControlMode) {
+            this.currentControlMode = newControlMode;
+        },
         pauseChart() {
             this.buttonIsPaused = true;
             eventBus.$emit('pause-chart');
@@ -53,13 +52,13 @@ export default {
         },
         startExperiment() {
             this.hardwareIsBusy = true;
-            this.$emit('setOptionDisabled', true);
+            eventBus.$emit('set-option-disabled', true);
             this.$socket.emit('startExperiment', this.currentControlMode);
         },
         stopExperiment() {
             this.hardwareIsBusy = false;
             this.$emit('showLoadingScreen');
-            this.$emit('setOptionDisabled', false);
+            eventBus.$emit('set-option-disabled', false);
             this.$socket.emit('stopExperiment');
         }
     }

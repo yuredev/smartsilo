@@ -13,9 +13,7 @@
                 <Chart v-show="currentChart == 'Temperatura'" type="Temperatura" :paused="chartIsPaused" key="chart1"/>
                 <Chart v-show="currentChart == 'Massa'" type="Massa" :paused="chartIsPaused" key="chart2" />
                 <ControlPane @pauseChart="pauseChart" 
-                            @setOptionDisabled="$emit('setOptionDisabled', $event)" 
                             @showLoadingScreen="showLoadingScreen = true"
-                            :currentControlMode="currentControlMode"
                             />
                 <Chart type="Controle" />
             </div>

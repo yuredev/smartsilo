@@ -8,7 +8,6 @@
         />
         <Navbar @openNav="openNav(true)" @chartChange="currentChart = $event" />
         <MainContent
-            @setOptionDisabled="optionDisabled = $event"
             :mainStyle="styles.mainContentStyle"
             :currentChart="currentChart"
             :currentControlMode="currentControlMode"
@@ -17,7 +16,7 @@
 </template>
 
 <script>
-// BOOTSTRAP SIZES
+
 // xs (for phones - screens less than 768px wide)
 // sm (for tablets - screens equal to or greater than 768px wide)
 // md (for small laptops - screens equal to or greater than 992px wide)
@@ -54,14 +53,11 @@ export default {
         };
     },
     created() {
-        window.addEventListener("resize", this.handleResize);
+        window.addEventListener('resize', this.handleResize);
         this.handleResize();
     },
     mounted() {
-        eventBus.$on("set-control-mode", ctrlMode =>
-            this.setControlMode(ctrlMode)
-        );
-
+        eventBus.$on('set-control-mode', this.setControlMode);
         if (this.screenWidth > 992) {
             this.showHamburger = false;
             this.openNav();

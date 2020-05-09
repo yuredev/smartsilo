@@ -11,7 +11,11 @@
         <div class="centralize-self">
 			<label for="controlMode">Modo de controle:</label>
 			<select name="controlMode" id="" :disabled="optionDisabled">
-				<option value="controlMode" v-for="(controlMode, index) of controlModes" :key="index" @click="setControlMode(controlMode)">
+				<option value="controlMode" 
+					v-for="(controlMode, index) of controlModes" 
+					:key="index" 
+					@click="setControlMode(controlMode)"
+				>
 					{{controlMode}}
 				</option>
 			</select>
@@ -58,6 +62,7 @@ export default {
 			pins: ['A0','A1','A2','A3','A4'],
 			currentControlMode: 'Malha aberta',
 			setPointTemp: undefined,
+			optionDisabled: false,
 			controlModes: [
 				'Malha aberta',
 				'PID',
@@ -65,18 +70,17 @@ export default {
 			]
 		}
 	},
-	props: {
-		optionDisabled: Boolean
-	},
 	mounted() {
 		this.$socket.emit('getSetPoint');
+        eventBus.$on('set-option-disabled',  this.switchSelectState);
 	},
-	sockets: {
+	methods: {
 		changeSetPoint(newSetPoint) {
 			this.setPointTemp = newSetPoint;
 		},
-	},
-	methods: {
+		switchSelectState(optionDisabled) {
+			this.optionDisabled = optionDisabled;
+		},
 		setPins() {
 			if (haveEqualItens(this.pins)) {
 				alert('Error, there are pins with equal values, each pin must have a different value');
