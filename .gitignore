@@ -1,12 +1,7 @@
 # ingore the node_modules directory
 node_modules
 
-# ignore the frontend node_modules directory 
-frontend/node_modules
-
-frontend/dist
-
 # ignore the experiments 
-experiments/*
+experiments/data/*
 
-# igore the .vscode directory
+experiments/plots/*
