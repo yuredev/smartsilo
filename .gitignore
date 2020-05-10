@@ -5,3 +5,5 @@ backend/node_modules
 backend/experiments/data/*
 
 backend/experiments/plots/*
+
+backend/experiments/currentPlot.png
