@@ -79,7 +79,7 @@ function switchOffController() {
 function octavePlot(fileName, socket) {
     cmd.get(`octave-cli ./experiments/octavePlot.m "${fileName}"`, (e, dt) => {
         if (!e) {
-            console.log('Gráfico gerado');
+            console.log('Chart ploted');
             fs.readFile('./experiments/currentPlot.png', (err, data) => {
                 if (err) throw err;
                 if (server) {
@@ -186,7 +186,7 @@ function setSetPoint(newSetPoint, socket) {
     setPoint = Number(newSetPoint); // garantir que será um número
     socket.emit('changeSetPoint', setPoint); // enviando para o cliente atual 
     socket.broadcast.emit('changeSetPoint', setPoint); // enviando o resto dos clientes
-    console.log(`Set point mudado para ${setPoint}`);
+    console.log(`Setpoint changed to: ${setPoint}`);
 }
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
@@ -194,7 +194,7 @@ function startSending(socket, clientId) {
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
     setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
 
-    console.log('Mandando dados para ' + clientId);
+    console.log('Sending data to ' + clientId);
     
     // passar o setPoint atual para o novo usuário conectado
     socket.emit('changeSetPoint', setPoint);
