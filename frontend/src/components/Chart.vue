@@ -21,6 +21,7 @@
 import { Plotly } from 'vue-plotly';
 import { eventBus } from '../eventBus';
 import Stopwatch from '../utils/Stopwatch';
+import getTracesConfig from '../utils/getTracesConfig';
 
 export default {
     components: {
@@ -36,16 +37,18 @@ export default {
             setPointMass: undefined,
             x: 0,
             value: 0,
-            data: [{
-                y: [],
-                type:"line",
-            }],
+            data: [],
             layout: {
+                font: {
+                    family: 'Helvetica',
+                    size: 18,
+                    color: 'rgb(240,240,240)'
+                },
                 height: 235,
                 autosize: true,
                 margin: { b: 50, t: 10 },
                 plot_bgcolor:"rgb(37,42,63)",
-                paper_bgcolor:"rgb(37,42,63)"
+                paper_bgcolor:"rgb(37,42,63)",
             }
         }
     },
@@ -56,16 +59,7 @@ export default {
         }
     },
     created() {
-        if (this.type != 'Control') {
-            this.data.push({
-                y: [],
-                type:"line",
-                line: {
-                    color: '#13c570',
-                    width: 3
-                }
-            })
-        }
+        this.data = getTracesConfig(this.type);
     },
     mounted() {
         eventBus.$on('pause-chart', this.pauseChart);
