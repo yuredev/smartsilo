@@ -1,10 +1,10 @@
 const http = require('http');
 const io = require('socket.io')(http);
 const five = require('johnny-five');
-const cmd = require('node-cmd');
+const { run: cmdRun, get: cmdGet} = require('node-cmd');
 const Controller = require('node-pid-controller');
-const fs = require('fs');
 const { promisify } = require('util');
+const readFile =  promisify(require('fs').readFile);
 
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
@@ -79,10 +79,7 @@ function switchOffController() {
 
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 async function octavePlot(fileName, socket) {
-    const cmdRun = promisify(cmd.get);
-    const readFile = promisify(fs.readFile);
-
-    await cmdRun(`octave-cli ./experiments/octavePlot.m "${fileName}"`);
+    await cmdGet(`octave-cli ./experiments/octavePlot.m "${fileName}"`);
 
     const file = await readFile('./experiments/currentPlot.png');
 
@@ -125,7 +122,7 @@ function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
 // começa a salvar em arquivo txt 
 function startSaving(nomeArq) {
     savingInterval = setInterval(() => {
-        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/data/${nomeArq}.txt`);
+        cmdRun(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/data/${nomeArq}.txt`);
     }, 250);
 }
 // começa a controlar o secador de grãos a partir do modo passado 
