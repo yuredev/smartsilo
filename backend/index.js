@@ -76,28 +76,25 @@ function switchOffController() {
     clearInterval(offControling);
     offControling(offControlValue);
 }
-// interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
-function octavePlot(fileName, socket) {
 
+// interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
+async function octavePlot(fileName, socket) {
     const cmdRun = promisify(cmd.get);
     const readFile = promisify(fs.readFile);
 
-    cmdRun(`octave-cli ./experiments/octavePlot.m "${fileName}"`)
-        .then((e, dt) => {
-            const file = readFile('./experiments/currentPlot.png');
-            return file;
-        })
-        .then(file => {
-            if (server) {
-                server.close(); 
-            }
-            server = http.createServer( (req, res)  => {
-                res.writeHead(200, {'Content-Type': 'image/jpeg'});
-                res.end(file); 
-            }).listen(8124);
-            socket.emit('chartReady');
-            console.log('The chart can be accessed in: http://localhost:8124/');
-        });
+    await cmdRun(`octave-cli ./experiments/octavePlot.m "${fileName}"`);
+
+    const file = await readFile('./experiments/currentPlot.png');
+
+    if (server) server.close();
+    
+    server = server = http.createServer((req, res) => {
+        res.writeHead(200, {'Content-Type': 'image/jpeg'});
+        res.end(file); 
+    }).listen(8124);
+    
+    socket.emit('chartReady');
+    console.log('The chart can be accessed in: http://localhost:8124/');
 }
 
 // função para setar novos canais no Arduino 
