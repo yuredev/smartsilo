@@ -70,14 +70,13 @@ export default {
 			]
 		}
 	},
-	mounted() {
-		this.$socket.emit('getSetPoint');
+	created() {
         eventBus.$on('set-option-disabled',  this.switchSelectState);
 	},
+	mounted() {
+		this.$socket.emit('getSetPoint');
+	},
 	methods: {
-		changeSetPoint(newSetPoint) {
-			this.setPointTemp = newSetPoint;
-		},
 		switchSelectState(optionDisabled) {
 			this.optionDisabled = optionDisabled;
 		},
@@ -103,6 +102,11 @@ export default {
 			this.currentControlMode = controlMode;
 			eventBus.$emit('set-control-mode', this.currentControlMode);
 		}
+	},
+	sockets: {
+		changeSetPoint(newSetPoint) {
+			this.setPointTemp = newSetPoint;
+		},
 	}
 }
 </script>
