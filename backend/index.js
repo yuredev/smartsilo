@@ -39,9 +39,9 @@ function startApplication() {
 }
 
 function startSocketListening(socket) {    
-    socket.on('setPins', pins => setPins(pins));      // mudar os canais do Arduino 
+    socket.on('setPins', setPins);      // mudar os canais do Arduino 
     socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
-    socket.on('startExperiment', controlMode => startExperiment(controlMode));
+    socket.on('startExperiment', startExperiment);
     socket.on('stopExperiment', () => stopExperiment(socket));
     socket.on('switchOffController', () => switchOffController());
     socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
@@ -86,8 +86,8 @@ function octavePlot(fileName, socket) {
                     server.close(); 
                 }
                 server = http.createServer( (req, res)  => {
-                  res.writeHead(200, {'Content-Type': 'image/jpeg'});
-                  res.end(data); 
+                    res.writeHead(200, {'Content-Type': 'image/jpeg'});
+                    res.end(data); 
                 }).listen(8124);
                 console.log('The chart can be accessed in: http://localhost:8124/');
                 socket.emit('chartReady');
@@ -97,7 +97,6 @@ function octavePlot(fileName, socket) {
         }
     });
 }
-
 
 // função para setar novos canais no Arduino 
 function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
@@ -124,7 +123,7 @@ function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
 
     console.log(`Canais setados: ${pins}`);
 }
-// comecça a salvar em arquivo txt 
+// começa a salvar em arquivo txt 
 function startSaving(nomeArq) {
     savingInterval = setInterval(() => {
         cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/data/${nomeArq}.txt`);
@@ -138,7 +137,7 @@ function startControling(mode) {
         case 'Malha aberta': offControling(0); break; // controle desligado, valor constante de 3v
     }
 }
-// controle desligado, valor constante de 3v
+// controle por malha aberta 
 function offControling(value) {
     u = scale(value);
 
