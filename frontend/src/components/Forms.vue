@@ -113,58 +113,47 @@ export default {
 		flex-direction: row;
 		justify-content: space-around;
 	}
-	
 	#buttonOk{
 		display: flex;
 		justify-content: center;
 		width: 30px;
 		margin-left: 1px;
 	}
-
 	.formsDiv{
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 	}
-
 	label, h2{
 		font-size: 1.0rem;
 	}
-
 	.centralize-self{
 		display: flex;
 		flex-direction: column;
 		align-self: center;
 	}
-
 	input, select{
 		width: 190px;
 		border-width: 1px;
 	}
-
 	input#setPoint{
 		width: 156px;
 		text-align: right;
 	}
-
 	select#pin{
 		width: 167px;
 	}
-
 	.formsArea {
 		background-color: #00000021;
 		display: flex;
 		flex-direction: column;
 	}
-
 	.formsArea * {
 		margin-bottom: 5px;
 	}
-
 	.formsArea > * {
 		margin-left: 4px;
 	}
-
 	.radioButtonDiv{
 		display: flex;
 		flex-direction: row;

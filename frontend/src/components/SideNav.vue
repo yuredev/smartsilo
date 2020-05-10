@@ -49,7 +49,6 @@ export default {
 	.sidenav > * {
 		margin: 0px 15px 4px 15px;
 	}
-  
 	.sidenav {
 		display: flex;
 		flex-direction: column;
@@ -65,18 +64,15 @@ export default {
 		overflow-x: hidden;
 		transition: 0.15s;
 	}
-
 	#hamburger{
 		font-size: 28px;
 		cursor:pointer; 
 		color: #f7f7f7;
 	}
-
 	#logo{
 		width: 180px;
 		margin-top: 5px;
 		margin-bottom: 50px;
 		margin-left: 17px;
 	}
-  
 </style>

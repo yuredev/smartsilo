@@ -28,16 +28,6 @@ export default {
     mounted() {
         eventBus.$on('set-control-mode', this.setControlMode);
     },
-    sockets: {
-        connect() {
-            // assim que a conexão websocket com o servidor for concluída é preciso obter o estado do secador
-            // para saber se ele está ou não ocupado
-            this.$socket.emit('getHardwareState');
-        },
-        setHardwareState(hardwareIsBusy) {
-            this.hardwareIsBusy = hardwareIsBusy;
-        }
-    },
     methods: {
         setControlMode(newControlMode) {
             this.currentControlMode = newControlMode;
@@ -61,7 +51,17 @@ export default {
             eventBus.$emit('set-option-disabled', false);
             this.$socket.emit('stopExperiment');
         }
-    }
+    },
+    sockets: {
+        connect() {
+            // assim que a conexão websocket com o servidor for concluída é preciso obter o estado do secador
+            // para saber se ele está ou não ocupado
+            this.$socket.emit('getHardwareState');
+        },
+        setHardwareState(hardwareIsBusy) {
+            this.hardwareIsBusy = hardwareIsBusy;
+        }
+    },
 }
 </script>
 
@@ -87,21 +87,18 @@ export default {
     .checkDiv{
         user-select: none;
     }
-
     @media screen and (max-width: 992px){
         .controlPane > * {
             margin-left: 15px;
             margin-right: 15px;
         }
     } 
-
     @media screen and (min-width: 992px){
         .controlPane > * {
             margin-left: 50px;
             margin-right: 50px;
         }
     } 
-    
     .controlPane{
         margin-top: 4px;
         margin-bottom: 4px;

@@ -17,10 +17,10 @@
 
 <script>
 
-// xs (for phones - screens less than 768px wide)
-// sm (for tablets - screens equal to or greater than 768px wide)
-// md (for small laptops - screens equal to or greater than 992px wide)
-// lg (for laptops and desktops - screens equal to or greater than 1200px wide)
+// (for phones - screens less than 768px wide)
+// (for tablets - screens equal to or greater than 768px wide)
+// (for small laptops - screens equal to or greater than 992px wide)
+// (for laptops and desktops - screens equal to or greater than 1200px wide)
 
 import Navbar from "./components/Navbar";
 import SideNav from "./components/SideNav";
@@ -29,7 +29,6 @@ import { eventBus } from "./eventBus";
 
 export default {
     components: {
-        // Chart,
         MainContent,
         Navbar,
         SideNav

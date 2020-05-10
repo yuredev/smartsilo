@@ -28,6 +28,9 @@ import ControlPane from './ControlPane';
 import chartImage from '../assets/chart.png';
 
 export default {
+    components: {
+        Chart, ControlPane
+    },
     data() {
         return {
             chartImage,
@@ -49,9 +52,6 @@ export default {
             type: Object,
             required: true
         }
-    },
-    components: {
-        Chart, ControlPane
     },
     methods: {
         getPlotUrl() {
@@ -75,50 +75,44 @@ export default {
 </script>
 
 <style scoped>
-
-button{
-    background-color: rgb(37,42,63);
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgba(240, 248, 255, 0.226);
-    box-shadow: 0 0 0.1em rgba(240, 248, 255, 0.226);
-    font-size: 0.95rem;
-    color: #DDDDDD;
-    font-family: Helvetica, sans-serif;
-}
-button:hover{
-    transform: scale(1.02);
-    color: #FDFDFD;
-}
-
-.chartArea{
-    border-radius: 7px;
-    padding: 10px 0px 10px 0px;
-    background-color: rgb(37,42,63);
-}
-
-.centralize-content{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-#chartResult{
-    max-width: 750px;
-    width: 80%;
-    margin-bottom: 5px;
-}
-
-#main {
-    transition: margin-left .5s;
-    margin: 0px;
-    border: 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding: 14px;
-    background-color: #202537;
-}
-
+    button{
+        background-color: rgb(37,42,63);
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgba(240, 248, 255, 0.226);
+        box-shadow: 0 0 0.1em rgba(240, 248, 255, 0.226);
+        font-size: 0.95rem;
+        color: #DDDDDD;
+        font-family: Helvetica, sans-serif;
+    }
+    button:hover{
+        transform: scale(1.02);
+        color: #FDFDFD;
+    }
+    .chartArea{
+        border-radius: 7px;
+        padding: 10px 0px 10px 0px;
+        background-color: rgb(37,42,63);
+    }
+    .centralize-content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #chartResult{
+        max-width: 750px;
+        width: 80%;
+        margin-bottom: 5px;
+    }
+    #main {
+        transition: margin-left .5s;
+        margin: 0px;
+        border: 0px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding: 14px;
+        background-color: #202537;
+    }
 </style>

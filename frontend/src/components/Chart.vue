@@ -23,6 +23,9 @@ import { eventBus } from '../eventBus';
 import Stopwatch from '../utils/Stopwatch';
 
 export default {
+    components: {
+        Plotly
+    },
     data() {
         return {
             stopwatch: undefined,
@@ -45,9 +48,6 @@ export default {
                 paper_bgcolor:"rgb(37,42,63)"
             }
         }
-    },
-    components: {
-        Plotly
     },
     props: {
         type: {
@@ -131,7 +131,6 @@ export default {
     h2{
         font-size: 1.3rem;
     }
-
     .color{
         background-color: rgb(37,42,63);
     }

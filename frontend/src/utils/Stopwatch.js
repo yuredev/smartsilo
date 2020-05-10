@@ -1,24 +1,27 @@
-export default class {
+class Stopwatch{
+    /**
+     * Class to create objects that represents a stopwatch to count time and display it
+     */
     constructor() {
         this.days = 0;
         this.hours = 0;
         this.minutes = 0;
         this.seconds = 0;
     }
-    formatTimeToShow(time) {
-        time = String(time);
-        if (time.length == 1) {
-            time = '0' + time;
-        }
-        return time;
-    }
+    /**
+     * function to get the current time of the stopwatch 
+     * @returns {String} a string that displays the current time 
+     */
     getTime() {
-        this.time = `${this.hours > 0 ? this.formatTimeToShow(this.hours)+':' : ''}${this.formatTimeToShow(this.minutes)}:${this.formatTimeToShow(this.seconds)}`;        
+        this.time = `${this.hours > 0 ? formatTime(this.hours)+':' : ''}${formatTime(this.minutes)}:${formatTime(this.seconds)}`;        
         if (this.days > 0) {
             this.time = `${this.days} days, ${this.hours} hours and ${this.minutes} minutes`;
         }
         return this.time;
     }
+    /**
+     * Make the stopwatch starts to count
+     */
     start() {
         this.stopwatch = setInterval(() => {
             if (++this.seconds == 60) {
@@ -35,6 +38,9 @@ export default class {
             }
         }, 1000);
     }
+    /**
+     * stop and reset to 0 the time of the stopwatch
+     */
     stop() {
         this.days = 0;
         this.hours = 0;
@@ -42,7 +48,24 @@ export default class {
         this.seconds = 0;
         this.pause();
     }
+    /**
+     * pauses the stopwatch counting
+     */
     pause() {
         clearInterval(this.stopwatch);
     }
 }
+
+/**
+ * complements a number less than 10 with a zero left 
+ * @param {String || Number} time the number that maybe have to complemented with a zero left  
+ */
+function formatTime(time) {
+    time = String(time);
+    if (time.length == 1) {
+        time = '0' + time;
+    }
+    return time;
+}
+
+export default Stopwatch;
