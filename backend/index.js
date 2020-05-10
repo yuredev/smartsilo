@@ -4,7 +4,7 @@ const five = require('johnny-five');
 const cmd = require('node-cmd');
 const Controller = require('node-pid-controller');
 const fs = require('fs');
-const util = require('util');
+const { promisify } = require('util');
 
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
@@ -79,8 +79,8 @@ function switchOffController() {
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 function octavePlot(fileName, socket) {
 
-    const cmdRun = util.promisify(cmd.get);
-    const readFile = util.promisify(fs.readFile);
+    const cmdRun = promisify(cmd.get);
+    const readFile = promisify(fs.readFile);
 
     cmdRun(`octave-cli ./experiments/octavePlot.m "${fileName}"`)
         .then((e, dt) => {
@@ -97,29 +97,7 @@ function octavePlot(fileName, socket) {
             }).listen(8124);
             socket.emit('chartReady');
             console.log('The chart can be accessed in: http://localhost:8124/');
-        })
-        // .then(() => {
-        // })
-        
-    // cmd.get(`octave-cli ./experiments/octavePlot.m "${fileName}"`, (e, dt) => {
-    //     if (!e) {
-    //         console.log('Chart ploted');
-            // fs.readFile('./experiments/currentPlot.png', (err, data) => {
-            //     if (err) throw err;
-            //     if (server) {
-            //         server.close(); 
-            //     }
-            //     server = http.createServer( (req, res)  => {
-            //         res.writeHead(200, {'Content-Type': 'image/jpeg'});
-            //         res.end(data); 
-            //     }).listen(8124);
-            //     console.log('The chart can be accessed in: http://localhost:8124/');
-            //     socket.emit('chartReady');
-            // });
-    //     } else {
-    //         console.log(e);
-    //     }
-    // });
+        });
 }
 
 // função para setar novos canais no Arduino 
