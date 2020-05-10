@@ -1,6 +1,5 @@
 /**
  * function to get traces configuration of a chart
- * 
  * @param {type} type the chart type to determinate the traces config
  * @returns {Array} returns the traces config of a chart 
  */
