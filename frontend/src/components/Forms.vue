@@ -9,7 +9,7 @@
 			</div>
         </div>
         <div class="centralize-self">
-			<label for="controlMode">Modo de controle:</label>
+			<label for="controlMode">Control Mode:</label>
 			<select name="controlMode" id="" :disabled="optionDisabled">
 				<option value="controlMode" 
 					v-for="(controlMode, index) of controlModes" 
@@ -20,7 +20,7 @@
 				</option>
 			</select>
         </div>
-		<div class="radioButtonDiv" v-show="currentControlMode == 'Malha aberta'">
+		<div class="radioButtonDiv" v-show="currentControlMode == 'Open loop'">
 			<input type="radio" name="voltageRadioBtn" id="voltage0v">
 			<label for="voltage0v">0v</label> 
 			<input type="radio" name="voltageRadioBtn" id="voltage3v">
@@ -29,7 +29,7 @@
 	</div>
 		<div class="formsArea" style="margin-top: 40px;">
 			<div class="centralize-self" style="margin-top: 10px">
-				<label for="pin">Canais</label>
+				<label for="pin">Pins:</label>
 				<div v-for="pin of 5" :key="pin">  
 					<label for="">{{pin}}° </label>
 					<select name="" id="pin">
@@ -44,7 +44,7 @@
 					</select>
 				</div>
 				<button @click="setPins">
-					Setar canais
+					Set Pins
 				</button>
 			</div>
 		</div>
@@ -60,11 +60,11 @@ export default {
 	data() {
 		return {
 			pins: ['A0','A1','A2','A3','A4'],
-			currentControlMode: 'Malha aberta',
+			currentControlMode: 'Open loop',
 			setPointTemp: undefined,
 			optionDisabled: false,
 			controlModes: [
-				'Malha aberta',
+				'Open loop',
 				'PID',
 				'ON/OFF'
 			]

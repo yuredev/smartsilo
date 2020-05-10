@@ -3,13 +3,13 @@
         <h2 class="centralizeSelf">{{type}}</h2>
         <Plotly :data="data" :layout="layout" :display-mode-bar="false" ref="chart" />
         <div class="no-user-select" id="info">
-            <span v-if="type != 'Controle'" id="stopwatch">
+            <span v-if="type != 'Control'" id="stopwatch">
                 elapsed time: {{time}}
             </span>
             <div class="centralizeSelf" id="value-div">
                 <span>{{value.toFixed(2)}}</span>
-                <span v-if="type == 'Temperatura'">°C</span>
-                <span v-else-if="type == 'Massa'">g</span>
+                <span v-if="type == 'Temperature'">°C</span>
+                <span v-else-if="type == 'Mass'">g</span>
                 <span v-else>v</span>
             </div>
         </div>
@@ -56,7 +56,7 @@ export default {
         }
     },
     created() {
-        if (this.type != 'Controle') {
+        if (this.type != 'Control') {
             this.data.push({
                 y: [],
                 type:"line",
@@ -94,15 +94,15 @@ export default {
                 },
             }
             switch (this.type) {
-                case 'Controle':
+                case 'Control':
                     this.$refs.chart.extendTraces({ y: [[this.value]] }, [0]);
                     newLayout.yaxis = { range: [0, 5] }
                     break;
-                case 'Temperatura': 
+                case 'Temperature': 
                     this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointTemp]] }, [0, 1]);
                     newLayout.yaxis = { range: [0, 45] }
                     break;
-                case 'Massa': 
+                case 'Mass': 
                     this.$refs.chart.extendTraces({ y: [[this.value], [this.setPointMass]] }, [0, 1]);
                     newLayout.yaxis = { range: [0, 1] }
             }
@@ -112,7 +112,7 @@ export default {
     },
     sockets: {
         changeSetPoint(newSetPoint) {
-            if (this.type != 'Controle') {
+            if (this.type != 'Control') {
                 this.setPointTemp = newSetPoint;
             }
         },

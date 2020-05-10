@@ -31,7 +31,7 @@ function startApplication() {
     setPins();
  
     // arduino.pinMode(9, five.Pin.PWM);
-    startControling('Malha aberta'); 
+    startControling('Open loop'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
         startSocketListening(socket);
@@ -66,7 +66,7 @@ function stopExperiment(socket) {
     clearInterval(onOffInterval);
     clearInterval(pidInterval);
     clearInterval(savingInterval);
-    startControling('Malha aberta');
+    startControling('Open loop');
     octavePlot(fileName, socket);
 }
 // mudar voltagem de 0 a 3 para malha aberta 
@@ -121,7 +121,7 @@ function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
     setInterval(() => therm4.value = Math.round(Math.random() * 70 + 400), 500);
     setInterval(() => therm5.value = Math.round(Math.random() * 70 + 400), 500);
 
-    console.log(`Canais setados: ${pins}`);
+    console.log(`Pins setted: ${pins}`);
 }
 // começa a salvar em arquivo txt 
 function startSaving(nomeArq) {
@@ -134,7 +134,7 @@ function startControling(mode) {
     switch (mode) {
         case 'PID': pidControling(); break;       // controle por pid
         case 'ON/OFF': onOffControling(); break;  // controle por liga/desliga
-        case 'Malha aberta': offControling(0); break; // controle desligado, valor constante de 3v
+        case 'Open loop': offControling(0); break; // controle desligado, valor constante de 3v
     }
 }
 // controle por malha aberta 
@@ -192,7 +192,7 @@ function setSetPoint(newSetPoint, socket) {
 function startSending(socket, clientId) {
 
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
-    setInterval(() => socket.emit('newData', { type: 'Controle', value: scale(u, 'to [0,5]') }), 500);
+    setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
 
     console.log('Mandando dados para ' + clientId);
     
@@ -206,8 +206,8 @@ function startSending(socket, clientId) {
     // tempSend(socket, therm4, 'newTemperature4');
     // tempSend(socket, therm5, 'newTemperature5');
     setInterval(() => {
-        socket.emit('newData', {type: 'Temperatura', value: getTemp()});
-        socket.emit('newData', {type: 'Massa', value: Math.random() * 1});
+        socket.emit('newData', {type: 'Temperature', value: getTemp()});
+        socket.emit('newData', {type: 'Mass', value: Math.random() * 1});
     }, 500);
 }
 // faz os dados de um termistor começarem a ser mandados pros clientes via socket.io

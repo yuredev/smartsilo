@@ -36,8 +36,8 @@ export default {
     data() {
         return {
             optionDisabled: false,
-            currentControlMode: "Malha aberta",
-            currentChart: "Temperatura",
+            currentControlMode: "Open loop",
+            currentChart: "Temperature",
             showHamburger: false,
             openNavButtonState: undefined,
             screenWidth: undefined,

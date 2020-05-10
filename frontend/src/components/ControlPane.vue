@@ -6,7 +6,7 @@
         </div>
         <button @click="resumeChart" v-if="buttonIsPaused">resume</button>
         <button v-else @click="pauseChart">pause</button>
-        <div v-show="currentControlMode != 'Malha aberta'">
+        <div v-show="currentControlMode != 'Open loop'">
             <button @click="stopExperiment" v-if="hardwareIsBusy" >stop acquisition</button>
             <button @click="startExperiment" v-else>start acquisition</button>
         </div>
@@ -22,7 +22,7 @@ export default {
         return {
             buttonIsPaused: false,
             hardwareIsBusy: false,
-            currentControlMode: 'Malha aberta'
+            currentControlMode: 'Open loop'
         }
     },
     mounted() {
