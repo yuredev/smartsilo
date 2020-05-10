@@ -6,4 +6,4 @@ backend/experiments/data/*
 
 backend/experiments/plots/*
 
-backend/experiments/currentPlot.png
+backend/experiments/*.png
