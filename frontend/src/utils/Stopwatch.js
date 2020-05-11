@@ -59,6 +59,7 @@ class Stopwatch{
 /**
  * complements a number less than 10 with a zero left 
  * @param {String || Number} time the number that maybe have to complemented with a zero left  
+ * @returns {String} returns the formated time string
  */
 function formatTime(time) {
     time = String(time);
