@@ -82,7 +82,7 @@ async function octavePlot(fileName, socket) {
     const cmdGet = promisify(cmd.get);
     const readFile =  promisify(fs.readFile);
     
-    await cmdGet(`octave-cli ./experiments/octavePlot.m "${fileName}"`);
+    await cmdGet(`octave-cli ./src/octavePlot.m "${fileName}"`);
 
     const file = await readFile('./experiments/currentPlot.png');
 

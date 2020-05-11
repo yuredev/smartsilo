@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "nodemon ./index.js",
-    "start": "node ./index.js"
+    "dev": "nodemon ./src",
+    "start": "node ./src"
   },
   "dependencies": {
     "johnny-five": "^1.4.0",

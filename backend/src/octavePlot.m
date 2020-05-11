@@ -3,7 +3,7 @@ args = argv();
 txtName = [args{1} ".txt"];
 imgName = [args{1} ".png"];
 
-x = load(["experiments/data/" txtName]);
+x = load(["./experiments/data/" txtName]);
 
 freq = 0.25;
 nSamples = length(x(:,1));
@@ -23,11 +23,10 @@ xlabel('Tempo');
 ylabel('oC');
 
 print('./experiments/currentPlot.png', '-dpng');
-% print('./frontend/src/assets/chart.png', '-dpng'); 
 
 % para Linux
-system(["cp experiments/currentPlot.png " "experiments/plots/" imgName]);
+system(["cp ./experiments/currentPlot.png " "./experiments/plots/" imgName]);
 % para Windows
-system(["copy experiments\\currentPlot.png " "experiments\\plots\\" imgName]);
+system(["copy .\\experiments\\currentPlot.png " ".\\experiments\\plots\\" imgName]);
     
 close(fh); % destruir janela

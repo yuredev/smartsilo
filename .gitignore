@@ -1,9 +1,0 @@
-# ingore the node_modules directory
-backend/node_modules
-
-# ignore the experiments 
-backend/experiments/data/*
-
-backend/experiments/plots/*
-
-backend/experiments/*.png
