@@ -1,18 +1,18 @@
+const { Sensor, Pin, Board } = require('johnny-five');
 const http = require('http');
 const io = require('socket.io')(http);
-const five = require('johnny-five');
-const { run: cmdRun, get: cmdGet} = require('node-cmd');
 const Controller = require('node-pid-controller');
 const { promisify } = require('util');
-const readFile =  promisify(require('fs').readFile);
+const fs = require('fs');
+const cmd = require('node-cmd');
 
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
-// const arduino = new five.Board({ port: '/dev/ttyACM0' });
+// const arduino = new Board({ port: '/dev/ttyACM0' });
 
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
-let therm1, therm2, therm3, therm4, therm5;  // sensores 
+let therms = [];  // sensores 
 let pidInterval, onOffInterval, offInterval, savingInterval; // será usado para armazenar os setIntervals 
 let offControlValue = 0;
 let fileName;
@@ -31,7 +31,7 @@ startApplication();
 function startApplication() {
     setPins();
  
-    // arduino.pinMode(9, five.Pin.PWM);
+    // arduino.pinMode(9, Pin.PWM);
     startControling('Open loop'); 
     io.on('connection', socket => {
         startSending(socket, socket.id);               // começa a mandar os dados para os clientes
@@ -79,6 +79,9 @@ function switchOffController() {
 
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 async function octavePlot(fileName, socket) {
+    const cmdGet = promisify(cmd.get);
+    const readFile =  promisify(fs.readFile);
+    
     await cmdGet(`octave-cli ./experiments/octavePlot.m "${fileName}"`);
 
     const file = await readFile('./experiments/currentPlot.png');
@@ -98,31 +101,29 @@ async function octavePlot(fileName, socket) {
 function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
     
     // descomentar depois
-    // therm1 = new five.Sensor({ pin: pins[0], freq: 100 });
-    // therm2 = new five.Sensor({ pin: pins[1], freq: 100 });
-    // therm3 = new five.Sensor({ pin: pins[2], freq: 100 });
-    // therm4 = new five.Sensor({ pin: pins[3], freq: 100 });
-    // therm5 = new five.Sensor({ pin: pins[4], freq: 100 });
+    // therm1 = new Sensor({ pin: pins[0], freq: 100 });
+    // therm2 = new Sensor({ pin: pins[1], freq: 100 });
+    // therm3 = new Sensor({ pin: pins[2], freq: 100 });
+    // therm4 = new Sensor({ pin: pins[3], freq: 100 });
+    // therm5 = new Sensor({ pin: pins[4], freq: 100 });
 
     // comentar depois 
-    therm1 = {value: 0};
-    therm2 = {value: 0};
-    therm3 = {value: 0};
-    therm4 = {value: 0};
-    therm5 = {value: 0};
+    therms[0] = {value: 0};
+    therms[1] = {value: 0};
+    therms[2] = {value: 0};
+    therms[3] = {value: 0};
+    therms[4] = {value: 0};
 
-    setInterval(() => therm1.value = Math.round(Math.random() * 70 + 400), 500);
-    setInterval(() => therm2.value = Math.round(Math.random() * 70 + 400), 500);
-    setInterval(() => therm3.value = Math.round(Math.random() * 70 + 400), 500);
-    setInterval(() => therm4.value = Math.round(Math.random() * 70 + 400), 500);
-    setInterval(() => therm5.value = Math.round(Math.random() * 70 + 400), 500);
+    therms.forEach(therm => {
+        setInterval(() => therm.value = Math.round(Math.random() * 70 + 400), 500);
+    });
 
     console.log(`Pins setted: ${pins}`);
 }
 // começa a salvar em arquivo txt 
 function startSaving(nomeArq) {
     savingInterval = setInterval(() => {
-        cmdRun(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/data/${nomeArq}.txt`);
+        cmd.run(`echo ${getTemp()},${scale(u, 'to [0,5]')},${e},${setPoint} >> experiments/data/${nomeArq}.txt`);
     }, 250);
 }
 // começa a controlar o secador de grãos a partir do modo passado 
@@ -171,11 +172,14 @@ function pidControling() {
         // arduino.analogWrite(9, u);
     }, 100);
 }
-// retorna a temperatura media
-function getTemp() {
-    return ((toCelsius(therm1.value) + toCelsius(therm2.value) +
-        toCelsius(therm3.value) + toCelsius(therm4.value) + toCelsius(therm5.value)) / 5);
-}
+
+// returns the average temp of the therms array
+const getTemp = () => {
+    const sumTemps = (total, el) => total + toCelsius(el.value);
+    const averageTemp = therms.reduce(sumTemps, 0) / 5;
+    return averageTemp;
+};
+
 // mudar o setPoint 
 function setSetPoint(newSetPoint, socket) {
     console.log(newSetPoint);
@@ -194,13 +198,7 @@ function startSending(socket, clientId) {
     
     // passar o setPoint atual para o novo usuário conectado
     socket.emit('changeSetPoint', setPoint);
-    // quando receber um novo setPoint é necessário mandar o novo set para todos os clientes 
 
-    // tempSend(socket, therm1, 'newTemperature1');
-    // tempSend(socket, therm2, 'newTemperature2');
-    // tempSend(socket, therm3, 'newTemperature3');
-    // tempSend(socket, therm4, 'newTemperature4');
-    // tempSend(socket, therm5, 'newTemperature5');
     setInterval(() => {
         socket.emit('newData', {type: 'Temperature', value: getTemp()});
         socket.emit('newData', {type: 'Mass', value: Math.random() * 1});
