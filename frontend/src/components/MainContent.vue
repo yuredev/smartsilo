@@ -25,7 +25,6 @@
 
 import Chart from './Chart';
 import ControlPane from './ControlPane';
-import chartImage from '../assets/chart.png';
 
 export default {
     components: {
@@ -33,7 +32,6 @@ export default {
     },
     data() {
         return {
-            chartImage,
             showChart: false,
             chartIsPaused: false,
             showLoadingScreen: false
