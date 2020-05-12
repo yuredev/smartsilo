@@ -55,6 +55,7 @@
 
 import { haveEqualItens } from '../utils/arrayCustomFunctions';
 import { eventBus } from '../eventBus';
+import serverHandler from '../services/serverHandler';
 
 export default {
 	data() {
@@ -84,8 +85,9 @@ export default {
 			if (haveEqualItens(this.pins)) {
 				alert('Error, there are pins with equal values, each pin must have a different value');
 			} else {
-				alert('Pins successfully exchanged');
-				this.$socket.emit('setPins', this.pins);
+				serverHandler.post('/pins', {
+					pins: this.pins
+				}).then(() => alert('Pins successfully exchanged'));
 			}
 		},
 		addPin(pin, value) {

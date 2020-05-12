@@ -13,18 +13,21 @@ const cors = require('cors');
 const httpPort = 8124;
 
 routes.get('/', async (req, res) => {
-    const readFile =  promisify(fs.readFile);
+    const readFile = promisify(fs.readFile);
     file = await readFile('./experiments/currentPlot.png');
     res.writeHead(200, {'Content-Type': 'image/jpeg'});
     res.end(file); 
 });
 
-app.listen(httpPort, () => console.log('Listening at ' + httpPort));
+routes.post('/pins', (req, res) => {
+    setPins(req.body.pins);
+    res.sendStatus(201);
+});
 
 app.use(cors());
 app.use(express.json());
 app.use(routes);
-
+app.listen(httpPort);
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
 // const arduino = new Board({ port: '/dev/ttyACM0' });
@@ -61,7 +64,6 @@ function startApplication() {
 }
 
 function startSocketListening(socket) {    
-    socket.on('setPins', setPins);      // mudar os canais do Arduino 
     socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
     socket.on('startExperiment', startExperiment);
     socket.on('stopExperiment', () => stopExperiment(socket));
