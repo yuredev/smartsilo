@@ -1,4 +1,6 @@
-2 create functionalities to change PID consts 
-3 create a gif to put on readme
-4 reintegrate express and separate routes <<
-5 fix the opeen loop options 0v and 3v
+create functionalities to change PID consts 
+translate socket messages to post requests
+create a gif to put on readme
+separate routes of express 
+fix the opeen loop options 0v and 3v
+create functionalitie to hide the control chart 
