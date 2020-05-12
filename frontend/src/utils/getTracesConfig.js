@@ -34,7 +34,7 @@ function getTracesConfig(type) {
                 {
                     y: [],
                     type:"line",
-                    name: 'setpoint',
+                    name: 'Setpoint',
                     line: {
                         color: '#0add77',
                         width: 3
@@ -57,7 +57,7 @@ function getTracesConfig(type) {
                     y: [],
                     type:"line",
                     fill: 'tonexty',
-                    name: 'setpoint',
+                    name: 'Setpoint',
                     line: {
                         color: '#0aec5a',
                         width: 3
