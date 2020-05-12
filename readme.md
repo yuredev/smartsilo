@@ -39,7 +39,7 @@
     style="display: flex; flex-wrap: wrap; margin: auto"
 >
     <img src="./readme/screenshot.png" width="65%" style="margin:10px">
-    <img src="./readme/dryer.png" width="25%" style="margin:10px">
+    <img src="./readme/dryer.PNG" width="25%" style="margin:10px">
 
 </div>
 
