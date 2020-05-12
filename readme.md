@@ -36,7 +36,7 @@
 <hr>
 
 <div 
-    style="display: flex; flex-wrap: wrap; margin: auto"
+    style="display: flex; flex-wrap: wrap; justify-content:space-around; align-itens: center;"
 >
     <img src="./readme/screenshot.png" width="65%" style="margin:10px">
     <img src="./readme/dryer.PNG" width="25%" style="margin:10px">
