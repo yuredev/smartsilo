@@ -1,4 +1,4 @@
-const { Sensor, Pin, Board } = require('johnny-five');
+// const { Sensor, Pin, Board } = require('johnny-five');
 const http = require('http');
 const io = require('socket.io')(http);
 const Controller = require('node-pid-controller');
@@ -6,9 +6,26 @@ const { promisify } = require('util');
 const fs = require('fs');
 const cmd = require('node-cmd');
 
+const express = require('express');
+const routes = express.Router();
+const app = express();
+const cors = require('cors');
+const httpPort = 8124;
+
+routes.get('/', async (req, res) => {
+    const readFile =  promisify(fs.readFile);
+    file = await readFile('./experiments/currentPlot.png');
+    res.writeHead(200, {'Content-Type': 'image/jpeg'});
+    res.end(file); 
+});
+
+app.listen(httpPort, () => console.log('Listening at ' + httpPort));
+
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
 // const arduino = new Board({ port: '/dev/ttyACM0' });
+
+let file;
 
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
@@ -80,18 +97,8 @@ function switchOffController() {
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 async function octavePlot(fileName, socket) {
     const cmdGet = promisify(cmd.get);
-    const readFile =  promisify(fs.readFile);
     
     await cmdGet(`octave-cli ./src/octavePlot.m "${fileName}"`);
-
-    const file = await readFile('./experiments/currentPlot.png');
-
-    if (server) server.close();
-    
-    server = server = http.createServer((req, res) => {
-        res.writeHead(200, {'Content-Type': 'image/jpeg'});
-        res.end(file); 
-    }).listen(8124);
     
     socket.emit('chartReady');
     console.log('The chart can be accessed in: http://localhost:8124/');
@@ -233,3 +240,7 @@ function scale(value, inverse = false) {
     var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
     return (capped * scale + to[0]);
 }
+
+app.use(cors());
+app.use(express.json());
+app.use(routes);
