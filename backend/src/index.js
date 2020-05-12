@@ -21,6 +21,10 @@ routes.get('/', async (req, res) => {
 
 app.listen(httpPort, () => console.log('Listening at ' + httpPort));
 
+app.use(cors());
+app.use(express.json());
+app.use(routes);
+
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
 // const arduino = new Board({ port: '/dev/ttyACM0' });
@@ -240,7 +244,3 @@ function scale(value, inverse = false) {
     var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
     return (capped * scale + to[0]);
 }
-
-app.use(cors());
-app.use(express.json());
-app.use(routes);
