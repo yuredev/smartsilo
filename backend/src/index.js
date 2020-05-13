@@ -5,6 +5,8 @@ const Controller = require('node-pid-controller');
 const { promisify } = require('util');
 const fs = require('fs');
 const cmd = require('node-cmd');
+const { toCelsius, scale } = require('./mathOperators');
+const { setSetPoint, startExperiment, stopExperiment, switchOffController } = require('./socketListeners');
 
 const express = require('express');
 const routes = express.Router();
@@ -17,6 +19,7 @@ routes.get('/', async (req, res) => {
     file = await readFile('./experiments/currentPlot.png');
     res.writeHead(200, {'Content-Type': 'image/jpeg'});
     res.end(file); 
+    console.log('The chart can be accessed in: http://localhost:8124/');
 });
 
 routes.post('/pins', (req, res) => {
@@ -32,7 +35,7 @@ app.listen(httpPort);
 // descomentar depois 
 // const arduino = new Board({ port: '/dev/ttyACM0' });
 
-let file;
+let file; // variable to store the img currentPlot readed 
 
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
@@ -42,7 +45,6 @@ let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
-let server;
 io.listen(3000);
 console.log('Websocket funcionando na porta ' + 3000);
 
@@ -72,34 +74,6 @@ function startSocketListening(socket) {
     socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
 }
 
-// começa o experimento
-function startExperiment(controlMode) {
-    dryertBusy = true;
-    const time = new Date();
-    fileName = `${time.getDate()}-${time.getMonth()+1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
-    startSaving(fileName);
-    clearInterval(offInterval);
-    clearInterval(onOffInterval);
-    clearInterval(pidInterval);
-    startControling(controlMode);
-}
-// parar experimento 
-function stopExperiment(socket) {
-    dryerBusy = false;
-    clearInterval(offInterval);
-    clearInterval(onOffInterval);
-    clearInterval(pidInterval);
-    clearInterval(savingInterval);
-    startControling('Open loop');
-    octavePlot(fileName, socket);
-}
-// mudar voltagem de 0 a 3 para malha aberta 
-function switchOffController() {
-    offControlValue = offControlValue == 0 ? 3 : 0;
-    clearInterval(offControling);
-    offControling(offControlValue);
-}
-
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 async function octavePlot(fileName, socket) {
     const cmdGet = promisify(cmd.get);
@@ -107,7 +81,6 @@ async function octavePlot(fileName, socket) {
     await cmdGet(`octave-cli ./src/octavePlot.m "${fileName}"`);
     
     socket.emit('chartReady');
-    console.log('The chart can be accessed in: http://localhost:8124/');
 }
 
 // função para setar novos canais no Arduino 
@@ -131,7 +104,7 @@ function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
         setInterval(() => therm.value = Math.round(Math.random() * 70 + 400), 500);
     });
 
-    console.log(`Pins setted: ${pins}`);
+    console.log('Pins setted: ' + pins);
 }
 // começa a salvar em arquivo txt 
 function startSaving(nomeArq) {
@@ -193,14 +166,6 @@ const getTemp = () => {
     return averageTemp;
 };
 
-// mudar o setPoint 
-function setSetPoint(newSetPoint, socket) {
-    console.log(newSetPoint);
-    setPoint = Number(newSetPoint); // garantir que será um número
-    socket.emit('changeSetPoint', setPoint); // enviando para o cliente atual 
-    socket.broadcast.emit('changeSetPoint', setPoint); // enviando o resto dos clientes
-    console.log(`Setpoint changed to: ${setPoint}`);
-}
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
 
@@ -216,33 +181,4 @@ function startSending(socket, clientId) {
         socket.emit('newData', {type: 'Temperature', value: getTemp()});
         socket.emit('newData', {type: 'Mass', value: Math.random() * 1});
     }, 500);
-}
-// faz os dados de um termistor começarem a ser mandados pros clientes via socket.io
-function tempSend(socket, therm, socketMsg) {
-    // setInterval(() => socket.emit(socketMsg, toCelsius(Math.random() * 100 + 420)), 400);
-
-    // descomentar depois 
-    // therm.on('data', () => socket.emit(socketMsg, toCelsius(therm.value)));
-
-    // comentar depois 
-    // setInterval(() => socket.emit(socketMsg, toCelsius(therm.value)), 500);
-}
-// converte valor ADC em Celsius
-function toCelsius(rawADC) {
-    let temp = Math.log(((10240000 / rawADC) - 10000));
-    temp = 1 / (0.001129148 + (0.000234125 * temp) + (0.0000000876741 * temp ** 3));
-    temp = temp - 273.15;   // Kelvin para Celsius 
-    return temp;
-}
-// retorna correspondente do valor em outra escala  
-function scale(value, inverse = false) {
-    let from;
-    if (!inverse) {
-        from = [0, 5], to = [0, 255];
-    } else {
-        from = [0, 255], to = [0, 5];
-    }
-    var scale = (to[1] - to[0]) / (from[1] - from[0]);
-    var capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
-    return (capped * scale + to[0]);
 }
