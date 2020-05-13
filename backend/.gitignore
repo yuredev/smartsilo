@@ -2,8 +2,8 @@
 node_modules
 
 # ignore the experiments 
-experiments/data
+data
 
-experiments/plots
+plots
 
 experiments/*.png
