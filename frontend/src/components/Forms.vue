@@ -90,7 +90,7 @@ export default {
 				pins: this.pins
 			}).then(() => {
 				alert('Pins successfully exchanged');
-			});
+			}).catch(() => console.log('error in setting pins, please try again'));
 		},
 		addPin(pin, value) {
 			this.pins.splice(pin-1, 1, value);
