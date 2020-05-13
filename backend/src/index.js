@@ -6,7 +6,6 @@ const { promisify } = require('util');
 const fs = require('fs');
 const cmd = require('node-cmd');
 const { toCelsius, scale } = require('./mathOperators');
-const { setSetPoint, startExperiment, stopExperiment, switchOffController } = require('./socketListeners');
 
 const express = require('express');
 const routes = express.Router();
@@ -19,7 +18,6 @@ routes.get('/', async (req, res) => {
     file = await readFile('./experiments/currentPlot.png');
     res.writeHead(200, {'Content-Type': 'image/jpeg'});
     res.end(file); 
-    console.log('The chart can be accessed in: http://localhost:8124/');
 });
 
 routes.post('/pins', (req, res) => {
@@ -35,7 +33,7 @@ app.listen(httpPort);
 // descomentar depois 
 // const arduino = new Board({ port: '/dev/ttyACM0' });
 
-let file; // variable to store the img currentPlot readed 
+let file;
 
 let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
@@ -74,6 +72,34 @@ function startSocketListening(socket) {
     socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
 }
 
+// começa o experimento
+function startExperiment(controlMode) {
+    dryertBusy = true;
+    const time = new Date();
+    fileName = `${time.getDate()}-${time.getMonth()+1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
+    startSaving(fileName);
+    clearInterval(offInterval);
+    clearInterval(onOffInterval);
+    clearInterval(pidInterval);
+    startControling(controlMode);
+}
+// parar experimento 
+function stopExperiment(socket) {
+    dryerBusy = false;
+    clearInterval(offInterval);
+    clearInterval(onOffInterval);
+    clearInterval(pidInterval);
+    clearInterval(savingInterval);
+    startControling('Open loop');
+    octavePlot(fileName, socket);
+}
+// mudar voltagem de 0 a 3 para malha aberta 
+function switchOffController() {
+    offControlValue = offControlValue == 0 ? 3 : 0;
+    clearInterval(offControling);
+    offControling(offControlValue);
+}
+
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
 async function octavePlot(fileName, socket) {
     const cmdGet = promisify(cmd.get);
@@ -81,6 +107,7 @@ async function octavePlot(fileName, socket) {
     await cmdGet(`octave-cli ./src/octavePlot.m "${fileName}"`);
     
     socket.emit('chartReady');
+    console.log('The chart can be accessed in: http://localhost:8124/');
 }
 
 // função para setar novos canais no Arduino 
@@ -104,7 +131,7 @@ function setPins(pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
         setInterval(() => therm.value = Math.round(Math.random() * 70 + 400), 500);
     });
 
-    console.log('Pins setted: ' + pins);
+    console.log(`Pins setted: ${pins}`);
 }
 // começa a salvar em arquivo txt 
 function startSaving(nomeArq) {
@@ -166,6 +193,14 @@ const getTemp = () => {
     return averageTemp;
 };
 
+// mudar o setPoint 
+function setSetPoint(newSetPoint, socket) {
+    console.log(newSetPoint);
+    setPoint = Number(newSetPoint); // garantir que será um número
+    socket.emit('changeSetPoint', setPoint); // enviando para o cliente atual 
+    socket.broadcast.emit('changeSetPoint', setPoint); // enviando o resto dos clientes
+    console.log(`Setpoint changed to: ${setPoint}`);
+}
 // começa a mandar os dados para o arduino
 function startSending(socket, clientId) {
 
