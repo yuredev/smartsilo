@@ -64,7 +64,13 @@ function startApplication() {
 }
 
 function startSocketListening(socket) {    
-    socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
+    // socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
+    
+    routes.post('/setpoint', (req, res) => {
+        setSetPoint(req.body.setpoint, socket);
+        res.sendStatus(201);
+    });
+    
     socket.on('startExperiment', startExperiment);
     socket.on('stopExperiment', () => stopExperiment(socket));
     socket.on('switchOffController', () => switchOffController());
