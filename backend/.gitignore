@@ -2,9 +2,10 @@
 node_modules
 
 # ignore the experiments 
-data/*.txt
+experiments/data
 
 # ignore the plots
-plots/*.png
+experiments/plots
 
+#ignore all imgs
 experiments/*.png
