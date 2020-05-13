@@ -97,9 +97,15 @@ export default {
 		},
 		setSetPoint() {
 			if (this.setPointTemp > 45) {
-				alert('O Valor informado é alto demais, isso pode comprometer o hardware');
-			} else {
-				this.$socket.emit('changingSetPoint', this.setPointTemp);
+				alert('The value is too high, please reduce for not damage the hardware');
+				return;
+			} 
+			try {
+				serverHandler.post('setpoint', {
+					setpoint: this.setPointTemp
+				});
+			} catch (error) {
+				alert('error in setpoint changing, please try again')
 			}
 		},
 		setControlMode(controlMode) {
