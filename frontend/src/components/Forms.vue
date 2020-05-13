@@ -84,11 +84,13 @@ export default {
 		setPins() {
 			if (haveEqualItens(this.pins)) {
 				alert('Error, there are pins with equal values, each pin must have a different value');
-			} else {
-				serverHandler.post('/pins', {
-					pins: this.pins
-				}).then(() => alert('Pins successfully exchanged'));
+				return;
 			}
+			serverHandler.post('/pins', {
+				pins: this.pins
+			}).then(() => {
+				alert('Pins successfully exchanged');
+			});
 		},
 		addPin(pin, value) {
 			this.pins.splice(pin-1, 1, value);
