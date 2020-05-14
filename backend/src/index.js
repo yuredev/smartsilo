@@ -217,7 +217,7 @@ function setSetPoint(newSetPoint, socket) {
 // começa a mandar os dados para o arduino
 function startSending(socket) {
 
-    clientId = socket.id;
+    let clientId = socket.id;
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
     setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
 
