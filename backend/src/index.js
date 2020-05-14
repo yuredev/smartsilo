@@ -13,22 +13,6 @@ const app = express();
 const cors = require('cors');
 const httpPort = 8124;
 
-routes.get('/', async (req, res) => {
-    const readFile = promisify(fs.readFile);
-    file = await readFile('./experiments/currentPlot.png');
-    res.writeHead(200, {'Content-Type': 'image/jpeg'});
-    res.end(file); 
-});
-
-routes.post('/pins', (req, res) => {
-    setPins(req.body.pins);
-    res.sendStatus(201);
-});
-
-app.use(cors());
-app.use(express.json());
-app.use(routes);
-app.listen(httpPort);
 // a porta abaixo é válida para Linux, no Windows ela precisa ser COM1 ou algo parecido
 // descomentar depois 
 // const arduino = new Board({ port: '/dev/ttyACM0' });
@@ -49,28 +33,51 @@ console.log('Websocket funcionando na porta ' + 3000);
 // descomentar depois
 // arduino.on('ready', startApplication);
 
+// comentar depois
 startApplication();
 
 // função para startar a aplicaçãos
 function startApplication() {
     setPins();
- 
     // arduino.pinMode(9, Pin.PWM);
     startControling('Open loop'); 
     io.on('connection', socket => {
-        startSending(socket, socket.id);               // começa a mandar os dados para os clientes
+        startExpressServer(socket);
+        startSending(socket);               // começa a mandar os dados para os clientes
         startSocketListening(socket);
     });
+    app.use(cors());
+    app.use(express.json());
+    app.use(routes);
+    app.listen(httpPort, () => console.log('Express server working at port: ' + httpPort));
 }
 
-function startSocketListening(socket) {    
-    // socket.on('changingSetPoint', setPointReceived => setSetPoint(setPointReceived, socket)); // mudar o setpoint 
-    
+
+function startExpressServer(socket) {
+    routes.get('/', startPlotServer);
+    routes.post('/pins', (req, res) => {
+        setPins(req.body.pins);
+        res.sendStatus(201);
+    });
     routes.post('/setpoint', (req, res) => {
         setSetPoint(req.body.setpoint, socket);
         res.sendStatus(201);
     });
-    
+}
+
+async function startPlotServer(req, res) {
+    const readFile = promisify(fs.readFile);
+    try {
+        file = await readFile('./experiments/currentPlot.png');
+        res.writeHead(200, {'Content-Type': 'image/jpeg'});
+        res.end(file); 
+    } catch (error) {
+        console.log('error at reading the currentPlot.png');
+        res.sendStatus(400);
+    }
+}
+
+function startSocketListening(socket) {    
     socket.on('startExperiment', startExperiment);
     socket.on('stopExperiment', () => stopExperiment(socket));
     socket.on('switchOffController', () => switchOffController());
@@ -208,8 +215,9 @@ function setSetPoint(newSetPoint, socket) {
     console.log(`Setpoint changed to: ${setPoint}`);
 }
 // começa a mandar os dados para o arduino
-function startSending(socket, clientId) {
+function startSending(socket) {
 
+    clientId = socket.id;
     // o u gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5 
     setInterval(() => socket.emit('newData', { type: 'Control', value: scale(u, 'to [0,5]') }), 500);
 
