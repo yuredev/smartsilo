@@ -1,6 +1,1 @@
 create functionalities to change PID consts 
-translate socket messages to post requests
-create a gif to put on readme
-separate routes of express 
-fix the opeen loop options 0v and 3v
-create functionalitie to hide the control chart 
