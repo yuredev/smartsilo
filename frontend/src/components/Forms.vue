@@ -21,9 +21,9 @@
 			</select>
         </div>
 		<div class="radioButtonDiv" v-show="currentControlMode == 'Open loop'">
-			<input type="radio" name="voltageRadioBtn" id="voltage0v">
+			<input type="radio" name="voltageRadioBtn" id="voltage0v" @click="setOpenLoopVoltage(0)">
 			<label for="voltage0v">0v</label> 
-			<input type="radio" name="voltageRadioBtn" id="voltage3v">
+			<input type="radio" name="voltageRadioBtn" id="voltage3v" @click="setOpenLoopVoltage(3)">
 			<label for="voltage3v">3v</label> 
 		</div>
 	</div>
@@ -78,6 +78,9 @@ export default {
 		this.$socket.emit('getSetPoint');
 	},
 	methods: {
+		setOpenLoopVoltage(voltage) {
+			this.$socket.emit('setOpenLoopVoltage', voltage);
+		},
 		switchSelectState(optionDisabled) {
 			this.optionDisabled = optionDisabled;
 		},
