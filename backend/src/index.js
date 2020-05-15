@@ -23,7 +23,6 @@ let setPoint = 30;
 let u, e = 0;    // valor de saída e valor do erro  
 let therms = [];  // sensores 
 let pidInterval, onOffInterval, offInterval, savingInterval; // será usado para armazenar os setIntervals 
-let offControlValue = 0;
 let fileName;
 let dryerBusy = false;
 
@@ -80,7 +79,7 @@ async function startPlotServer(req, res) {
 function startSocketListening(socket) {    
     socket.on('startExperiment', startExperiment);
     socket.on('stopExperiment', () => stopExperiment(socket));
-    socket.on('switchOffController', () => switchOffController());
+    socket.on('setOpenLoopVoltage', setOpenLoopVoltage);
     socket.on('getSetPoint', () => socket.emit('changeSetPoint', setPoint));
     socket.on('getHardwareState', () => socket.emit('setHardwareState', dryerBusy));
 }
@@ -107,10 +106,10 @@ function stopExperiment(socket) {
     octavePlot(fileName, socket);
 }
 // mudar voltagem de 0 a 3 para malha aberta 
-function switchOffController() {
-    offControlValue = offControlValue == 0 ? 3 : 0;
+function setOpenLoopVoltage(openLoopVoltage) {
+    console.log('mudando para ', openLoopVoltage);
     clearInterval(offControling);
-    offControling(offControlValue);
+    offControling(openLoopVoltage);
 }
 
 // interpreta o script draw.m para o Octave gerar a imagem do gráfico e logo após starta o servidor para a imagem
