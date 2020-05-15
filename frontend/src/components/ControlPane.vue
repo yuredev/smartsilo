@@ -2,7 +2,12 @@
     <div class="controlPane">
         <div class="checkDiv">
             <label for="checkControl">control signal </label>
-            <input type="checkbox" name="checkControl" id="checkControl">
+            <input 
+                type="checkbox" 
+                name="checkControl" 
+                id="checkControl" 
+                v-model="controlChartVisibility"
+            >
         </div>
         <button @click="resumeChart" v-if="buttonIsPaused">resume</button>
         <button v-else @click="pauseChart">pause</button>
@@ -20,13 +25,19 @@ import { eventBus } from '../eventBus';
 export default {
     data() {
         return {
+            controlChartVisibility: true,
             buttonIsPaused: false,
             hardwareIsBusy: false,
             currentControlMode: 'Open loop'
         }
     },
-    mounted() {
+    created() {
         eventBus.$on('set-control-mode', this.setControlMode);
+    },
+    watch: {
+        controlChartVisibility() {
+            eventBus.$emit('set-control-chart-visibility', this.controlChartVisibility);
+        }
     },
     methods: {
         setControlMode(newControlMode) {

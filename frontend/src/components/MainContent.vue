@@ -12,10 +12,11 @@
             <div v-show="!showLoadingScreen">
                 <Chart v-show="currentChart == 'Temperature'" type="Temperature" :paused="chartIsPaused" key="chart1"/>
                 <Chart v-show="currentChart == 'Mass'" type="Mass" :paused="chartIsPaused" key="chart2" />
-                <ControlPane @pauseChart="pauseChart" 
-                            @showLoadingScreen="showLoadingScreen = true"
-                            />
-                <Chart type="Control" />
+                <ControlPane 
+                    @pauseChart="pauseChart" 
+                    @showLoadingScreen="showLoadingScreen = true"
+                />
+                <Chart v-show="controlChartVisibility" type="Control" />
             </div>
         </div>
     </div>
@@ -25,6 +26,7 @@
 
 import Chart from './Chart';
 import ControlPane from './ControlPane';
+import { eventBus } from '../eventBus';
 
 export default {
     components: {
@@ -34,8 +36,12 @@ export default {
         return {
             showChart: false,
             chartIsPaused: false,
-            showLoadingScreen: false
+            showLoadingScreen: false,
+            controlChartVisibility: true
         }
+    },
+    created() {
+        eventBus.$on('set-control-chart-visibility', this.setControlChartVisibility);
     },
     props: {
         currentControlMode: {
@@ -52,6 +58,9 @@ export default {
         }
     },
     methods: {
+        setControlChartVisibility(newVisibility) {
+            this.controlChartVisibility = newVisibility;
+        },
         getPlotUrl() {
             // esse valor aleatório serve para forçar o browser a pegar a nova imagem do servidor
             // sem ele o browser sempre continuará com a mesma imagem
