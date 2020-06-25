@@ -20,6 +20,12 @@ let therms = []; // sensores
 
 let txtFileName;
 
+let pidConsts = {
+  pb: 0.3,  // proportional band width 
+  ti: 1.27,  // integral time 
+  td: 6 // derivativeTime
+}
+
 // variables that will be used to store the Timeouts of the setIntervals that refers to 
 // output and write control to the dryer
 let openLoopTimeLapse;
@@ -53,9 +59,13 @@ function startListeners() {
   ipcMain.on('set-open-loop-voltage', setOpenLoopVoltage);
   ipcMain.on('set-setpoint', setSetPoint);
   ipcMain.on('set-pins', setPins);
+  ipcMain.on('set-pid-consts', (evt, consts) => setPidConsts(consts));
 }
 
-// começa o experimento
+function setPidConsts(newPidConsts) {
+  pidConsts = newPidConsts;
+}
+
 function startExperiment(controlMode) {
   stopControlling();
   startControlling(controlMode);
@@ -68,7 +78,6 @@ function stopControlling() {
   clearInterval(pidTimeLapse);
 }
 
-// parar experimento
 function stopExperiment(evt) {
   clearInterval(savingTimeLapse);
   stopControlling();
@@ -87,7 +96,7 @@ function octavePlot() {
       if (error) {
         reject(error);
       } 
-      resolve(path.resolve(projectPaths.plots, '__current-plot.png'));
+      resolve(path.resolve(projectPaths.plots  , '__current-plot.png'));
     });
   });
 }
@@ -141,10 +150,10 @@ function startSaving() {
 }
 
 function controlViaPid() {
-  const KP = 1 / 0.3;
-  const KI = KP / 1.27;
+  const KP = 1 / pb; // proportionalBand
+  const KI = KP / ti; // integrativeTime 
+  const KD = KP * td; // derivativeTime 
   const H = 0.1;
-  const KD = KP * 6;
   const pidController = new Controller(KP, KI, KD, H);
   const temperature = getTemp();
   errorValue = getTemp() - setPoint;
