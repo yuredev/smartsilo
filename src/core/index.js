@@ -150,9 +150,9 @@ function startSaving() {
 }
 
 function controlViaPid() {
-  const KP = 1 / pb; // proportionalBand
-  const KI = KP / ti; // integrativeTime 
-  const KD = KP * td; // derivativeTime 
+  const KP = 1 / pidConsts.pb; // proportionalBand
+  const KI = KP / pidConsts.ti; // integrativeTime 
+  const KD = KP * pidConsts.td; // derivativeTime 
   const H = 0.1;
   const pidController = new Controller(KP, KI, KD, H);
   const temperature = getTemp();
