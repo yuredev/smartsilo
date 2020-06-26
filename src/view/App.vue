@@ -99,6 +99,11 @@ export default {
 </script>
 
 <style>
+
+button, select {
+  cursor: pointer;
+}
+
 h2#swal2-title.swal2-title {
   font-size: 1.15em;
 }

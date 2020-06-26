@@ -21,7 +21,7 @@ export default new Vue({
         title: title,
         icon: type,
         text,
-        timer: type === 'error' ? 10000 : 2500
+        timer: type === 'error' ? 10000 : 2000
       };
       this.$swal(config);
     }

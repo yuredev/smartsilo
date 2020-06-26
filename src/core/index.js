@@ -21,7 +21,7 @@ let therms = []; // sensores
 let txtFileName;
 
 let pidConsts = {
-  pb: 0.3,  // proportional band width 
+  pb: 30,  // proportional band width 
   ti: 1.27,  // integral time 
   td: 6 // derivativeTime
 }
@@ -150,10 +150,17 @@ function startSaving() {
 }
 
 function controlViaPid() {
-  const KP = 1 / pidConsts.pb; // proportionalBand
+  const KP = 1 / (pidConsts.pb / 100); // proportionalBand
   const KI = KP / pidConsts.ti; // integrativeTime 
   const KD = KP * pidConsts.td; // derivativeTime 
   const H = 0.1;
+
+  const { log } = console;
+
+  log('KP: ', KP);
+  log('KI: ', KI);
+  log('KD: ', KD);
+
   const pidController = new Controller(KP, KI, KD, H);
   const temperature = getTemp();
   errorValue = getTemp() - setPoint;
