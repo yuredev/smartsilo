@@ -19,10 +19,12 @@ fh = figure();
 
 p = plot(t, x(:,1), 'r', t, x(:,4), 'b');
 
-set(p(1),'linewidth',2);
+set(p(1),'linewidth', 2);
 set(p(1),'Color','b');
-set(p(2),'linewidth',2);
+set(p(2),'linewidth', 1.5);
 set(p(2),'Color','r');
+
+legend('Temperature', 'Setpoint');
 
 ylim([0 50]);
 
