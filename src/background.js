@@ -1,6 +1,6 @@
 'use strict';
 
-import './core'; // will load the index.js of the core folder
+import './domain'; // will load the index.js of the domain folder
 import { app, protocol, BrowserWindow } from 'electron';
 import {
   createProtocol

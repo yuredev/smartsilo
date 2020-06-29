@@ -155,12 +155,6 @@ function controlViaPid() {
   const KD = KP * pidConsts.td; // derivativeTime 
   const H = 0.1;
 
-  const { log } = console;
-
-  log('KP: ', KP);
-  log('KI: ', KI);
-  log('KD: ', KD);
-
   const pidController = new Controller(KP, KI, KD, H);
   const temperature = getTemp();
   errorValue = getTemp() - setPoint;
