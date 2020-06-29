@@ -15,7 +15,7 @@ function getTracesConfig(type) {
           type: 'line',
           name: type,
           line: {
-            color: 'rgb(255,150,255)',
+            color: '#FAF',
             width: 3
           }
         }
@@ -36,7 +36,7 @@ function getTracesConfig(type) {
           type: 'line',
           name: 'Setpoint',
           line: {
-            color: '#0add77',
+            color: '#66EE88',
             width: 3
           }
         }

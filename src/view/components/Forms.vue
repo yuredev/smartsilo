@@ -41,6 +41,7 @@
               placeholder="Proportional band width"  
               min="0"
               max="100"
+              @keyup.enter="setPidConsts"
             >
           </abbr>
           <div class="flex-bet academic-label">
@@ -57,6 +58,7 @@
               type="number"
               v-model="pidConsts.ti"
               placeholder="Integrative time"  
+              @keyup.enter="setPidConsts"
             >
           </abbr>
           <div class="flex-bet academic-label">
@@ -73,6 +75,7 @@
               type="number"
               v-model="pidConsts.td"
               placeholder="Derivative time"  
+              @keyup.enter="setPidConsts"
             >
           </abbr>
           <div class="flex-bet academic-label">
@@ -113,7 +116,7 @@ export default {
     return {
       pins: ['A0', 'A1', 'A2', 'A3', 'A4'],
       currentControlMode: 'Open loop',
-      setPointTemp: 35,
+      setPointTemp: 30,
       optionDisabled: false,
       controlModes: ['Open loop', 'PID', 'ON/OFF'],
       pidConsts: {
@@ -144,6 +147,8 @@ export default {
         ti: 1.27, // integral time
         td: 6     // derivative time
       };
+      ipcRenderer.send('set-pid-consts', this.pidConsts);
+      sweetAlert.fire('success', 'Pid settings changed successfully');
     },
     setPidConsts() {
       if (!this.pidConsts.pb || !this.pidConsts.ti || !this.pidConsts.td) {
@@ -163,7 +168,7 @@ export default {
         return;
       }
       ipcRenderer.send('set-pid-consts', this.pidConsts);
-      sweetAlert.fire('success', 'Pid settings changed successfully')
+      sweetAlert.fire('success', 'Pid settings changed successfully');
     },
     setOpenLoopVoltage(voltage) {
       ipcRenderer.send('set-open-loop-voltage', voltage);
@@ -184,7 +189,7 @@ export default {
       }
     },
     setSetPoint() {
-      if (this.setPointTemp > 45) {
+      if (this.setPointTemp > 40) {
         sweetAlert.fire(
           'error', 
           'Sorry, but you can\'t do this',

@@ -13,7 +13,7 @@ const projectPaths = require('./utils/project-paths');
 // will be copied to an plot.m file, that are executable by octave-cli
 const octaveCode = require('./octave/plot.m');
 
-let setPoint = 35;
+let setPoint = 30;
 let output,
   errorValue = 0; // valor de saída errorValue valor do erro
 let therms = []; // sensores

@@ -17,13 +17,19 @@ t = 0: freq : maxTime-freq;
 
 fh = figure();  
 
-plot(t, x(:,1), 'r', t, x(:,4), 'b');
+p = plot(t, x(:,1), 'r', t, x(:,4), 'b');
+
+set(p(1),'linewidth',2);
+set(p(1),'Color','b');
+set(p(2),'linewidth',2);
+set(p(2),'Color','r');
+
 ylim([0 50]);
 
 grid;
 title('Internal Temperature');
 xlabel('Time (s)');
-ylim([15 32])
+ylim([10 35])
 ylabel('oC');
 
 print([saveImgPath "/" imgName], '-dpng');

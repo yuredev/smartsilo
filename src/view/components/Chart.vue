@@ -31,7 +31,7 @@ export default {
       paused: false,
       time: undefined,
       chartInterval: undefined,
-      setPointTemp: 35,
+      setPointTemp: 30,
       setPointMass: undefined,
       x: 0,
       value: 0,
@@ -114,7 +114,7 @@ export default {
             { y: [[this.value], [this.setPointTemp]] },
             [0, 1]
           );
-          newLayout.yaxis = { range: [0, 45] };
+          newLayout.yaxis = { range: [10, 35] };
           break;
         case 'Mass':
           this.$refs.chart.extendTraces(
