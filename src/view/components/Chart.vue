@@ -17,7 +17,7 @@
 <script>
 import { ipcRenderer } from 'electron';
 import { Plotly } from 'vue-plotly';
-import { eventBus } from '../eventBus';
+import eventBus from '../event-bus';
 import Stopwatch from '../utils/stopwatch';
 import getTracesConfig from '../utils/get-traces-config';
 

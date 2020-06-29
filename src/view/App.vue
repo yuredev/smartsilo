@@ -19,7 +19,7 @@
 import Navbar from './components/Navbar';
 import SideNav from './components/SideNav';
 import MainContent from './components/MainContent';
-import { eventBus } from './eventBus';
+import eventBus from './event-bus';
 
 export default {
   components: {

@@ -103,10 +103,10 @@
 </template>
 
 <script>
-import { haveEqualItens } from '../utils/array-have-equal-itens';
-import { eventBus } from '../eventBus';
-import { ipcRenderer } from 'electron';
+import eventBus from '../event-bus';
 import sweetAlert from '../utils/sweet-alert';
+import { haveEqualItens } from '../utils/array-have-equal-itens';
+import { ipcRenderer } from 'electron';
 
 export default {
   data() {

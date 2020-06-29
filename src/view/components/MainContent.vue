@@ -27,7 +27,7 @@
 <script>
 import Chart from './Chart';
 import ControlPane from './ControlPane';
-import { eventBus } from '../eventBus';
+import eventBus from '../event-bus';
 import { ipcRenderer } from 'electron';
 
 export default {
