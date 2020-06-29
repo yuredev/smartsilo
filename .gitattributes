@@ -1,1 +1,1 @@
-./src/domain/octave/* linguist-language=MATLAB
+src/domain/octave/plot.m.js linguist-language=MATLAB
