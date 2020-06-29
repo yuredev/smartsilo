@@ -7,7 +7,7 @@
     <div v-show="!showChart">
       <div class="centralize-content chartArea" v-if="showLoadingScreen">
         <img src="../assets/load.gif" alt />
-        <h2>O Servidor está gerando o gráfico, aguarde...</h2>
+        <h2>Please wait while the chart is being plotted</h2>
       </div>
       <div v-show="!showLoadingScreen">
         <Chart
