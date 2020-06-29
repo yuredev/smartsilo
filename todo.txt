@@ -1,1 +1,7 @@
-colocar footer no sistema
+* traduzir palavras do gráfico do octave
+
+* colocar créditos 
+
+* deixar linha do gŕafico octave mais grossa 
+
+* estabelecer escala fixa no gráfico do octave 
