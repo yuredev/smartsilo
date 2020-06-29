@@ -21,8 +21,9 @@ plot(t, x(:,1), 'r', t, x(:,4), 'b');
 ylim([0 50]);
 
 grid;
-title('Controle de temperatura interna do silo');
-xlabel('Tempo');
+title('Internal Temperature');
+xlabel('Time (s)');
+ylim([15 32])
 ylabel('oC');
 
 print([saveImgPath "/" imgName], '-dpng');
