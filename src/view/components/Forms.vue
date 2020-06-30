@@ -90,7 +90,7 @@
       </div>
 
     </div>
-    <div class="formsArea" style="margin-top: 40px;">
+    <div class="formsArea" style="margin-top: 27px;">
       <div class="centralize-self" style="margin-top: 10px">
         <label for="pin">Pins:</label>
         <div v-for="pin of 5" :key="pin">
@@ -242,7 +242,7 @@ input:hover {
   display: flex;
   flex-direction: column;
   padding: 0px 13px;
-  margin-top: 10px;
+  margin-top: 7px;
 }
 
 #pid-consts-div .input-abbr > .input-pid {

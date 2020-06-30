@@ -20,6 +20,7 @@
     "electron": "^6.0.0",
     "firmata": "^2.2.0",
     "node-pid-controller": "^1.0.1",
+    "open": "^7.0.4",
     "serialport": "^9.0.0",
     "vue": "^2.6.11",
     "vue-plotly": "^1.1.0",

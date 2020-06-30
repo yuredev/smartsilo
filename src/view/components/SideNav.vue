@@ -2,11 +2,31 @@
   <div class="sidenav" :style="sideNavStyle">
     <div>
       <span v-show="showHamburger" id="hamburger" @click="closeNav">&#9776;</span>
-      <div id="logoDiv">
-        <img src="../assets/smart.png" alt="logo do sistema" id="logo" />
+      <div id="logo-div">
+        <img 
+          src="../assets/smart.png" 
+          alt="logo do sistema" 
+          id="logo" 
+        />
       </div>
     </div>
     <Forms :optionDisabled="optionDisabled" />
+    <bottom>
+      <div class="img-div">
+        <img id="ufrn-logo" src="../assets/ufrn-logo.png" alt="logo da ufrn">
+      </div>
+      <div id="team">
+        <p>
+          Developed by:
+          <a id="git-yure" href="http://github.com/yuredev">Yure Matias</a> and 
+          <a id="lattes-josenalde" href="http://lattes.cnpq.br/0503501772199456">Josenalde Oliveira</a>
+        </p>  
+      </div>  
+      <p id="institutions">
+        <a id="tapioca-page" href="http://tapioca.eaj.ufrn.br/">TAPIOCA-LAB</a>
+        <a id="eaj-page" href="http://www.eaj.ufrn.br/site/">EAJ-UFRN</a>
+      </p>
+    </bottom>
   </div>
 </template>
 
@@ -68,10 +88,56 @@ export default {
   cursor: pointer;
   color: #f7f7f7;
 }
+#logo-div {
+  display: flex;
+  justify-content: center;
+}
 #logo {
+  cursor: pointer;
   width: 180px;
-  margin-top: 5px;
-  margin-bottom: 50px;
-  margin-left: 17px;
+  margin-bottom: 25px;
+}
+bottom {
+  font-size: .9rem;
+  background-color: #00000021;
+  margin-top: 27px !important;
+  padding: 4px 10px !important;
+  display: flex;
+  flex-direction: column;
+  height: 130px;
+  justify-content: space-around;
+}
+bottom > #team > p {
+  text-align: center;
+  justify-content: center;
+  padding: 2px;
+}
+bottom > #team > p > a {
+  color: #FAFAFA;
+  font-weight: 500;
+  text-decoration: none;
+}
+bottom > #team > p > a:hover {
+  text-decoration: underline;
+}
+bottom > .img-div {
+  display: flex;
+  justify-content: center;
+}
+bottom > .img-div > #ufrn-logo {
+  width: 40px;
+  cursor: pointer;
+}
+bottom > #institutions {
+  display: flex;
+  justify-content: space-between;
+}
+bottom > #institutions a {
+  color: #FAFAFA;
+  text-decoration: none;
+  font-weight: 600;
+}
+bottom > #institutions a:hover {
+  text-decoration: underline;
 }
 </style>
