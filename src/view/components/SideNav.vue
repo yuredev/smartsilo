@@ -7,31 +7,34 @@
           src="../assets/smart.png" 
           alt="logo do sistema" 
           id="logo" 
+          @click="openUrl('http://smartsilo.netlify.com')"
         />
       </div>
     </div>
     <Forms :optionDisabled="optionDisabled" />
-    <bottom>
+    <footer>
       <div class="img-div">
         <img id="ufrn-logo" src="../assets/ufrn-logo.png" alt="logo da ufrn">
       </div>
       <div id="team">
         <p>
           Developed by:
-          <a id="git-yure" href="http://github.com/yuredev">Yure Matias</a> and 
-          <a id="lattes-josenalde" href="http://lattes.cnpq.br/0503501772199456">Josenalde Oliveira</a>
+          <span class="link" @click="openUrl('http://github.com/yuredev')">Yure Matias</span> and 
+          <span class="link" @click="openUrl('http://lattes.cnpq.br/0503501772199456')">Josenalde Oliveira</span>
         </p>  
       </div>  
       <p id="institutions">
-        <a id="tapioca-page" href="http://tapioca.eaj.ufrn.br/">TAPIOCA-LAB</a>
-        <a id="eaj-page" href="http://www.eaj.ufrn.br/site/">EAJ-UFRN</a>
+        <span class="link" @click="openUrl('http://tapioca.eaj.ufrn.br/')">TAPIOCA-LAB</span>
+        <span class="link" @click="openUrl('http://www.eaj.ufrn.br/site/')">EAJ-UFRN</span>
       </p>
-    </bottom>
+    </footer>
   </div>
 </template>
 
 <script>
+
 import Forms from './Forms';
+import { shell } from 'electron';
 
 export default {
   components: {
@@ -54,6 +57,9 @@ export default {
     closeNav() {
       this.sideNavStyle.width = '0px';
       this.$emit('closeNav');
+    },
+    openUrl(url) {
+      shell.openExternal(url);
     }
   }
 };
@@ -97,7 +103,7 @@ export default {
   width: 180px;
   margin-bottom: 25px;
 }
-bottom {
+footer {
   font-size: .9rem;
   background-color: #00000021;
   margin-top: 27px !important;
@@ -107,37 +113,40 @@ bottom {
   height: 130px;
   justify-content: space-around;
 }
-bottom > #team > p {
+footer > #team > p {
   text-align: center;
   justify-content: center;
   padding: 2px;
 }
-bottom > #team > p > a {
+footer > #team > p > .link {
   color: #FAFAFA;
   font-weight: 500;
   text-decoration: none;
 }
-bottom > #team > p > a:hover {
+footer > #team > p > .link:hover {
   text-decoration: underline;
 }
-bottom > .img-div {
+footer > .img-div {
   display: flex;
   justify-content: center;
 }
-bottom > .img-div > #ufrn-logo {
+footer > .img-div > #ufrn-logo {
   width: 40px;
   cursor: pointer;
 }
-bottom > #institutions {
+footer > #institutions {
   display: flex;
   justify-content: space-between;
 }
-bottom > #institutions a {
+footer > #institutions .link {
   color: #FAFAFA;
   text-decoration: none;
   font-weight: 600;
 }
-bottom > #institutions a:hover {
+footer > #institutions .link:hover {
   text-decoration: underline;
+}
+.link {
+  cursor: pointer;
 }
 </style>
