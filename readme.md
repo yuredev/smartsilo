@@ -38,7 +38,7 @@
 <div 
     style="display: flex; flex-wrap: wrap; justify-content:space-around; align-itens: center;"
 >
-    <img src="./screenshots/screenshot.png" width="65%" style="margin:10px">
+    <img src="./screenshots/demo.gif" width="65%" style="margin:10px">
     <img src="./screenshots/dryer.PNG" width="25%" style="margin:10px">
 
 </div>
