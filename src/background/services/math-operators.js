@@ -9,6 +9,7 @@ module.exports = {
   // retorna correspondente do valor em outra escala
   scaleOutput(value, inverse = false) {
     let from;
+    let to;
     if (!inverse) {
       (from = [0, 5]), (to = [0, 255]);
     } else {

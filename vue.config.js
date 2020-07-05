@@ -4,7 +4,7 @@ module.exports = {
 		electronBuilder: {
 			externals: ['firmata', 'vue-plotly'],
 			nodeModulesPath: ['./node_modules'],
-      mainProcessFile: 'src/background/electron-entrypoint.js',
+      mainProcessFile: 'src/electron-entrypoint.js',
       mainProcessWatch: ['src/background/*'],		
 		}
 	}
