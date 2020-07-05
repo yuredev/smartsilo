@@ -7,8 +7,8 @@ const { exec: terminalExec } = require('child_process');
 
 const { ipcMain } = require('electron');
 
-const { toCelsius, scaleOutput } = require('./utils/math-operators'); 
-const projectPaths = require('./utils/project-paths');
+const { toCelsius, scaleOutput } = require('./services/math-operators'); 
+const projectPaths = require('./services/project-paths');
 
 // will be copied to an plot.m file, that are executable by octave-cli
 const octaveCode = require('./octave/plot.m');

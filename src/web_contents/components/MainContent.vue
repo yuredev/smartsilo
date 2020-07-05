@@ -14,9 +14,14 @@
           v-show="currentChart == 'Temperature'"
           type="Temperature"
           :paused="chartIsPaused"
-          key="chart1"
+          :expandChart="!controlChartVisibility"
         />
-        <Chart v-show="currentChart == 'Mass'" type="Mass" :paused="chartIsPaused" key="chart2" />
+        <Chart 
+          v-show="currentChart == 'Mass'" 
+          type="Mass" 
+          :paused="chartIsPaused" 
+          :expandChart="!controlChartVisibility"
+        />
         <ControlPane @pauseChart="pauseChart" @showLoadingScreen="showLoadingScreen = true" />
         <Chart v-show="controlChartVisibility" type="Control" />
       </div>
@@ -27,7 +32,7 @@
 <script>
 import Chart from './Chart';
 import ControlPane from './ControlPane';
-import eventBus from '../event-bus';
+import eventBus from '../utils/event-bus';
 import { ipcRenderer } from 'electron';
 
 export default {

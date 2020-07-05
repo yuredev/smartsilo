@@ -17,9 +17,9 @@
 <script>
 import { ipcRenderer } from 'electron';
 import { Plotly } from 'vue-plotly';
-import eventBus from '../event-bus';
+import eventBus from '../utils/event-bus';
 import Stopwatch from '../utils/stopwatch';
-import getTracesConfig from '../utils/get-traces-config';
+import getTracesConfig from '../services/get-traces-config';
 
 export default {
   components: {
@@ -27,12 +27,12 @@ export default {
   },
   data() {
     return {
-      stopwatch: undefined,
+      stopwatch: null,
       paused: false,
-      time: undefined,
-      chartInterval: undefined,
+      time: null,
+      chartInterval: null,
       setPointTemp: 30,
-      setPointMass: undefined,
+      setPointMass: null,
       x: 0,
       value: 0,
       data: [],
@@ -51,6 +51,7 @@ export default {
     };
   },
   props: {
+    expandChart: Boolean,
     type: {
       type: String,
       required: true
@@ -71,6 +72,13 @@ export default {
     this.stopwatch = new Stopwatch();
     this.stopwatch.start();
     setInterval(() => (this.time = this.stopwatch.getTime()), 1000);
+  },
+  watch: {
+    expandChart() {
+      const newLayout = { ...this.layout };
+      newLayout.height = this.expandChart ? 300 : 235;
+      this.layout = newLayout; 
+    }
   },
   methods: {
     setSetPoint(newSetPoint) {
@@ -97,7 +105,7 @@ export default {
     },
     updateChart() {
       if (!this.$refs.chart || this.value < 0) return;
-      
+       
       let newLayout = {
         xaxis: {
           showticklabels: false,

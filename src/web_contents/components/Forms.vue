@@ -106,9 +106,9 @@
 </template>
 
 <script>
-import eventBus from '../event-bus';
+import eventBus from '../utils/event-bus';
 import sweetAlert from '../utils/sweet-alert';
-import { haveEqualItens } from '../utils/array-have-equal-itens';
+import haveEqualItens from '../services/array-have-equal-itens';
 import { ipcRenderer } from 'electron';
 
 export default {

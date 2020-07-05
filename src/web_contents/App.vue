@@ -19,7 +19,7 @@
 import Navbar from './components/Navbar';
 import SideNav from './components/SideNav';
 import MainContent from './components/MainContent';
-import eventBus from './event-bus';
+import eventBus from './utils/event-bus';
 
 export default {
   components: {
@@ -33,14 +33,14 @@ export default {
       currentControlMode: 'Open loop',
       currentChart: 'Temperature',
       showHamburger: false,
-      openNavButtonState: undefined,
-      screenWidth: undefined,
+      openNavButtonState: null,
+      screenWidth: null,
       styles: {
         sideNavStyle: {
-          width: undefined
+          width: null
         },
         mainContentStyle: {
-          'margin-left': undefined
+          'margin-left': null
         }
       }
     };

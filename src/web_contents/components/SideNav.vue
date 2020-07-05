@@ -32,7 +32,6 @@
 </template>
 
 <script>
-
 import Forms from './Forms';
 import { shell } from 'electron';
 

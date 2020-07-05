@@ -1,14 +1,12 @@
 'use strict';
 
-import './domain'; // will load the index.js of the domain folder
+import './background'; // will load the index.js of the domain folder
 import { app, protocol, BrowserWindow } from 'electron';
 import {
   createProtocol
   /* installVueDevtools */
 } from 'vue-cli-plugin-electron-builder/lib';
 const isDevelopment = process.env.NODE_ENV !== 'production';
-
-const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -25,7 +23,6 @@ function createWindow() {
     width: 1080,
     height: 720,
     title: 'SmartSilo',
-    icon: path.join(__static, 'icon.png'),
     titleBarStyle: 'hidden',
     webPreferences: {
       webSecurity: false,

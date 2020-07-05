@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import eventBus from '../event-bus';
+import eventBus from '../utils/event-bus';
 import { ipcRenderer } from 'electron';
 
 export default {
