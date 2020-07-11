@@ -4,7 +4,7 @@ const { exec: terminalExec } = require('child_process');
 
 const { ipcMain } = require('electron');
 
-const projectPaths = require('./services/project-paths');
+const projectPaths = require('./utils/project-paths');
 
 // will be copied to an plot.m file, that are executable by octave-cli
 const octaveCode = require('./octave/plot.m');
@@ -14,19 +14,20 @@ let txtFileName;
 // will store the Timeout of the setInverval that saves the data in txt files
 let savingTimeLapse;
 
-const HardwareHandler = require('./hardware-handler');
-// console.log(typeof new HardwareHandler());
-const hardHandler = new HardwareHandler();
+const Board = require('./board');
+// console.log(typeof new Board());
+const board = new Board();
 
-// hardHandler.onBoardReady(main);
+// board.onReady(main);
 
-(function main() {
+const main = () => {
   initializeFolders();
-  hardHandler.setPins();
+  board.setPins();
   // arduino.pinMode(9, Pin.PWM);
-  hardHandler.startControlling('Open loop');
+  board.startControlling('Open loop');
   startListeners();
-})();
+}
+main();
 
 function initializeFolders() {
   terminalExec(`mkdir ${projectPaths.experiments}`);
@@ -42,21 +43,21 @@ function startListeners() {
     startExperiment(controlMode)
   );
   ipcMain.on('stop-experiment', stopExperiment);
-  ipcMain.on('set-open-loop-voltage', (evt, v) => hardHandler.setOpenLoopVoltage(evt, v));
-  ipcMain.on('set-setpoint', (evt, sp) => hardHandler.setSetPoint(evt, sp));
-  ipcMain.on('set-pins', (evt, p) => hardHandler.setPins(evt, p));
-  ipcMain.on('set-pid-consts', (evt, consts) => hardHandler.setPidConsts(consts));
+  ipcMain.on('set-open-loop-voltage', (evt, v) => board.setOpenLoopVoltage(evt, v));
+  ipcMain.on('set-setpoint', (evt, sp) => board.setSetPoint(evt, sp));
+  ipcMain.on('set-pins', (evt, p) => board.setPins(evt, p));
+  ipcMain.on('set-pid-consts', (evt, consts) => board.setPidConsts(consts));
 }
 
 function startExperiment(controlMode) {
-  hardHandler.stopControlling();
-  hardHandler.startControlling(controlMode);
+  board.stopControlling();
+  board.startControlling(controlMode);
   startSaving();
 }
 function stopExperiment(evt) {
   clearInterval(savingTimeLapse);
-  hardHandler.stopControlling();
-  hardHandler.startControlling('Open loop');
+  board.stopControlling();
+  board.startControlling('Open loop');
   octavePlot()
     .then((currentPlotPath) => {
       evt.reply('chart-ready', currentPlotPath);
@@ -82,7 +83,7 @@ function octavePlot() {
 // começa a salvar em arquivo txt
 function startSaving() {
   const getTextToSave = () =>
-    `${hardHandler.getTemp()},${hardHandler.getVoltage()},${hardHandler.errorValue},${hardHandler.setpoint}\n`;
+    `${board.getTemp()},${board.getVoltage()},${board.errorValue},${board.setpoint}\n`;
 
   const pathToNewTxt = projectPaths.getNewTxt();
   txtFileName = path.basename(pathToNewTxt);
@@ -102,9 +103,9 @@ function startSending(evt, freq = 500) {
     // o output gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5
     evt.reply('new-data', {
       type: 'Control',
-      value: hardHandler.getVoltage()
+      value: board.getVoltage()
     }),
-    evt.reply('new-data', { type: 'Temperature', value: hardHandler.getTemp() });
+    evt.reply('new-data', { type: 'Temperature', value: board.getTemp() });
     evt.reply('new-data', { type: 'Mass', value: Math.random() * 1 });
   }, freq);
 }
