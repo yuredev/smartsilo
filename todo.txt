@@ -1,7 +1,1 @@
-* traduzir palavras do gráfico do octave
-
-* colocar créditos 
-
-* deixar linha do gŕafico octave mais grossa 
-
-* estabelecer escala fixa no gráfico do octave 
+add the set board path functionality
