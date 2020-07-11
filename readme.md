@@ -1,39 +1,10 @@
-<h1 align="center"> ⚙  SmartSilo  🌱 </h1>
+# ⚙  SmartSilo  🌱 </h1>
 
-<p>
-    SmartSilo is a university research project from the Federal University of Rio Grande do Norte. Consists in a a hardware based application for intelligent aeration / drying instrumentation and control in grain storage silos in a IoT context.
-</p>
+### Description:
 
-<h3>
-    Access the <a href="https://smartsilo.netlify.com/">oficial project website</a>
-</h3>
+With the increase in productivity presented by the grain sector in the country, the need for not only storage places for products, but for them to be optimized to provide greater durability of these products, is of national and strategic interest for the primary economy chain. This project will allow the development of an aeration / drying control system in grain storage silos, with the use of instrumentation in the Internet of Things (IoT) context, with the possibility not only of monitoring but of controlling variables remotely, for maintenance humidity / temperature levels suitable for each type of grain and microclimate conditions inside and outside the silo installation site.
 
-<hr>
-
-<h2 align="center">
-    <strong>
-        Technologies involved 
-    </strong>
-</h2>
-<div>
-<p>
-    <strong>Frontend: </strong>
-    VueJS, Vue-Plotly, Vue-Socket.io, Axios.
-</p>
-
-<p>
-    <strong>Backend: </strong>
-    NodeJS, Johnny-Five , Express, Socket.io, Octave-cli.
-</p>
-
-<p>
-    <strong>Hardware: </strong>
-    Arduino Board, 5 Thermistors, 3 Load Cells, Didactic Grain Drying Kit  
-</p>
-
-<div/>
-
-<hr>
+Access the <a href="https://smartsilo.netlify.com/">Oficial project website</a>
 
 <div 
     style="display: flex; flex-wrap: wrap; justify-content:space-around; align-itens: center;"
@@ -43,8 +14,12 @@
 
 </div>
 
+### 🛠️ Built with:
 
+- Electron
+- Vue.js
+- Firmata.js
+- Plotly.js
+- Octave
 
-
-
-
+Built mainly in the <a href="">TAPIOCA-LAB</a> from the <a>Federal University of Rio Grande do Norte.</a> 
