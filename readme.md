@@ -1,6 +1,6 @@
 # ⚙  SmartSilo  🌱 </h1>
 
-### Introduction:
+### About:
 
 SmartSilo is a research project from the Federal University of Rio Grande do Norte that consists in a idea of software to monitor and control the drying proccess of grains and seeds within storage silos. <br />
 <br />
