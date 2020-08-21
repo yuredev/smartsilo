@@ -16,7 +16,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "electron": "^6.0.0",
+    "electron": "^7.2.4",
     "firmata": "^2.2.0",
     "node-pid-controller": "^1.0.1",
     "socket.io": "^2.3.0",
