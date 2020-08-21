@@ -16,11 +16,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "core-js": "^3.6.4",
     "electron": "^6.0.0",
-    "firmata": "^2.2.0",
-    "node-pid-controller": "^1.0.1",
-    "serialport": "^9.0.0",
     "vue": "^2.6.11",
     "vue-plotly": "^1.1.0",
     "vue-sweetalert2": "^3.0.5"
