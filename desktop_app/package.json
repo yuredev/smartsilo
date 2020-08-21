@@ -16,7 +16,9 @@
   },
   "main": "background.js",
   "dependencies": {
+    "axios": "^0.20.0",
     "electron": "^6.0.0",
+    "socket.io-client": "^2.3.0",
     "vue": "^2.6.11",
     "vue-plotly": "^1.1.0",
     "vue-sweetalert2": "^3.0.5"

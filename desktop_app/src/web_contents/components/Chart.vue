@@ -21,6 +21,9 @@ import eventBus from '../utils/event-bus';
 import Stopwatch from '../utils/stopwatch';
 import getTracesConfig from '../services/get-traces-config';
 
+import websocketClient from 'socket.io-client';
+const socket = websocketClient('http://localhost:3333');
+
 export default {
   components: {
     Plotly
@@ -58,13 +61,16 @@ export default {
     }
   },
   created() {
+    this.socket = socket;
     this.data = getTracesConfig(this.type);
   },
   mounted() {
     eventBus.$on('pause-chart', this.pauseChart);
     eventBus.$on('resume-chart', this.resumeChart);
     eventBus.$on('set-setpoint', this.setSetPoint);
-    ipcRenderer.on('new-data', this.updateData);
+
+    this.socket.on('new-data', this.updateData);
+    
     setTimeout(() => ipcRenderer.send('ready'), 2500);
     this.chartInterval = setInterval(() => this.updateChart(), 100);
     this.stopwatch = new Stopwatch();
@@ -84,7 +90,7 @@ export default {
         this.setPointTemp = newSetPoint;
       }
     },
-    updateData(evt, newData) {
+    updateData(newData) {
       // se o tipo de dado que chegar for do tipo que o gráfico está exibindo
       // o valor deve ser atualizado
       if (newData.type == this.type) {
