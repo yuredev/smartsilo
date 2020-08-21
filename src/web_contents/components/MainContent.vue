@@ -2,8 +2,8 @@
   <div id="main" :style="mainStyle">
     <div class="centralize-content chartArea" v-if="showChart">
       <img :src="'file:///' + plotPath" id="chartResult" alt="gráfico gerado" />
-      <button @click="showChart = false">voltar</button>
-    </div>
+      <button @click="showChart = false">Back</button>
+    </div> 
     <div v-show="!showChart">
       <div class="centralize-content chartArea" v-if="showLoadingScreen">
         <img src="../assets/load.gif" />

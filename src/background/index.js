@@ -43,7 +43,7 @@ function startListeners() {
   ipcMain.on('stop-experiment', stopExperiment);
   ipcMain.on('set-open-loop-voltage', (evt, v) => board.setOpenLoopVoltage(evt, v));
   ipcMain.on('set-setpoint', (evt, sp) => board.setSetPoint(evt, sp));
-  ipcMain.on('set-pins', (p) => board.setPins(p));
+  ipcMain.on('set-pins', (evt, p) => board.setPins(p));
   ipcMain.on('set-pid-consts', (evt, consts) => board.setPidConsts(consts));
 }
 
