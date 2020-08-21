@@ -56,6 +56,7 @@ export default {
     );
   },
   mounted() {
+    ipcRenderer.send('ready');
     ipcRenderer.on('chart-ready', (evt, plotPath) => {
       this.showLoadingScreen = false;
       this.showChart = true;

@@ -23,11 +23,9 @@ board.onReady(() => main());
 function main() {
   initializeFolders();
   board.setPins(3, 4, 5);
-  // arduino.pinMode(9, Pin.PWM);
   board.startControlling('Open loop');
   startListeners();
 }
-// main();
 
 function initializeFolders() {
   terminalExec(`mkdir ${projectPaths.experiments}`);

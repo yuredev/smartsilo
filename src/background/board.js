@@ -55,24 +55,25 @@ module.exports = class Board {
     clearInterval(this.pidTimeLapse);
   }
   startControlling(mode) {
+    this.board.pinMode(11, this.board.MODES.PWM);
     switch (mode) {
       case 'PID':
-        this.pidTimeLapse = setInterval(() => this.controlViaPid(), 100);
+        this.pidTimeLapse = setInterval(() => this.controlViaPid(), 10);
         break;
       case 'ON/OFF':
-        this.onOffTimeLapse = setInterval(() => this.controlViaOnOff(), 100);
+        this.onOffTimeLapse = setInterval(() => this.controlViaOnOff(), 10);
         break;
       case 'Open loop':
         this.output = scaleOutput(this.openLoopVoltage);
         this.openLoopTimeLapse = setInterval(() => {
-          this.board.analogWrite(9, this.output);
-        }, 100);
+          this.board.pwmWrite(11, this.output);
+        }, 10);
         break;
     }
   }
   controlViaOnOff() {
     this.output = this.getTemp() < this.setpoint ? 255 : 0;
-    this.board.analogWrite(9, this.output);
+    this.board.pwmWrite(11, this.output);
   }
   controlViaPid() {
     const { pb, ti, td } = this.pidConsts;
@@ -97,6 +98,6 @@ module.exports = class Board {
       this.output = 0;
     }
     console.log(this.output);
-    this.board.analogWrite(9, this.output);
+    this.board.pwmWrite(11, this.output);
   }
 };

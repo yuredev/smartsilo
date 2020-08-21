@@ -88,11 +88,8 @@ export default {
       // se o tipo de dado que chegar for do tipo que o gráfico está exibindo
       // o valor deve ser atualizado
       if (newData.type == this.type) {
-        console.log('entrou');
         this.value = newData.value;
-      } else {
-        console.log('não entrou');
-      }
+      } 
     },
     pauseChart() {
       clearInterval(this.chartInterval);
