@@ -16,18 +16,18 @@ let savingTimeLapse;
 
 const Board = require('./board');
 // console.log(typeof new Board());
-const board = new Board();
+const board = new Board('COM3');
 
-// board.onReady(main);
+board.onReady(() => main());
 
-const main = () => {
+function main() {
   initializeFolders();
-  board.setPins();
+  board.setPins(3, 4, 5);
   // arduino.pinMode(9, Pin.PWM);
   board.startControlling('Open loop');
   startListeners();
 }
-main();
+// main();
 
 function initializeFolders() {
   terminalExec(`mkdir ${projectPaths.experiments}`);
@@ -45,7 +45,7 @@ function startListeners() {
   ipcMain.on('stop-experiment', stopExperiment);
   ipcMain.on('set-open-loop-voltage', (evt, v) => board.setOpenLoopVoltage(evt, v));
   ipcMain.on('set-setpoint', (evt, sp) => board.setSetPoint(evt, sp));
-  ipcMain.on('set-pins', (evt, p) => board.setPins(evt, p));
+  ipcMain.on('set-pins', (p) => board.setPins(p));
   ipcMain.on('set-pid-consts', (evt, consts) => board.setPidConsts(consts));
 }
 

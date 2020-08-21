@@ -1,4 +1,4 @@
-// const Firmata = require('firmata');
+const Firmata = require('firmata');
 // const board = new Firmata('/dev/ttyUSB0');
 const { toCelsius, scaleOutput } = require('./utils/math-operators');
 const Controller = require('node-pid-controller');
@@ -13,7 +13,7 @@ module.exports = class Board {
     this.pidTimeLapse = null;
     this.openLoopVoltage = 0;
     this.therms = [];
-    // this.board = new Firmata(boardPath);
+    this.board = new Firmata(boardPath);
     this.pidConsts = {
       pb: 30, // proportional band width
       ti: 1.27, // integral time
@@ -27,8 +27,8 @@ module.exports = class Board {
     return scaleOutput(this.output, 'to [0,5]');
   }
   getTemp() {
-    const sumTemps = (total, el) => total + toCelsius(el.value);
-    const averageTemp = this.therms.reduce(sumTemps, 0) / 5;
+    const sumTemps = (acc, cur) => acc + toCelsius(cur);
+    const averageTemp = this.therms.reduce(sumTemps, 0) / this.therms.length;
     return averageTemp;
   }
   setSetPoint(evt, newSetPoint) {
@@ -42,25 +42,12 @@ module.exports = class Board {
     clearInterval(this.openLoopTimeLapse);
     this.startControlling('Open loop');
   }
-  setPins(evt, pins = ['A0', 'A1', 'A2', 'A3', 'A4']) {
-    // descomentar depois
-    // for (let i = 0; i < 5; i++) {
-    //   this.therms[i] = new Sensor({ pin: pins[i], freq: 100 });
-    // }
-
-    // comentar depois
-    this.therms[0] = { value: 0 };
-    this.therms[1] = { value: 0 };
-    this.therms[2] = { value: 0 };
-    this.therms[3] = { value: 0 };
-    this.therms[4] = { value: 0 };
-
-    this.therms.forEach((therm) => {
-      setInterval(
-        () => (therm.value = Math.round(Math.random() * 70 + 400)),
-        500
-      );
-    });
+  setPins(...pins) {
+    for (let i = 0; i < pins.length; i++) {
+      this.board.analogRead(pins[i], (value) => {
+        this.therms[i] = value;
+      });
+    }
   }
   stopControlling() {
     clearInterval(this.openLoopTimeLapse);
@@ -78,14 +65,14 @@ module.exports = class Board {
       case 'Open loop':
         this.output = scaleOutput(this.openLoopVoltage);
         this.openLoopTimeLapse = setInterval(() => {
-          // arduino.analogWrite(9, this.output);
+          this.board.analogWrite(9, this.output);
         }, 100);
         break;
     }
   }
   controlViaOnOff() {
     this.output = this.getTemp() < this.setpoint ? 255 : 0;
-    // arduino.analogWrite(9, this.output);
+    this.board.analogWrite(9, this.output);
   }
   controlViaPid() {
     const { pb, ti, td } = this.pidConsts;
@@ -109,6 +96,7 @@ module.exports = class Board {
     } else if (this.output < 0) {
       this.output = 0;
     }
-    // arduino.analogWrite(9, this.output);
+    console.log(this.output);
+    this.board.analogWrite(9, this.output);
   }
 };

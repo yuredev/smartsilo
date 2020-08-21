@@ -64,10 +64,8 @@ export default {
     eventBus.$on('pause-chart', this.pauseChart);
     eventBus.$on('resume-chart', this.resumeChart);
     eventBus.$on('set-setpoint', this.setSetPoint);
-  
-    ipcRenderer.send('ready');
     ipcRenderer.on('new-data', this.updateData);
-
+    setTimeout(() => ipcRenderer.send('ready'), 2500);
     this.chartInterval = setInterval(() => this.updateChart(), 100);
     this.stopwatch = new Stopwatch();
     this.stopwatch.start();
@@ -90,7 +88,10 @@ export default {
       // se o tipo de dado que chegar for do tipo que o gráfico está exibindo
       // o valor deve ser atualizado
       if (newData.type == this.type) {
+        console.log('entrou');
         this.value = newData.value;
+      } else {
+        console.log('não entrou');
       }
     },
     pauseChart() {
