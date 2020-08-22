@@ -16,14 +16,24 @@
       </div>
       <div class="centralize-self">
         <label for="controlMode">Control Mode:</label>
-        <select name="controlMode" :disabled="disableControlModeSelection" v-model="selectedControlMode">
+        <select
+          name="controlMode"
+          :disabled="disableControlModeSelection"
+          v-model="selectedControlMode"
+        >
           <option>Open loop</option>
           <option>PID</option>
           <option>ON/OFF</option>
         </select>
       </div>
       <div class="radioButtonDiv" v-show="selectedControlMode == 'Open loop'">
-        <input type="radio" name="voltageRadioBtn" id="voltage0v" @click="setOpenLoopVoltage(0)" checked />
+        <input
+          type="radio"
+          name="voltageRadioBtn"
+          id="voltage0v"
+          @click="setOpenLoopVoltage(0)"
+          checked
+        />
         <label for="voltage0v">0v</label>
         <input type="radio" name="voltageRadioBtn" id="voltage3v" @click="setOpenLoopVoltage(3)" />
         <label for="voltage3v">3v</label>
@@ -31,55 +41,58 @@
       <div id="pid-consts-div" v-show="selectedControlMode == 'PID'">
         <label>PID Settings:</label>
         <div class="flex-bet">
-          <abbr class="input-abbr flex-bet" title="Proportional band width. Must be between 0 and 100">
-            <span>PB: </span>
-            <input 
+          <abbr
+            class="input-abbr flex-bet"
+            title="Proportional band width. Must be between 0 and 100"
+          >
+            <span>PB:</span>
+            <input
               :disabled="disableControlModeSelection"
               class="input-pid"
               type="number"
               v-model="pidConsts.pb"
-              placeholder="Proportional band width"  
+              placeholder="Proportional band width"
               min="0"
               max="100"
               @keyup.enter="sendPidConsts"
-            >
+            />
           </abbr>
           <div class="flex-bet academic-label">
-            <span>KP: </span>
+            <span>KP:</span>
             <span>{{kp.toFixed(2)}}</span>
           </div>
         </div>
         <div class="flex-bet">
           <abbr class="input-abbr flex-bet" title="Integrative time">
-            <span>TI: </span>
-            <input 
+            <span>TI:</span>
+            <input
               :disabled="disableControlModeSelection"
               class="input-pid"
               type="number"
               v-model="pidConsts.ti"
-              placeholder="Integrative time"  
+              placeholder="Integrative time"
               @keyup.enter="sendPidConsts"
-            >
+            />
           </abbr>
           <div class="flex-bet academic-label">
-            <span>KI: </span>
+            <span>KI:</span>
             <span>{{ki.toFixed(2)}}</span>
           </div>
         </div>
         <div class="flex-bet">
           <abbr class="input-abbr flex-bet" title="Derivative time">
-            <span>TD: </span>
-            <input 
+            <span>TD:</span>
+            <input
               :disabled="disableControlModeSelection"
               class="input-pid"
               type="number"
               v-model="pidConsts.td"
-              placeholder="Derivative time"  
+              placeholder="Derivative time"
               @keyup.enter="sendPidConsts"
-            >
+            />
           </abbr>
           <div class="flex-bet academic-label">
-            <span>KD: </span>
+            <span>KD:</span>
             <span>{{kd.toFixed(2)}}</span>
           </div>
         </div>
@@ -88,13 +101,12 @@
           <button :disabled="disableControlModeSelection" @click="sendPidConsts">Confirm</button>
         </div>
       </div>
-
     </div>
     <div class="formsArea" style="margin-top: 27px;">
       <div class="centralize-self" style="margin-top: 10px">
         <label for="pin">Pins:</label>
         <div v-for="pin of 5" :key="pin">
-          <label>{{pin}}° </label>
+          <label>{{pin}}°</label>
           <select id="pin" v-model="pins[pin-1]" :disabled="disableControlModeSelection">
             <option v-for="avaliablePin of 6" :key="avaliablePin">{{'A'+(avaliablePin-1)}}</option>
           </select>
@@ -110,6 +122,10 @@ import eventBus from '../utils/event-bus';
 import websocketBus from '../utils/websocket-bus';
 import sweetAlert from '../utils/sweet-alert';
 import haveEqualItens from '../services/array-have-equal-itens';
+import axios from 'axios';
+
+import config from '../../../package.json';
+const baseUrl = config.base_url;
 
 export default {
   data() {
@@ -123,19 +139,19 @@ export default {
         pb: null,
         ti: null,
         td: null,
-      }
+      },
     };
   },
-  mounted() {
+  async mounted() {
     eventBus.$on('set-option-disabled', this.switchSelectState);
 
-    websocketBus.$on('set-setpoint', this.setSetPoint);
-    websocketBus.$on('set-pid-consts', this.setPidConsts);
+    websocketBus.$on('update-setpoint-client', this.setSetPoint);
+    websocketBus.$on('update-pid-consts-client', this.setPidConsts);
 
-    setTimeout(() => {
-      websocketBus.$emit('get-setpoint');
-      websocketBus.$emit('get-pid-consts');
-    }, 2000);
+    const serverState = await axios.get(`${baseUrl}/state`);
+
+    this.setpointTemp = serverState.data.setpoint;
+    this.pidConsts = serverState.data.pidConsts;
   },
   computed: {
     kp() {
@@ -146,16 +162,16 @@ export default {
     },
     kd() {
       return this.kp * this.pidConsts.td;
-    }
+    },
   },
   methods: {
     resetPidConsts() {
-      this.pidConsts =  {
-        pb: 30,   // proportional band width 
+      this.pidConsts = {
+        pb: 30, // proportional band width
         ti: 1.27, // integral time
-        td: 6     // derivative time
+        td: 6, // derivative time
       };
-      websocketBus.$emit('set-pid-consts', this.pidConsts);
+      websocketBus.$emit('update-pid-consts-server', this.pidConsts);
       sweetAlert.fire('success', 'Pid constants changed successfully');
     },
     setPidConsts(newPidConsts) {
@@ -164,25 +180,25 @@ export default {
     sendPidConsts() {
       if (!this.pidConsts.pb || !this.pidConsts.ti || !this.pidConsts.td) {
         sweetAlert.fire(
-          'error', 
-          'Sorry, but you can\'t do this', 
+          'error',
+          "Sorry, but you can't do this",
           'You have to fill all of the pid constants fields to change'
         );
         return;
-      } 
+      }
       if (this.pidConsts.pb < 0 || this.pidConsts.pb > 100) {
         sweetAlert.fire(
-          'error', 
-          'Sorry, but you can\'t do this', 
+          'error',
+          "Sorry, but you can't do this",
           'You have to insert a value between 0 and 100'
         );
         return;
       }
-      websocketBus.$emit('set-pid-consts', this.pidConsts);
+      websocketBus.$emit('update-pid-consts-server', this.pidConsts);
       sweetAlert.fire('success', 'Pid settings changed successfully');
     },
     setOpenLoopVoltage(voltage) {
-      websocketBus.$emit('set-open-loop-voltage', voltage);
+      websocketBus.$emit('update-open-loop-voltage', voltage);
     },
     switchSelectState(disableControlModeSelection) {
       this.disableControlModeSelection = disableControlModeSelection;
@@ -191,7 +207,7 @@ export default {
       if (haveEqualItens(this.pins)) {
         sweetAlert.fire(
           'error',
-          'Sorry, but you can\'t do this',
+          "Sorry, but you can't do this",
           'There are pins with equal values, each pin must have a different value'
         );
       } else {
@@ -201,47 +217,48 @@ export default {
     },
     setSetPoint(newSetpoint) {
       this.setpointTemp = newSetpoint;
+      eventBus.$emit('set-setpoint', this.setpointTemp);
     },
     sendSetpoint() {
       if (this.setpointTemp > 40) {
         sweetAlert.fire(
-          'error', 
-          'Sorry, but you can\'t do this',
+          'error',
+          "Sorry, but you can't do this",
           'The value is too high, please reduce for not damage the hardware'
         );
         return;
       }
       // send the new setpoint to the Chart Component
       eventBus.$emit('set-setpoint', this.setpointTemp);
-      websocketBus.$emit('set-setpoint', this.setpointTemp);
-    }
+      websocketBus.$emit('update-setpoint-server', this.setpointTemp);
+    },
   },
   watch: {
     selectedControlMode() {
       eventBus.$emit('set-control-mode', this.selectedControlMode);
-    }
+    },
   },
 };
 </script>
 
 <style scoped>
-
 * {
   font-family: Helvetica, sans-serif;
 }
 
-button, select {
+button,
+select {
   cursor: pointer;
 }
 
 button,
 select,
 input {
-  background-color: rgb(255, 255, 255, 0.90);
+  background-color: rgb(255, 255, 255, 0.9);
   border-style: solid;
-  border-color: rgb(255, 255, 255, 0.40);
+  border-color: rgb(255, 255, 255, 0.4);
   border-radius: 2px;
-  transition: .1s;
+  transition: 0.1s;
 }
 
 button:hover,

@@ -4,20 +4,24 @@ const express = require('express');
 const app = express();
 const Board = require('./board');
 const PORT = 3333;
+const board = new Board('COM3');
+
+app.get('/state', (req, res) => {
+  const { setpoint, pidConsts, isControlling } = board;
+  return res.json({ setpoint, pidConsts, isControlling });
+});
 
 const server = app.listen(PORT, () => {
   console.log('✔ Server working at http://127.0.0.1:' + PORT);
 });
-
 const io = socketIO(server);
-const board = new Board('COM3');
 
 board.onReady(() => {
   console.log('✔ board ready');
-  board.setPins(3, 4, 5);
+  board.updatePins(3, 4, 5);
   board.startControlling('Open loop');
   io.on('connection', (socket) => {
-    console.log(`${socket.id} connected`);
+    console.log(`> ${socket.id} connected`);
     startSending(socket);
     startSocketListening(socket);
   });
@@ -28,34 +32,24 @@ function startSocketListening(socket) {
     startExperiment(controlMode);
   });
   // socket.on('stop-experiment', stopExperiment);
-  socket.on('set-open-loop-voltage', (v) => board.setOpenLoopVoltage(v));
-  
-  socket.on('get-setpoint', () => {
-    socket.emit('set-setpoint', board.setpoint);
-    console.log('setpoint getted');
-  });
+  socket.on('update-open-loop-voltage', (v) => board.updateOpenLoopVoltage(v));
 
-  socket.on('get-pid-consts', () => {
-    socket.emit('set-pid-consts', board.setpoint);
-    console.log('pid consts getted');
-  });
-
-  socket.on('set-setpoint-server', (newSetpoint) => {
-    board.setSetPoint(newSetpoint);
+  socket.on('update-setpoint-server', (newSetpoint) => {
+    board.updateSetpoint(newSetpoint);
     // send new setpoint to the others clients connected
-    socket.broadcast.emit('set-setpoint', board.setpoint);
-    console.log('setpoint seted: ' + board.setpoint);
+    socket.broadcast.emit('update-setpoint-client', board.setpoint);
+    console.log('setpoint updated to: ' + board.setpoint);
   });
 
-  socket.on('set-pins', (pins) => {
-    board.setPins(pins)
-    console.log('pins seted: ' + board.therms);
+  socket.on('update-pins', (pins) => {
+    board.updatePins(pins);
+    console.log('pins updated to: ' + board.therms);
   });
-  
-  socket.on('set-pid-consts', (pidConsts) => {
-    board.setPidConsts(pidConsts)
+
+  socket.on('update-pid-consts-server', (pidConsts) => {
+    board.updatePidConsts(pidConsts);
     // send new pid consts to the others clients connected
-    socket.broadcast.emit('set-pid-consts', pidConsts);
+    socket.broadcast.emit('update-pid-consts-client', pidConsts);
   });
 }
 
@@ -67,14 +61,12 @@ function startSending(socket, freq = 500) {
     // o output gerado está na escala 0 a 255 assim é preciso converte-lo para a escala 0 a 5
     socket.emit('new-data', {
       type: 'Control',
-      value: board.getVoltage()
+      value: board.getVoltage(),
     }),
-    socket.emit('new-data', { type: 'Temperature', value: board.getTemp() });
+      socket.emit('new-data', { type: 'Temperature', value: board.getTemp() });
     socket.emit('new-data', { type: 'Mass', value: Math.random() * 1 });
   }, freq);
 }
 
 // io.listen(PORT);
 // console.log(`✔ Websocket working at http://localhost:${WEBSOCKET_PORT}`);
-
-

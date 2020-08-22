@@ -5,6 +5,7 @@
   "author": "Yure Matias",
   "version": "1.0.0",
   "private": true,
+  "base_url": "http://localhost:3333",
   "scripts": {
     "serve": "vue-cli-service electron:serve",
     "build": "vue-cli-service electron:build",

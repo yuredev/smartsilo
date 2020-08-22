@@ -54,17 +54,15 @@ export default {
     this.handleResize();
   },
   mounted() {
-    this.addSocketListener('set-setpoint');
-    this.addSocketListener('set-pid-consts');
+    this.addSocketListener('update-setpoint-client');
+    this.addSocketListener('update-pid-consts-client');
     this.addSocketListener('new-data');
 
     this.addSocketEmitter('start-experiment');
-    this.addSocketEmitter('set-open-loop-voltage');
-    this.addSocketEmitter('get-setpoint');
-    this.addSocketEmitter('get-pid-consts');
-    this.addSocketEmitter('set-setpoint');
-    this.addSocketEmitter('set-pins');
-    this.addSocketEmitter('set-pid-consts');
+    this.addSocketEmitter('update-open-loop-voltage');
+    this.addSocketEmitter('update-setpoint-server');
+    this.addSocketEmitter('update-pins');
+    this.addSocketEmitter('update-pid-consts-server');
 
     eventBus.$on('set-control-mode', this.setControlMode);
     if (this.screenWidth > 992) {
