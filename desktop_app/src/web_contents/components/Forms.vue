@@ -117,7 +117,7 @@
             <option v-for="avaliablePin of 6" :key="avaliablePin">{{'A'+(avaliablePin-1)}}</option>
           </select>
         </div>
-        <button :disabled="disableControlModeSelection" @click="setPins">Set Pins</button>
+        <button :disabled="disableControlModeSelection" @click="updatePins">Set Pins</button>
       </div>
     </div>
   </div>
@@ -152,9 +152,9 @@ export default {
   async mounted() {
     eventBus.$on('set-option-disabled', this.switchSelectState);
 
-    websocketBus.$on('update-setpoint-client', this.updateSetpoint);
-    websocketBus.$on('update-pid-consts-client', this.setPidConsts);
-    websocketBus.$on('update-open-loop-voltage-client', this.updateOpenLoopVoltage);
+    websocketBus.$on('update-client-setpoint', this.updateSetpoint);
+    websocketBus.$on('update-client-pid-consts', this.updatePidConsts);
+    websocketBus.$on('update-client-open-loop-voltage', this.updateOpenLoopVoltage);
 
     const serverState = await axios.get(`${baseUrl}/state`);
 
@@ -180,10 +180,10 @@ export default {
         ti: 1.27, // integral time
         td: 6, // derivative time
       };
-      websocketBus.$emit('update-pid-consts-server', this.pidConsts);
+      websocketBus.$emit('update-server-pid-consts', this.pidConsts);
       sweetAlert.fire('success', 'Pid constants changed successfully');
     },
-    setPidConsts(newPidConsts) {
+    updatePidConsts(newPidConsts) {
       this.pidConsts = newPidConsts;
     },
     sendPidConsts() {
@@ -203,12 +203,12 @@ export default {
         );
         return;
       }
-      websocketBus.$emit('update-pid-consts-server', this.pidConsts);
+      websocketBus.$emit('update-server-pid-consts', this.pidConsts);
       sweetAlert.fire('success', 'Pid settings changed successfully');
     },
     sendOpenLoopVoltage(voltage) {
       this.updateOpenLoopVoltage(voltage);
-      websocketBus.$emit('update-open-loop-voltage-server', voltage);
+      websocketBus.$emit('update-server-open-loop-voltage', voltage);
     },
     updateOpenLoopVoltage(voltage) {
       this.currentOpenLoopVoltage = voltage;
@@ -216,7 +216,7 @@ export default {
     switchSelectState(disableControlModeSelection) {
       this.disableControlModeSelection = disableControlModeSelection;
     },
-    setPins() {
+    updatePins() {
       if (haveEqualItens(this.pins)) {
         sweetAlert.fire(
           'error',
@@ -243,7 +243,7 @@ export default {
       }
       // send the new setpoint to the Chart Component
       eventBus.$emit('set-setpoint', this.setpointTemp);
-      websocketBus.$emit('update-setpoint-server', this.setpointTemp);
+      websocketBus.$emit('update-server-setpoint', this.setpointTemp);
     },
   },
   watch: {

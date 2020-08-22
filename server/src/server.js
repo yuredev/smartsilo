@@ -34,15 +34,15 @@ function startSocketListening(socket) {
 
   // socket.on('stop-experiment', stopExperiment);
 
-  socket.on('update-open-loop-voltage-server', (v) => {
+  socket.on('update-server-open-loop-voltage', (v) => {
     board.updateOpenLoopVoltage(v)
-    socket.broadcast.emit('update-open-loop-voltage-client', board.openLoopVoltage);
+    socket.broadcast.emit('update-client-open-loop-voltage', board.openLoopVoltage);
   });
 
-  socket.on('update-setpoint-server', (newSetpoint) => {
+  socket.on('update-server-setpoint', (newSetpoint) => {
     board.updateSetpoint(newSetpoint);
     // send new setpoint to the others clients connected
-    socket.broadcast.emit('update-setpoint-client', board.setpoint);
+    socket.broadcast.emit('update-client-setpoint', board.setpoint);
     console.log('setpoint updated to: ' + board.setpoint);
   });
 
@@ -51,10 +51,10 @@ function startSocketListening(socket) {
     console.log('pins updated to: ' + board.therms);
   });
 
-  socket.on('update-pid-consts-server', (pidConsts) => {
+  socket.on('update-server-pid-consts', (pidConsts) => {
     board.updatePidConsts(pidConsts);
     // send new pid consts to the others clients connected
-    socket.broadcast.emit('update-pid-consts-client', pidConsts);
+    socket.broadcast.emit('update-client-pid-consts', pidConsts);
   });
 }
 
