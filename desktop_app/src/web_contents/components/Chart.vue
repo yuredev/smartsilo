@@ -18,11 +18,9 @@
 import { ipcRenderer } from 'electron';
 import { Plotly } from 'vue-plotly';
 import eventBus from '../utils/event-bus';
+import websocketBus from '../utils/websocket-bus';
 import Stopwatch from '../utils/stopwatch';
 import getTracesConfig from '../services/get-traces-config';
-
-import websocketClient from 'socket.io-client';
-const socket = websocketClient('http://localhost:3333');
 
 export default {
   components: {
@@ -61,7 +59,6 @@ export default {
     }
   },
   created() {
-    this.socket = socket;
     this.data = getTracesConfig(this.type);
   },
   mounted() {
@@ -69,7 +66,7 @@ export default {
     eventBus.$on('resume-chart', this.resumeChart);
     eventBus.$on('set-setpoint', this.setSetPoint);
 
-    this.socket.on('new-data', this.updateData);
+    websocketBus.$on('new-data', this.updateData);
     
     setTimeout(() => ipcRenderer.send('ready'), 2500);
     this.chartInterval = setInterval(() => this.updateChart(), 100);

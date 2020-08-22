@@ -8,40 +8,40 @@
             type="number"
             id="setPoint"
             name="setPoint"
-            v-model="setPointTemp"
-            @keyup.enter="setSetPoint"
+            v-model="setpointTemp"
+            @keyup.enter="sendSetpoint"
           />
-          <button id="button-change" @click="setSetPoint">Change</button>
+          <button id="button-change" @click="sendSetpoint">Change</button>
         </div>
       </div>
       <div class="centralize-self">
         <label for="controlMode">Control Mode:</label>
-        <select name="controlMode" :disabled="optionDisabled" v-model="currentControlMode">
+        <select name="controlMode" :disabled="disableControlModeSelection" v-model="selectedControlMode">
           <option>Open loop</option>
           <option>PID</option>
           <option>ON/OFF</option>
         </select>
       </div>
-      <div class="radioButtonDiv" v-show="currentControlMode == 'Open loop'">
+      <div class="radioButtonDiv" v-show="selectedControlMode == 'Open loop'">
         <input type="radio" name="voltageRadioBtn" id="voltage0v" @click="setOpenLoopVoltage(0)" checked />
         <label for="voltage0v">0v</label>
         <input type="radio" name="voltageRadioBtn" id="voltage3v" @click="setOpenLoopVoltage(3)" />
         <label for="voltage3v">3v</label>
       </div>
-      <div id="pid-consts-div" v-show="currentControlMode == 'PID'">
+      <div id="pid-consts-div" v-show="selectedControlMode == 'PID'">
         <label>PID Settings:</label>
         <div class="flex-bet">
           <abbr class="input-abbr flex-bet" title="Proportional band width. Must be between 0 and 100">
             <span>PB: </span>
             <input 
-              :disabled="optionDisabled"
+              :disabled="disableControlModeSelection"
               class="input-pid"
               type="number"
               v-model="pidConsts.pb"
               placeholder="Proportional band width"  
               min="0"
               max="100"
-              @keyup.enter="setPidConsts"
+              @keyup.enter="sendPidConsts"
             >
           </abbr>
           <div class="flex-bet academic-label">
@@ -53,12 +53,12 @@
           <abbr class="input-abbr flex-bet" title="Integrative time">
             <span>TI: </span>
             <input 
-              :disabled="optionDisabled"
+              :disabled="disableControlModeSelection"
               class="input-pid"
               type="number"
               v-model="pidConsts.ti"
               placeholder="Integrative time"  
-              @keyup.enter="setPidConsts"
+              @keyup.enter="sendPidConsts"
             >
           </abbr>
           <div class="flex-bet academic-label">
@@ -70,12 +70,12 @@
           <abbr class="input-abbr flex-bet" title="Derivative time">
             <span>TD: </span>
             <input 
-              :disabled="optionDisabled"
+              :disabled="disableControlModeSelection"
               class="input-pid"
               type="number"
               v-model="pidConsts.td"
               placeholder="Derivative time"  
-              @keyup.enter="setPidConsts"
+              @keyup.enter="sendPidConsts"
             >
           </abbr>
           <div class="flex-bet academic-label">
@@ -84,8 +84,8 @@
           </div>
         </div>
         <div class="flex-evenly">
-          <button :disabled="optionDisabled" @click="resetPidConsts">Reset</button>
-          <button :disabled="optionDisabled" @click="setPidConsts">Confirm</button>
+          <button :disabled="disableControlModeSelection" @click="resetPidConsts">Reset</button>
+          <button :disabled="disableControlModeSelection" @click="sendPidConsts">Confirm</button>
         </div>
       </div>
 
@@ -95,11 +95,11 @@
         <label for="pin">Pins:</label>
         <div v-for="pin of 5" :key="pin">
           <label>{{pin}}° </label>
-          <select id="pin" v-model="pins[pin-1]" :disabled="optionDisabled">
+          <select id="pin" v-model="pins[pin-1]" :disabled="disableControlModeSelection">
             <option v-for="avaliablePin of 6" :key="avaliablePin">{{'A'+(avaliablePin-1)}}</option>
           </select>
         </div>
-        <button :disabled="optionDisabled" @click="setPins">Set Pins</button>
+        <button :disabled="disableControlModeSelection" @click="setPins">Set Pins</button>
       </div>
     </div>
   </div>
@@ -107,27 +107,35 @@
 
 <script>
 import eventBus from '../utils/event-bus';
+import websocketBus from '../utils/websocket-bus';
 import sweetAlert from '../utils/sweet-alert';
 import haveEqualItens from '../services/array-have-equal-itens';
-import { ipcRenderer } from 'electron';
 
 export default {
   data() {
     return {
       pins: ['A0', 'A1', 'A2', 'A3', 'A4'],
-      currentControlMode: 'Open loop',
-      setPointTemp: 30,
-      optionDisabled: false,
+      selectedControlMode: 'Open loop',
+      setpointTemp: null,
+      disableControlModeSelection: false,
       controlModes: ['Open loop', 'PID', 'ON/OFF'],
       pidConsts: {
-        pb: 30,
-        ti: 1.27,
-        td: 6
+        pb: null,
+        ti: null,
+        td: null,
       }
     };
   },
-  created() {
+  mounted() {
     eventBus.$on('set-option-disabled', this.switchSelectState);
+
+    websocketBus.$on('set-setpoint', this.setSetPoint);
+    websocketBus.$on('set-pid-consts', this.setPidConsts);
+
+    setTimeout(() => {
+      websocketBus.$emit('get-setpoint');
+      websocketBus.$emit('get-pid-consts');
+    }, 2000);
   },
   computed: {
     kp() {
@@ -147,10 +155,13 @@ export default {
         ti: 1.27, // integral time
         td: 6     // derivative time
       };
-      ipcRenderer.send('set-pid-consts', this.pidConsts);
-      sweetAlert.fire('success', 'Pid settings changed successfully');
+      websocketBus.$emit('set-pid-consts', this.pidConsts);
+      sweetAlert.fire('success', 'Pid constants changed successfully');
     },
-    setPidConsts() {
+    setPidConsts(newPidConsts) {
+      this.pidConsts = newPidConsts;
+    },
+    sendPidConsts() {
       if (!this.pidConsts.pb || !this.pidConsts.ti || !this.pidConsts.td) {
         sweetAlert.fire(
           'error', 
@@ -167,14 +178,14 @@ export default {
         );
         return;
       }
-      ipcRenderer.send('set-pid-consts', this.pidConsts);
+      websocketBus.$emit('set-pid-consts', this.pidConsts);
       sweetAlert.fire('success', 'Pid settings changed successfully');
     },
     setOpenLoopVoltage(voltage) {
-      ipcRenderer.send('set-open-loop-voltage', voltage);
+      websocketBus.$emit('set-open-loop-voltage', voltage);
     },
-    switchSelectState(optionDisabled) {
-      this.optionDisabled = optionDisabled;
+    switchSelectState(disableControlModeSelection) {
+      this.disableControlModeSelection = disableControlModeSelection;
     },
     setPins() {
       if (haveEqualItens(this.pins)) {
@@ -184,12 +195,15 @@ export default {
           'There are pins with equal values, each pin must have a different value'
         );
       } else {
-        ipcRenderer.send('set-pins', this.pins);
+        websocketBus.$emit('set-pins', this.pins);
         sweetAlert.fire('success', 'Pins changed successfully');
       }
     },
-    setSetPoint() {
-      if (this.setPointTemp > 40) {
+    setSetPoint(newSetpoint) {
+      this.setpointTemp = newSetpoint;
+    },
+    sendSetpoint() {
+      if (this.setpointTemp > 40) {
         sweetAlert.fire(
           'error', 
           'Sorry, but you can\'t do this',
@@ -198,15 +212,13 @@ export default {
         return;
       }
       // send the new setpoint to the Chart Component
-      eventBus.$emit('set-setpoint', this.setPointTemp);
-
-      // set the setpoint in the core of the application
-      ipcRenderer.send('set-setpoint', this.setPointTemp);
+      eventBus.$emit('set-setpoint', this.setpointTemp);
+      websocketBus.$emit('set-setpoint', this.setpointTemp);
     }
   },
   watch: {
-    currentControlMode() {
-      eventBus.$emit('set-control-mode', this.currentControlMode);
+    selectedControlMode() {
+      eventBus.$emit('set-control-mode', this.selectedControlMode);
     }
   },
 };

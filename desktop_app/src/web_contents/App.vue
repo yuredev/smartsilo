@@ -20,6 +20,10 @@ import Navbar from './components/Navbar';
 import SideNav from './components/SideNav';
 import MainContent from './components/MainContent';
 import eventBus from './utils/event-bus';
+import websocketBus from './utils/websocket-bus';
+import socketIOClient from 'socket.io-client';
+
+const socket = socketIOClient('http://localhost:3333');
 
 export default {
   components: {
@@ -50,6 +54,18 @@ export default {
     this.handleResize();
   },
   mounted() {
+    this.addSocketListener('set-setpoint');
+    this.addSocketListener('set-pid-consts');
+    this.addSocketListener('new-data');
+
+    this.addSocketEmitter('start-experiment');
+    this.addSocketEmitter('set-open-loop-voltage');
+    this.addSocketEmitter('get-setpoint');
+    this.addSocketEmitter('get-pid-consts');
+    this.addSocketEmitter('set-setpoint');
+    this.addSocketEmitter('set-pins');
+    this.addSocketEmitter('set-pid-consts');
+
     eventBus.$on('set-control-mode', this.setControlMode);
     if (this.screenWidth > 992) {
       this.showHamburger = false;
@@ -59,6 +75,16 @@ export default {
     }
   },
   methods: {
+    addSocketListener(eventName) {
+      // console.log(eventName);
+      socket.on(eventName, (data) => websocketBus.$emit(eventName, data));
+    },
+    addSocketEmitter(eventName) {
+      websocketBus.$on(eventName, (data) => {
+        // console.log('chamou');
+        socket.emit(eventName, data)
+      });
+    },
     setControlMode(newControlMode) {
       this.currentControlMode = newControlMode;
     },
