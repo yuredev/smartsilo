@@ -31,7 +31,7 @@ module.exports = class Board {
     const averageTemp = this.therms.reduce(sumTemps, 0) / this.therms.length;
     return averageTemp;
   }
-  setSetPoint(evt, newSetPoint) {
+  setSetPoint(newSetPoint) {
     this.setpoint = Number(newSetPoint);
   }
   setPidConsts(newPidConsts) {

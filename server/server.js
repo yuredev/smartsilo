@@ -1,12 +1,15 @@
 // const express = require('express');
-const http = require('http');
-const io = require('socket.io')(http);
-const Firmata = require('firmata');
-const WEBSOCKET_PORT = 3333;
-// const HTTP_PORT = 3333;
-
+const socketIO = require('socket.io');
+const express = require('express');
+const app = express();
 const Board = require('./board');
+const PORT = 3333;
 
+const server = app.listen(PORT, () => {
+  console.log('✔ Server working at http://127.0.0.1:' + PORT);
+});
+
+const io = socketIO(server);
 const board = new Board('COM3');
 
 board.onReady(() => {
@@ -26,9 +29,34 @@ function startSocketListening(socket) {
   });
   // socket.on('stop-experiment', stopExperiment);
   socket.on('set-open-loop-voltage', (v) => board.setOpenLoopVoltage(v));
-  socket.on('set-setpoint', (setP) => board.setSetPoint(setP));
-  socket.on('set-pins', (pins) => board.setPins(pins));
-  socket.on('set-pid-consts', (pidConsts) => board.setPidConsts(pidConsts));
+  
+  socket.on('get-setpoint', () => {
+    socket.emit('set-setpoint', board.setpoint);
+    console.log('setpoint getted');
+  });
+
+  socket.on('get-pid-consts', () => {
+    socket.emit('set-pid-consts', board.setpoint);
+    console.log('pid consts getted');
+  });
+
+  socket.on('set-setpoint-server', (newSetpoint) => {
+    board.setSetPoint(newSetpoint);
+    // send new setpoint to the others clients connected
+    socket.broadcast.emit('set-setpoint', board.setpoint);
+    console.log('setpoint seted: ' + board.setpoint);
+  });
+
+  socket.on('set-pins', (pins) => {
+    board.setPins(pins)
+    console.log('pins seted: ' + board.therms);
+  });
+  
+  socket.on('set-pid-consts', (pidConsts) => {
+    board.setPidConsts(pidConsts)
+    // send new pid consts to the others clients connected
+    socket.broadcast.emit('set-pid-consts', pidConsts);
+  });
 }
 
 function startSending(socket, freq = 500) {
@@ -46,7 +74,7 @@ function startSending(socket, freq = 500) {
   }, freq);
 }
 
-io.listen(WEBSOCKET_PORT);
-console.log(`✔ Websocket working at http://localhost:${WEBSOCKET_PORT}`);
+// io.listen(PORT);
+// console.log(`✔ Websocket working at http://localhost:${WEBSOCKET_PORT}`);
 
 
