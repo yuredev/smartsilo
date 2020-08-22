@@ -7,8 +7,8 @@ const PORT = 3333;
 const board = new Board('COM3');
 
 app.get('/state', (req, res) => {
-  const { setpoint, pidConsts, isControlling } = board;
-  return res.json({ setpoint, pidConsts, isControlling });
+  const { setpoint, pidConsts, isControlling, openLoopVoltage } = board;
+  return res.json({ setpoint, pidConsts, isControlling, openLoopVoltage });
 });
 
 const server = app.listen(PORT, () => {
@@ -31,8 +31,13 @@ function startSocketListening(socket) {
   socket.on('start-experiment', (controlMode) => {
     startExperiment(controlMode);
   });
+
   // socket.on('stop-experiment', stopExperiment);
-  socket.on('update-open-loop-voltage', (v) => board.updateOpenLoopVoltage(v));
+
+  socket.on('update-open-loop-voltage-server', (v) => {
+    board.updateOpenLoopVoltage(v)
+    socket.broadcast.emit('update-open-loop-voltage-client', board.openLoopVoltage);
+  });
 
   socket.on('update-setpoint-server', (newSetpoint) => {
     board.updateSetpoint(newSetpoint);

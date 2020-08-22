@@ -73,7 +73,7 @@ module.exports = class Board {
   updatePidConsts(newPidConsts) {
     this.pidConsts = newPidConsts;
   }
-  updateOpenLoopVoltage(evt, voltage) {
+  updateOpenLoopVoltage(voltage) {
     this.openLoopVoltage = voltage;
     clearInterval(this.openLoopTimeLapse);
     this.startControlling('Open loop');

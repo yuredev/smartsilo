@@ -56,10 +56,11 @@ export default {
   mounted() {
     this.addSocketListener('update-setpoint-client');
     this.addSocketListener('update-pid-consts-client');
+    this.addSocketListener('update-open-loop-voltage-client');
     this.addSocketListener('new-data');
 
     this.addSocketEmitter('start-experiment');
-    this.addSocketEmitter('update-open-loop-voltage');
+    this.addSocketEmitter('update-open-loop-voltage-server');
     this.addSocketEmitter('update-setpoint-server');
     this.addSocketEmitter('update-pins');
     this.addSocketEmitter('update-pid-consts-server');

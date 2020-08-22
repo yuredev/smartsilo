@@ -31,11 +31,17 @@
           type="radio"
           name="voltageRadioBtn"
           id="voltage0v"
-          @click="setOpenLoopVoltage(0)"
-          checked
+          @click="sendOpenLoopVoltage(0)"
+          :checked="currentOpenLoopVoltage === 0"
         />
         <label for="voltage0v">0v</label>
-        <input type="radio" name="voltageRadioBtn" id="voltage3v" @click="setOpenLoopVoltage(3)" />
+        <input
+          type="radio"
+          name="voltageRadioBtn"
+          id="voltage3v"
+          @click="sendOpenLoopVoltage(3)"
+          :checked="currentOpenLoopVoltage === 3"
+        />
         <label for="voltage3v">3v</label>
       </div>
       <div id="pid-consts-div" v-show="selectedControlMode == 'PID'">
@@ -134,6 +140,7 @@ export default {
       selectedControlMode: 'Open loop',
       setpointTemp: null,
       disableControlModeSelection: false,
+      currentOpenLoopVoltage: null,
       controlModes: ['Open loop', 'PID', 'ON/OFF'],
       pidConsts: {
         pb: null,
@@ -145,11 +152,13 @@ export default {
   async mounted() {
     eventBus.$on('set-option-disabled', this.switchSelectState);
 
-    websocketBus.$on('update-setpoint-client', this.setSetPoint);
+    websocketBus.$on('update-setpoint-client', this.updateSetpoint);
     websocketBus.$on('update-pid-consts-client', this.setPidConsts);
+    websocketBus.$on('update-open-loop-voltage-client', this.updateOpenLoopVoltage);
 
     const serverState = await axios.get(`${baseUrl}/state`);
 
+    this.currentOpenLoopVoltage = serverState.data.openLoopVoltage;
     this.setpointTemp = serverState.data.setpoint;
     this.pidConsts = serverState.data.pidConsts;
   },
@@ -197,8 +206,12 @@ export default {
       websocketBus.$emit('update-pid-consts-server', this.pidConsts);
       sweetAlert.fire('success', 'Pid settings changed successfully');
     },
-    setOpenLoopVoltage(voltage) {
-      websocketBus.$emit('update-open-loop-voltage', voltage);
+    sendOpenLoopVoltage(voltage) {
+      this.updateOpenLoopVoltage(voltage);
+      websocketBus.$emit('update-open-loop-voltage-server', voltage);
+    },
+    updateOpenLoopVoltage(voltage) {
+      this.currentOpenLoopVoltage = voltage;
     },
     switchSelectState(disableControlModeSelection) {
       this.disableControlModeSelection = disableControlModeSelection;
@@ -215,7 +228,7 @@ export default {
         sweetAlert.fire('success', 'Pins changed successfully');
       }
     },
-    setSetPoint(newSetpoint) {
+    updateSetpoint(newSetpoint) {
       this.setpointTemp = newSetpoint;
       eventBus.$emit('set-setpoint', this.setpointTemp);
     },
