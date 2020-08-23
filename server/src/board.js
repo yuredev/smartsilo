@@ -78,8 +78,9 @@ module.exports = class Board {
     clearInterval(this.openLoopTimeLapse);
     this.startControlling('Open loop');
   }
-  updatePins(...pins) {
-    for (let i = 0; i < pins.length; i++) {
+  updatePins(pins) {
+    this.therms = [];
+    for (let i = 0; i < pins.length; i++) {      
       this.board.analogRead(pins[i], (value) => {
         this.therms[i] = value;
       });

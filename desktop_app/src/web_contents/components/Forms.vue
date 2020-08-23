@@ -112,7 +112,7 @@
       <div class="centralize-self" style="margin-top: 10px">
         <label for="pin">Pins:</label>
         <div v-for="pin of 5" :key="pin">
-          <label>{{pin}}°</label>
+          <label>{{pin}}° </label>
           <select id="pin" v-model="pins[pin-1]" :disabled="disableControlModeSelection">
             <option v-for="avaliablePin of 6" :key="avaliablePin">{{'A'+(avaliablePin-1)}}</option>
           </select>
@@ -224,7 +224,14 @@ export default {
           'There are pins with equal values, each pin must have a different value'
         );
       } else {
-        websocketBus.$emit('set-pins', this.pins);
+        // if the pin is A0, send just the 0, if the pin is A4, send just the 4...
+        const pinsToSend = this.pins.map(pin => Number(pin.split('')[1]));
+        
+        // remover quando colocar outros 2 sensores
+        pinsToSend.pop();
+        pinsToSend.pop();
+        
+        websocketBus.$emit('update-pins', pinsToSend);
         sweetAlert.fire('success', 'Pins changed successfully');
       }
     },

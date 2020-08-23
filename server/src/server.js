@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const Board = require('./board');
 const PORT = 3333;
-const board = new Board('COM3');
+const board = new Board('COM4');
 
 app.get('/state', (req, res) => {
   const { setpoint, pidConsts, isControlling, openLoopVoltage } = board;
@@ -18,7 +18,7 @@ const io = socketIO(server);
 
 board.onReady(() => {
   console.log('✔ board ready');
-  board.updatePins(3, 4, 5);
+  board.updatePins([3, 4, 5]);
   board.startControlling('Open loop');
   io.on('connection', (socket) => {
     console.log(`> ${socket.id} connected`);
@@ -43,12 +43,11 @@ function startSocketListening(socket) {
     board.updateSetpoint(newSetpoint);
     // send new setpoint to the others clients connected
     socket.broadcast.emit('update-client-setpoint', board.setpoint);
-    console.log('setpoint updated to: ' + board.setpoint);
   });
 
   socket.on('update-pins', (pins) => {
     board.updatePins(pins);
-    console.log('pins updated to: ' + board.therms);
+    console.log('pins updated to: ' + pins);
   });
 
   socket.on('update-server-pid-consts', (pidConsts) => {
@@ -73,5 +72,3 @@ function startSending(socket, freq = 500) {
   }, freq);
 }
 
-// io.listen(PORT);
-// console.log(`✔ Websocket working at http://localhost:${WEBSOCKET_PORT}`);
