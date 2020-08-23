@@ -288,6 +288,8 @@ input:hover {
 }
 
 #pid-consts-div {
+  margin: auto;
+  max-width: 200px;
   display: flex;
   flex-direction: column;
   padding: 0px 13px;

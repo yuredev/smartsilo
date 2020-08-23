@@ -58,8 +58,10 @@ export default {
     this.addSocketListener('update-client-pid-consts');
     this.addSocketListener('update-client-open-loop-voltage');
     this.addSocketListener('new-data');
+    this.addSocketListener('chart-ready');
 
     this.addSocketEmitter('start-experiment');
+    this.addSocketEmitter('stop-experiment');
     this.addSocketEmitter('update-server-open-loop-voltage');
     this.addSocketEmitter('update-server-setpoint');
     this.addSocketEmitter('update-pins');
@@ -80,7 +82,6 @@ export default {
     },
     addSocketEmitter(eventName) {
       websocketBus.$on(eventName, (data) => {
-        // console.log('chamou');
         socket.emit(eventName, data)
       });
     },

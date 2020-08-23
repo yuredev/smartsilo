@@ -1,9 +1,18 @@
-// const express = require('express');
 const socketIO = require('socket.io');
 const express = require('express');
 const app = express();
 const Board = require('./board');
 const PORT = 3333;
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+
+const PLOTS_PATH = path.resolve('..', 'experiments', 'plots');
+const RAW_DATA_PATH = path.resolve('..', 'experiments', 'raw_data');
+const OCTAVE_SCRIPT_PATH = path.resolve('plot.m');
+
+let fileName;
+let savingTimeLapse;
 
 const board = new Board('COM3', {
   setpoint: 28,
@@ -33,11 +42,14 @@ board.onReady(() => {
 });
 
 function startSocketListening(socket) {
+
   socket.on('start-experiment', (controlMode) => {
     startExperiment(controlMode);
   });
 
-  // socket.on('stop-experiment', stopExperiment);
+  socket.on('stop-experiment', () => {
+    stopExperiment(socket)
+  });
 
   socket.on('update-server-open-loop-voltage', (v) => {
     board.updateOpenLoopVoltage(v)
@@ -61,6 +73,72 @@ function startSocketListening(socket) {
   });
 }
 
+function startExperiment(controlMode) {
+  if (board.isControlling) {
+    return;
+  }
+  board.stopControlling();
+  board.startControlling(controlMode);
+  startSaving();
+}
+
+// começa a salvar em arquivo txt
+function startSaving() {
+  function getFileName() {
+    const time = new Date();
+    return `${time.getDate()}-${time.getMonth() + 1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
+  }
+  
+  function getTextToSave() {
+    return `${board.getTemp()},${board.getVoltage()},${board.errorValue},${board.setpoint}\n`;
+  }
+
+  const pathToNewTxt = path.join('..', 'experiments', 'raw_data', `${getFileName()}.txt`);
+  fileName = path.basename(pathToNewTxt).split('.')[0];
+  
+  savingTimeLapse = setInterval(() => {
+    fs.appendFile(pathToNewTxt, getTextToSave(), () => {});
+  }, 250);
+}
+
+async function stopExperiment(socket) {
+  console.log('chegou aq2')
+  clearInterval(savingTimeLapse);
+  board.stopControlling();
+  board.startControlling('Open loop');
+
+  try {
+    const currentPlotPath = await octavePlot({
+      fileName,
+      plotsPath: PLOTS_PATH,
+      octaveScriptPath: OCTAVE_SCRIPT_PATH,
+      rawDataPath: RAW_DATA_PATH,
+    });
+    socket.emit('chart-ready', currentPlotPath);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+function octavePlot({ fileName, rawDataPath, plotsPath, octaveScriptPath }) {
+  const isLinux = process.platform === 'linux';
+  const octaveCommand = isLinux ? 'octave' : 'octave-cli';
+
+  return new Promise((resolve, reject) => {
+    exec(
+      `${octaveCommand} ${octaveScriptPath} ${fileName} ${rawDataPath} ${plotsPath}`,
+      (error) => {
+        if (error) {
+          reject(error);
+        }
+        const currentPlotPath = path.resolve(plotsPath, '__current-plot.png');
+        resolve(currentPlotPath);
+      }
+    );
+  });
+}
+
 function startSending(socket, freq = 500) {
   if (!socket) {
     throw new Error('missing parameter socket');
@@ -70,9 +148,8 @@ function startSending(socket, freq = 500) {
     socket.emit('new-data', {
       type: 'Control',
       value: board.getVoltage(),
-    }),
-      socket.emit('new-data', { type: 'Temperature', value: board.getTemp() });
+    });
+    socket.emit('new-data', { type: 'Temperature', value: board.getTemp() });
     socket.emit('new-data', { type: 'Mass', value: Math.random() * 1 });
   }, freq);
 }
-

@@ -33,7 +33,7 @@
 import Chart from './Chart';
 import ControlPane from './ControlPane';
 import eventBus from '../utils/event-bus';
-import { ipcRenderer } from 'electron';
+import websocketBus from '../utils/websocket-bus';
 
 export default {
   components: {
@@ -56,11 +56,11 @@ export default {
     );
   },
   mounted() {
-    ipcRenderer.on('chart-ready', (evt, plotPath) => {
+    websocketBus.$on('chart-ready', (plotPath) => {
       this.showLoadingScreen = false;
       this.showChart = true;
       this.plotPath = plotPath;
-    })
+    });
   },
   props: {
     currentControlMode: {

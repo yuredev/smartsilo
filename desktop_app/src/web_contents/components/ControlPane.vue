@@ -15,7 +15,7 @@
 
 <script>
 import eventBus from '../utils/event-bus';
-import { ipcRenderer } from 'electron';
+import websocketBus from '../utils/websocket-bus';
 
 export default {
   data() {
@@ -56,13 +56,13 @@ export default {
       // to prevent that the control mode be changed
       eventBus.$emit('set-option-disabled', true); 
       
-      ipcRenderer.send('start-experiment', this.currentControlMode);
+      websocketBus.$emit('start-experiment', this.currentControlMode);
     },
     stopExperiment() {
       this.experimentOccurring = false;
       this.$emit('showLoadingScreen');
       eventBus.$emit('set-option-disabled', false);
-      ipcRenderer.send('stop-experiment');
+      websocketBus.$emit('stop-experiment');
     }
   }
 };
