@@ -4,11 +4,15 @@ const express = require('express');
 const app = express();
 const Board = require('./board');
 const PORT = 3333;
-const board = new Board('COM4');
+
+const board = new Board('COM3', {
+  setpoint: 28,
+  pins: [0, 1, 2],
+});
 
 app.get('/state', (req, res) => {
-  const { setpoint, pidConsts, isControlling, openLoopVoltage } = board;
-  return res.json({ setpoint, pidConsts, isControlling, openLoopVoltage });
+  const { setpoint, pidConsts, isControlling, openLoopVoltage, pins } = board;
+  return res.json({ setpoint, pidConsts, isControlling, openLoopVoltage, pins });
 });
 
 const server = app.listen(PORT, () => {
@@ -18,7 +22,8 @@ const io = socketIO(server);
 
 board.onReady(() => {
   console.log('✔ board ready');
-  board.updatePins([3, 4, 5]);
+  board.startThermsReading();
+  // board.updatePins([3, 4, 5]);
   board.startControlling('Open loop');
   io.on('connection', (socket) => {
     console.log(`> ${socket.id} connected`);
@@ -47,7 +52,6 @@ function startSocketListening(socket) {
 
   socket.on('update-pins', (pins) => {
     board.updatePins(pins);
-    console.log('pins updated to: ' + pins);
   });
 
   socket.on('update-server-pid-consts', (pidConsts) => {

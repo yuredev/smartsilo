@@ -2,18 +2,19 @@ const Firmata = require('firmata');
 const Controller = require('node-pid-controller');
 
 module.exports = class Board {
-  constructor(boardPath) {
-    this.setpoint = 30;
+  constructor(boardPath, { setpoint, pins, pidConsts }) {
+    this.setpoint = setpoint || 30;
     this.errorValue = null;
     this.output = 0; // save the output in the scale of 0 to 255
     this.openLoopTimeLapse = null;
     this.onOffTimeLapse = null;
+    this.pins = pins || [1, 2, 3, 4, 5];
     this.pidTimeLapse = null;
     this.openLoopVoltage = 0;
     this.therms = [];
     this.isControlling = false;
     this.board = new Firmata(boardPath);
-    this.pidConsts = {
+    this.pidConsts = pidConsts || {
       pb: 30, // proportional band width
       ti: 1.27, // integral time
       td: 6, // derivativeTime
@@ -79,13 +80,26 @@ module.exports = class Board {
     this.startControlling('Open loop');
   }
   updatePins(pins) {
+    for (const pin of this.pins) {
+      this.board.reportAnalogPin(pin, 0);
+    }
+    this.pins = pins;
     this.therms = [];
-    for (let i = 0; i < pins.length; i++) {      
-      this.board.analogRead(pins[i], (value) => {
+    this.startThermsReading();
+    // for (let i = 0; i < pins.length; i++) {      
+    //   this.board.analogRead(pins[i], (value) => {
+    //     this.therms[i] = value;
+    //   });
+    // }
+  }
+  startThermsReading() {
+    for (let i = 0; i < this.pins.length; i++) {      
+      this.board.analogRead(this.pins[i], (value) => {
         this.therms[i] = value;
       });
     }
   }
+
   stopControlling() {
     this.isControlling = false;
     clearInterval(this.openLoopTimeLapse);

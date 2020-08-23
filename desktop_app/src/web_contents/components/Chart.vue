@@ -15,12 +15,15 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
+import axios from 'axios';
 import { Plotly } from 'vue-plotly';
 import eventBus from '../utils/event-bus';
 import websocketBus from '../utils/websocket-bus';
 import Stopwatch from '../utils/stopwatch';
 import getTracesConfig from '../services/get-traces-config';
+
+import config from '../../../package.json';
+const baseUrl = config.base_url;
 
 export default {
   components: {
@@ -32,7 +35,7 @@ export default {
       paused: false,
       time: null,
       chartInterval: null,
-      setPointTemp: 30,
+      setpointTemp: null,
       setPointMass: null,
       x: 0,
       value: 0,
@@ -61,14 +64,16 @@ export default {
   created() {
     this.data = getTracesConfig(this.type);
   },
-  mounted() {
+  async mounted() {
     eventBus.$on('pause-chart', this.pauseChart);
     eventBus.$on('resume-chart', this.resumeChart);
     eventBus.$on('set-setpoint', this.setSetPoint);
 
     websocketBus.$on('new-data', this.updateData);
     
-    setTimeout(() => ipcRenderer.send('ready'), 2500);
+    const serverState = await axios.get(`${baseUrl}/state`);
+    this.setpointTemp = serverState.data.setpoint;
+
     this.chartInterval = setInterval(() => this.updateChart(), 100);
     this.stopwatch = new Stopwatch();
     this.stopwatch.start();
@@ -84,7 +89,7 @@ export default {
   methods: {
     setSetPoint(newSetPoint) {
       if (this.type != 'Control') {
-        this.setPointTemp = newSetPoint;
+        this.setpointTemp = newSetPoint;
       }
     },
     updateData(newData) {
@@ -120,7 +125,7 @@ export default {
           break;
         case 'Temperature':
           this.$refs.chart.extendTraces(
-            { y: [[this.value], [this.setPointTemp]] },
+            { y: [[this.value], [this.setpointTemp]] },
             [0, 1]
           );
           newLayout.yaxis = { range: [10, 35] };
