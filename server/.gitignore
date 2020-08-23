@@ -1,1 +1,3 @@
 node_modules
+experiments/plots/*.png
+experiments/raw_data/*.txt

@@ -7,9 +7,9 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-const PLOTS_PATH = path.resolve('..', 'experiments', 'plots');
-const RAW_DATA_PATH = path.resolve('..', 'experiments', 'raw_data');
-const OCTAVE_SCRIPT_PATH = path.resolve('plot.m');
+const PLOTS_PATH = path.join('..', 'experiments', 'plots');
+const RAW_DATA_PATH = path.join('..', 'experiments', 'raw_data');
+const OCTAVE_SCRIPT_PATH = path.join('plot.m');
 
 let fileName;
 let savingTimeLapse;
