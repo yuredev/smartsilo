@@ -9,7 +9,7 @@ const { exec } = require('child_process');
 
 const PLOTS_PATH = path.join('..', 'experiments', 'plots');
 const RAW_DATA_PATH = path.join('..', 'experiments', 'raw_data');
-const OCTAVE_SCRIPT_PATH = path.join('plot.m');
+const OCTAVE_SCRIPT_PATH = path.join('octave-plot.m');
 
 let fileName;
 let savingTimeLapse;
