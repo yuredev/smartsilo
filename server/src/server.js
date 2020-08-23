@@ -10,6 +10,7 @@ const { exec } = require('child_process');
 const PLOTS_PATH = path.join('..', 'experiments', 'plots');
 const RAW_DATA_PATH = path.join('..', 'experiments', 'raw_data');
 const OCTAVE_SCRIPT_PATH = path.join('octave-plot.m');
+const CURRENT_PLOT_PATH = path.join('..', 'experiments', 'plots', '__current-plot.png');
 
 let fileName;
 let savingTimeLapse;
@@ -102,7 +103,6 @@ function startSaving() {
 }
 
 async function stopExperiment(socket) {
-  console.log('chegou aq2')
   clearInterval(savingTimeLapse);
   board.stopControlling();
   board.startControlling('Open loop');
@@ -114,12 +114,34 @@ async function stopExperiment(socket) {
       octaveScriptPath: OCTAVE_SCRIPT_PATH,
       rawDataPath: RAW_DATA_PATH,
     });
+    startImageServer(currentPlotPath);
     socket.emit('chart-ready', currentPlotPath);
   } catch (error) {
     console.log(error);
   }
 }
 
+function removePreviousImageServer() {
+  const routes = app._router.stack;
+  routes.forEach((route, i, routes) => {
+    if (route.path === '/experiment-chart') {
+      routes.splice(i, 1);
+    }
+  });
+} 
+
+function startImageServer() {
+  fs.readFile(CURRENT_PLOT_PATH, (err, data) => {
+    removePreviousImageServer();
+    if (err) {
+      throw err; 
+    } 
+    app.get('/experiment-chart', (req, res) => {
+      res.contentType('image/jpeg');
+      res.send(data);
+    });
+  });
+}
 
 function octavePlot({ fileName, rawDataPath, plotsPath, octaveScriptPath }) {
   const isLinux = process.platform === 'linux';

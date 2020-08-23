@@ -86,11 +86,6 @@ module.exports = class Board {
     this.pins = pins;
     this.therms = [];
     this.startThermsReading();
-    // for (let i = 0; i < pins.length; i++) {      
-    //   this.board.analogRead(pins[i], (value) => {
-    //     this.therms[i] = value;
-    //   });
-    // }
   }
   startThermsReading() {
     for (let i = 0; i < this.pins.length; i++) {      
@@ -99,7 +94,6 @@ module.exports = class Board {
       });
     }
   }
-
   stopControlling() {
     this.isControlling = false;
     clearInterval(this.openLoopTimeLapse);
