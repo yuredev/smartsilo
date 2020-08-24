@@ -26,14 +26,14 @@ module.exports = class Board {
     };
   }
   /**
-   * Executa uma função quando a placa estiver pronta
-   * @param {Function} callback Função a ser executada
+   * Execute a function when the board is ready
+   * @param {function} callback The function to be executed
    */
   onReady(callback) {
     this.board.on('ready', callback);
   }
   /**
-   * Retorna o valor de voltagem da saída PWM da placa
+   * Returns the voltage value related to the PWM board output
    * @returns {Number} Voltagem
    */
   getVoltage() {
@@ -43,9 +43,9 @@ module.exports = class Board {
     });
   }
   /**
-   * Converte em Celsius o valor bruto do termistor lido da placa
-   * @param {number} rawADC valor entre 0 e 1023 lido da placa
-   * @returns {number} Temperatura em Celsius
+   * Convert the raw value read by the board to Celsius
+   * @param {number} rawADC The raw that is between 0 and 1023 
+   * @returns {number} Temperature converted to celsius
    */
   toCelsius(rawADC) {
     let temp = Math.log(10240000 / rawADC - 10000);
