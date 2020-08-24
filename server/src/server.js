@@ -15,7 +15,7 @@ const CURRENT_PLOT_PATH = path.join('..', 'experiments', 'plots', '__current-plo
 let fileName;
 let savingTimeLapse;
 
-const board = new Board('COM3', {
+const board = new Board('COM4', {
   setpoint: 28,
   pins: [0, 1, 2],
 });
@@ -26,14 +26,13 @@ app.get('/state', (req, res) => {
 });
 
 const server = app.listen(PORT, () => {
-  console.log('✔ Server working at http://127.0.0.1:' + PORT);
+  console.log('✔ Server working at http://192.168.0.9:' + PORT);
 });
 const io = socketIO(server);
 
 board.onReady(() => {
   console.log('✔ board ready');
   board.startThermsReading();
-  // board.updatePins([3, 4, 5]);
   board.startControlling('Open loop');
   io.on('connection', (socket) => {
     console.log(`> ${socket.id} connected`);
@@ -108,40 +107,40 @@ async function stopExperiment(socket) {
   board.startControlling('Open loop');
 
   try {
-    const currentPlotPath = await octavePlot({
+    await octavePlot({
       fileName,
       plotsPath: PLOTS_PATH,
       octaveScriptPath: OCTAVE_SCRIPT_PATH,
       rawDataPath: RAW_DATA_PATH,
     });
-    startImageServer(currentPlotPath);
-    socket.emit('chart-ready', currentPlotPath);
+    startImageServer(CURRENT_PLOT_PATH, '/experiment-chart');
+    socket.emit('chart-ready', '/experiment-chart');
   } catch (error) {
     console.log(error);
   }
 }
 
-function removePreviousImageServer() {
-  const routes = app._router.stack;
-  routes.forEach((route, i, routes) => {
-    if (route.path === '/experiment-chart') {
-      routes.splice(i, 1);
-    }
-  });
-} 
-
-function startImageServer() {
-  fs.readFile(CURRENT_PLOT_PATH, (err, data) => {
-    removePreviousImageServer();
+function startImageServer(imgPath, getMappingPath) {
+  fs.readFile(imgPath, (err, data) => {
+    removePreviousImageServer(getMappingPath);
     if (err) {
       throw err; 
     } 
-    app.get('/experiment-chart', (req, res) => {
+    app.get(getMappingPath, (req, res) => {
       res.contentType('image/jpeg');
       res.send(data);
     });
   });
 }
+
+function removePreviousImageServer(getMappingPath) {
+  const routes = app._router.stack;
+  routes.forEach((route, i, routes) => {
+    if (route.path === getMappingPath) {
+      routes.splice(i, 1);
+    }
+  });
+} 
 
 function octavePlot({ fileName, rawDataPath, plotsPath, octaveScriptPath }) {
   const isLinux = process.platform === 'linux';

@@ -1,7 +1,7 @@
 <template>
   <div id="main" :style="mainStyle">
     <div class="centralize-content chartArea" v-if="showChart">
-      <img :src="plotLocalPath" id="chartResult" alt="gráfico gerado" />
+      <img :src="experimentResultPlotUrl" id="chartResult" alt="gráfico gerado" />
       <button @click="showChart = false">Back</button>
     </div>
     <div v-show="!showChart">
@@ -36,6 +36,9 @@ import eventBus from '../utils/event-bus';
 import websocketBus from '../utils/websocket-bus';
 import { ipcRenderer } from 'electron';
 import sweetAlert from '../utils/sweet-alert';
+import config from '../../../package.json';
+
+const baseUrl = config.base_url;
 
 export default {
   components: {
@@ -44,7 +47,7 @@ export default {
   },
   data() {
     return {
-      plotLocalPath: null,
+      experimentResultPlotUrl: null,
       showChart: false,
       chartIsPaused: false,
       showLoadingScreen: false,
@@ -58,8 +61,8 @@ export default {
     );
   },
   mounted() {
-    ipcRenderer.on('chart-saved', (evt, path) => {
-      this.plotLocalPath = path;
+    ipcRenderer.on('chart-saved', (evt, finalUrl) => {
+      this.experimentResultPlotUrl = finalUrl;
       this.showLoadingScreen = false;
       this.showChart = true;
     });
@@ -70,8 +73,9 @@ export default {
         'Something unnespected ocurred in the server and the chart cannot be saved'
       );
     });
-    websocketBus.$on('chart-ready', (plotPath) => {
-      ipcRenderer.send('save-chart');
+    // urlPlotNamePath -> '/url-chart-name-terminatrion'
+    websocketBus.$on('chart-ready', (urlPlotNamePath) => {
+      ipcRenderer.send('save-chart', urlPlotNamePath);
     });
   },
   props: {

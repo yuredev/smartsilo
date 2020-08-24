@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { exec: terminalExec } = require('child_process');
+const { exec: terminalExec, exec } = require('child_process');
 const axios = require('axios');
 const { base_url } = require('../../package.json');
 const { ipcMain } = require('electron');
@@ -18,22 +18,24 @@ function initializeFolders() {
 }
 
 function startListeners() {
-  ipcMain.on('save-chart', (evt) => {
-    saveChartImg(evt)
+  ipcMain.on('save-chart', (evt, urlPlotNamePath) => {
+    saveChartImg(evt, urlPlotNamePath);
   });
 }
-function saveChartImg(evt) {
-  // function getFileName() {
-  //   const time = new Date();
-  //   return `${time.getDate()}-${time.getMonth() + 1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
-  // }
-  // const imgSavedPath = path.join(projectPaths.plots, getFileName()) + '.png';
-  downloadImage(`${base_url}/experiment-chart`, 'img.png').then((err) => {
+function saveChartImg(evt, urlPlotNamePath) {
+  function getFileName() {
+    const time = new Date();
+    return `${time.getDate()}-${time.getMonth() + 1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
+  }
+  const pathToSaveImg = path.join(projectPaths.plots, getFileName()) + '.png';
+  downloadImage(base_url + urlPlotNamePath, pathToSaveImg).then((err) => {
     if (err) {
       evt.reply('chart-not-saved');
+      exec('start cmd');
       console.log(err);
+      return;
     }
-    evt.reply('chart-saved', `${base_url}/experiment-chart`);
+    evt.reply('chart-saved', base_url + urlPlotNamePath);
   });
 }
 

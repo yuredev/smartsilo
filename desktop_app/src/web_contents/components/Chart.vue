@@ -10,6 +10,9 @@
         <span v-else-if="type == 'Mass'">g</span>
         <span v-else>v</span>
       </div>
+      <span v-if="type != 'Control'" id="previous-experiments-link">
+        {{type.toLowerCase()}} experiments
+      </span>
     </div>
   </div>
 </template>
@@ -184,5 +187,12 @@ h2 {
   align-self: center;
   display: flex;
   justify-content: center;
+}
+#previous-experiments-link {
+  color: rgb(220, 220, 220);
+  text-decoration: underline;
+  cursor: pointer;
+  /* font-size: 1px; */
+  color: rgba(230, 230, 255, 0.9);
 }
 </style>
