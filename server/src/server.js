@@ -2,11 +2,11 @@ const socketIO = require('socket.io');
 const express = require('express');
 const app = express();
 const Board = require('./board');
-const PORT = 3333;
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
+const PORT = 3333;
 const PLOTS_PATH = path.join('..', 'experiments', 'plots');
 const RAW_DATA_PATH = path.join('..', 'experiments', 'raw_data');
 const OCTAVE_SCRIPT_PATH = path.join('octave-plot.m');
@@ -17,7 +17,7 @@ let savingTimeLapse;
 
 const board = new Board('COM4', {
   setpoint: 28,
-  pins: [0, 1, 2],
+  pins: [1, 2, 3, 4, 5],
 });
 
 app.get('/state', (req, res) => {
