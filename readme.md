@@ -20,8 +20,8 @@ Access the <a href="https://smartsilo.netlify.com/">Oficial project website</a>
 <div 
     style="display: flex; flex-wrap: wrap; justify-content:space-around; align-itens: center;"
 >
-    <img src="./screenshots/demo.gif" width="65%" style="margin:10px">
-    <img src="./screenshots/dryer.PNG" width="25%" style="margin:10px">
+    <img src="./__readme/demo.gif" width="65%" style="margin:10px">
+    <img src="./__readme/dryer.PNG" width="25%" style="margin:10px">
 
 </div>
 

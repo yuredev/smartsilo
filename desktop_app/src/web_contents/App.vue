@@ -22,8 +22,10 @@ import MainContent from './components/MainContent';
 import eventBus from './utils/event-bus';
 import websocketBus from './utils/websocket-bus';
 import socketIOClient from 'socket.io-client';
+import config from '../../package.json';
 
-const socket = socketIOClient('http://localhost:3333');
+const baseUrl = config.base_url;
+const socket = socketIOClient(baseUrl);
 
 export default {
   components: {

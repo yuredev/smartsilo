@@ -136,7 +136,7 @@ const baseUrl = config.base_url;
 export default {
   data() {
     return {
-      pins: ['A0', 'A1', 'A2', 'A3', 'A4'],
+      pins: ['A1', 'A2', 'A3', 'A4', 'A5'],
       selectedControlMode: 'Open loop',
       setpointTemp: null,
       disableControlModeSelection: false,
