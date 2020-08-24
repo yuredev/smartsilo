@@ -1,52 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 const { exec: terminalExec } = require('child_process');
-
+const axios = require('axios');
+const { base_url } = require('../../package.json');
 const { ipcMain } = require('electron');
-
 const projectPaths = require('./utils/project-paths');
-
-// will be copied to an plot.m file, that are executable by octave-cli
-const octaveCode = require('./octave/plot.m');
-
-let txtFileName;
-
-// will store the Timeout of the setInverval that saves the data in txt files
-let savingTimeLapse;
-
-// const Board = require('./board');
-// console.log(typeof new Board());
-// const board = new Board('COM3');
-
-// board.onReady(() => main());
 
 function main() {
   initializeFolders();
-  // board.setPins(3, 4, 5);
-  // board.startControlling('Open loop');
-  // startListeners();
+  startListeners();
 }
 main();
 
 function initializeFolders() {
   terminalExec(`mkdir ${projectPaths.experiments}`);
   terminalExec(`mkdir ${projectPaths.plots}`);
-  // terminalExec(`mkdir ${projectPaths.rawData}`);
-  // terminalExec(`mkdir ${projectPaths.octaveScripts}`);
-  // fs.writeFile(projectPaths.octaveFile, octaveCode, () => {}); // create the octave file
 }
 
-// function startListeners() {
-//   ipcMain.once('ready', (evt) => startSending(evt));
-//   ipcMain.on('start-experiment', (evt, controlMode) =>
-//     startExperiment(controlMode)
-//   );
-//   ipcMain.on('stop-experiment', stopExperiment);
-//   ipcMain.on('set-open-loop-voltage', (evt, v) => board.setOpenLoopVoltage(evt, v));
-//   ipcMain.on('set-setpoint', (evt, sp) => board.setSetPoint(evt, sp));
-//   ipcMain.on('set-pins', (p) => board.setPins(p));
-//   ipcMain.on('set-pid-consts', (evt, consts) => board.setPidConsts(consts));
-// }
+function startListeners() {
+  ipcMain.on('save-chart', (evt) => {
+    saveChartImg(evt)
+  });
+}
+function saveChartImg(evt) {
+  // function getFileName() {
+  //   const time = new Date();
+  //   return `${time.getDate()}-${time.getMonth() + 1}-${time.getUTCFullYear()}-${time.getHours()}-${time.getMinutes()}-${time.getSeconds()}`;
+  // }
+  // const imgSavedPath = path.join(projectPaths.plots, getFileName()) + '.png';
+  downloadImage(`${base_url}/experiment-chart`, 'img.png').then((err) => {
+    if (err) {
+      evt.reply('chart-not-saved');
+      console.log(err);
+    }
+    evt.reply('chart-saved', `${base_url}/experiment-chart`);
+  });
+}
+
+function downloadImage(url, imagePath) {
+  return axios({
+    url,
+    responseType: 'stream'
+  }).then(res => {
+    return new Promise((resolve, reject) => {
+      res.data
+        .pipe(fs.createWriteStream(imagePath))
+        .on('finish', () => resolve())
+        .on('error', e => reject(e));
+    });
+  });
+}
 
 // function startExperiment(controlMode) {
 //   board.stopControlling();
@@ -109,26 +112,4 @@ function initializeFolders() {
 //   }, freq);
 // }
 
-
 // will be useful
-
-// const fs = require('fs');
-// const axios = require('axios');
-
-// /* ============================================================
-//   Function: Download Image
-// ============================================================ */
-
-// const download_image = (url, image_path) =>
-//   axios({
-//     url,
-//     responseType: 'stream',
-//   }).then(
-//     response =>
-//       new Promise((resolve, reject) => {
-//         response.data
-//           .pipe(fs.createWriteStream(image_path))
-//           .on('finish', () => resolve())
-//           .on('error', e => reject(e));
-//       }),
-//   );
