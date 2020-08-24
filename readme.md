@@ -27,9 +27,15 @@ Access the <a href="https://smartsilo.netlify.com/">Oficial project website</a>
 
 ### 🛠️ Built with:
 
-- Electron
+- Node.js
+- Express
 - Vue.js
+- Electron
+- Socket.io
 - Firmata.js
+- Node-pid-controller
+- Axios
 - Plotly.js
-- Octave
+- SweetAlerts.js
+- Octave-cli
 - Arduino board
