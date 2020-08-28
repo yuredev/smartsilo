@@ -2,6 +2,7 @@
 
 import './background/core'; // will load the index.js of the domain folder
 import { app, protocol, BrowserWindow } from 'electron';
+import path from 'path';
 import {
   createProtocol
   /* installVueDevtools */
@@ -24,6 +25,7 @@ function createWindow() {
     height: 720,
     title: 'SmartSilo',
     titleBarStyle: 'hidden',
+    icon: path.resolve('..', 'build', 'icon.png'),
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true
