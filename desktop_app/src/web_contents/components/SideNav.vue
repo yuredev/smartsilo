@@ -4,7 +4,7 @@
       <span v-show="showHamburger" id="hamburger" @click="closeNav">&#9776;</span>
       <div id="logo-div">
         <img 
-          src="../assets/smart.png" 
+          src="../assets/logo.png" 
           alt="logo do sistema" 
           id="logo" 
           @click="openUrl('http://smartsilo.netlify.com')"
@@ -99,8 +99,8 @@ export default {
 }
 #logo {
   cursor: pointer;
-  width: 180px;
-  margin-bottom: 25px;
+  width: 200px;
+  margin-bottom: 15px;
 }
 footer {
   font-size: .9rem;

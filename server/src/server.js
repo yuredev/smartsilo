@@ -17,7 +17,7 @@ let savingTimeLapse;
 
 const board = new Board('COM4', {
   setpoint: 28,
-  pins: [1, 2, 3, 4, 5],
+  pins: [0, 1, 2, 3],
 });
 
 app.get('/state', (req, res) => {

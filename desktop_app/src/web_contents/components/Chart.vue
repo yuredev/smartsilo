@@ -10,9 +10,9 @@
         <span v-else-if="type == 'Mass'">g</span>
         <span v-else>v</span>
       </div>
-      <span v-if="type != 'Control'" id="previous-experiments-link">
+      <!-- <span v-if="type != 'Control'" id="previous-experiments-link">
         {{type.toLowerCase()}} experiments
-      </span>
+      </span> -->
     </div>
   </div>
 </template>
