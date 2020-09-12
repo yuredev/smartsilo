@@ -4,14 +4,14 @@ const board = new Board('COM4');
 
 board.on('ready', () => {
   const thermistors = [];
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 0; i <= 4; i++) {
     board.analogRead(i, (value) => {
       thermistors[i] = value;
     });
   } 
   setInterval(() => {
     console.log('--------------------------------');
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 0; i <= 4; i++) {
       console.log(`A${i}: ${toCelsius(thermistors[i])}`);
     } 
     console.log('--------------------------------');
