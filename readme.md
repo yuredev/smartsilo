@@ -3,7 +3,7 @@
 
 <p align="center">
 SmartSilo is a research project from
-the <a href="http://tapioca.eaj.ufrn.br/?page_id=50&lang=en">TAPIOCA-LAB</a> of <a>Federal University of Rio Grande do Norte</a> <br/> 
+the <a href="http://tapioca.eaj.ufrn.br/?page_id=50&lang=en">TAPIOCA-LAB</a> of <a href="https://ufrn.br/en">Federal University of Rio Grande do Norte</a> <br/> 
 that consists in a idea of software to remotely monitor and control 
 the drying proccess
 of grains within storage silos. 
