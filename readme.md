@@ -31,7 +31,7 @@ of grains within storage silos.
 <hr/>
 <h2> Istrumentation </h2>
 
-<div>
+<div align="center">
 <table>
   <tr>
     <td>
@@ -78,13 +78,12 @@ of grains within storage silos.
   <li>Plotly.js</li>
   <li>SweetAlerts.js</li>
   <li>Octave-cli</li>
-  <li>Arduino board</li>
 </ul>
 
 <hr/>
 
 <h2>System Working Diagram</h2>
 
-<div style="padding: 10px">
+<div style="padding: 10px" align="center">
   <img src="./__readme/system-diagram.png">
 </div>
