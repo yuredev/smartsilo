@@ -1,41 +1,87 @@
-# ⚙  SmartSilo  🌱 </h1>
 
-### About:
+<h1 align="center"> ⚙  SmartSilo  🌱 </h1>
 
-SmartSilo is a research project from the Federal University of Rio Grande do Norte that consists in a idea of software to monitor and control the drying proccess of grains and seeds within storage silos. <br />
-<br />
-At the moment, the software is able to connect to an Arduino board and make a PID control of the temperature inside the silo, based on the temperature chosen by the user. This is possible thanks to the capture of sensor signals inside the silo that are directly connected to the board. This projects will soon aso include a mass and umildity controller and monitor.
+<p align="center">
+SmartSilo is a research project from
+the <a href="http://tapioca.eaj.ufrn.br/?page_id=50&lang=en">TAPIOCA-LAB</a> of <a>Federal University of Rio Grande do Norte</a> <br/> 
+that consists in a idea of software to remotely monitor and control 
+the drying proccess
+of grains within storage silos. 
+</p>
 
+<hr/>
 
-### Justification:
+<h2> Justification </h2>
+<p 
+  style="text-align: justify; padding:10px"
+>
+  In view of the low use or absence of technological tools in the country's grain sector and in view of the increase in Brazilian productivity in this field, this project aimed to develop a computer system with instruments and techniques related to automation and embedded systems to give the user the possibility to remotely monitor and control, through an interface with information and graphics, important variables of the grain storage process, such as temperature, mass and humidity inside a storage silo, in order to assist the producer to obtain an optimization on the durability of these products.
+</p>
+<hr>
 
-With the increase in productivity presented by the grain sector in the country, the need for not only storage places for products, but for them to be optimized to provide greater durability of these products, is of national and strategic interest for the primary economy chain. This project will allow the development of an aeration / drying control system in grain storage silos, with the use of instrumentation in the Internet of Things (IoT) context, with the possibility not only of monitoring but of controlling variables remotely, for maintenance humidity / temperature levels suitable for each type of grain and microclimate conditions inside and outside the silo installation site.
+<h2> Interface </h2>
+
+<div style="padding: 10px">
+  <img src="./__readme/demo.gif">
+</div>
+
+<hr/>
+<h2> Istrumentation </h2>
+
+<div>
+<table>
+  <tr>
+    <td>
+      <figure>
+      <img src="./__readme/arduino.jpeg"     width="250px">
+      <figcaption align="center">
+          Arduino Uno
+      </figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+      <img src="./__readme/didatic-silo.jpeg"   width="200px">
+      <figcaption align="center">
+          Grain Storage Didactic Silo
+      </figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+      <img src="./__readme/sensors.png"     width="200px">
+      <figcaption align="center">
+        Sensors disposition in the silo (image by: João Gabriel Quaresma)
+      </figcaption>
+      </figure>
+    </td>
+  </tr>
+</table>
+</div>
 
 <hr>
 
-Developed mainly in the <a href="http://tapioca.eaj.ufrn.br/?page_id=50&lang=en">TAPIOCA-LAB</a> from the <a>Federal University of Rio Grande do Norte.</a> 
+<h2>Software Tools</h2>
 
-Access the <a href="https://smartsilo.netlify.com/">Oficial project website</a>
+<ul>
+  <li>Node.js</li>
+  <li>Express</li>
+  <li>Vue.js</li>
+  <li>Electron</li>
+  <li>Socket.io</li>
+  <li>Firmata.js</li>
+  <li>Node-pid-controller</li>
+  <li>Axios</li>
+  <li>Plotly.js</li>
+  <li>SweetAlerts.js</li>
+  <li>Octave-cli</li>
+  <li>Arduino board</li>
+</ul>
 
-<div 
-    style="display: flex; flex-wrap: wrap; justify-content:space-around; align-itens: center;"
->
-    <img src="./__readme/demo.gif" width="65%" style="margin:10px">
-    <img src="./__readme/dryer.PNG" width="25%" style="margin:10px">
+<hr/>
 
+<h2>System Working Diagram</h2>
+
+<div style="padding: 10px">
+  <img src="./__readme/system-diagram.png">
 </div>
-
-### 🛠️ Built with:
-
-- Node.js
-- Express
-- Vue.js
-- Electron
-- Socket.io
-- Firmata.js
-- Node-pid-controller
-- Axios
-- Plotly.js
-- SweetAlerts.js
-- Octave-cli
-- Arduino board
