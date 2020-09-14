@@ -75,7 +75,6 @@ of grains within storage silos.
   <li>Plotly.js</li>
   <li>SweetAlerts.js</li>
   <li>Octave-cli</li>
-  <li>Arduino board</li>
 </ul>
 
 <hr/>
