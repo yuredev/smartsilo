@@ -21,7 +21,7 @@ of grains within storage silos.
 
 <h2> Interface </h2>
 
-<div style="padding: 10px">
+<div align="center" style="padding: 10px">
   <img src="./__readme/demo.gif">
 </div>
 
