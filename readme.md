@@ -1,7 +1,7 @@
 
 <h1 align="center" style="font-size:40px;"> 
   <img src="./__readme/icon.png" height="45px"></img>
-  <img src="./__readme/smart.png" height="45px"></img>
+  <img src="./__readme/smartsilo.jpeg" height="45px"></img>
 </h1>
 
 <p align="center">
