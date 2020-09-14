@@ -51,7 +51,7 @@ of grains within storage silos.
       <figure>
       <img src="./__readme/sensors.png"     width="200px">
       <figcaption align="center">
-        Sensors disposition in the silo (by: João Gabriel)
+        Sensors Disposition in the Silo (by: João Gabriel)
       </figcaption>
       </figure>
     </td>
