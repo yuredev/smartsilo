@@ -33,7 +33,7 @@ of grains within storage silos.
   <tr>
     <td>
       <figure>
-      <img src="./__readme/arduino.jpeg" style="display:block;" width="250px">
+      <img src="./__readme/arduino.jpeg" style="display:block;" width="250px"><br/>
       <figcaption align="center">
           Arduino Uno
       </figcaption>
@@ -41,7 +41,7 @@ of grains within storage silos.
     </td>
     <td>
       <figure>
-      <img src="./__readme/didatic-silo.jpeg" style="display:block;"  width="200px">
+      <img src="./__readme/didatic-silo.jpeg" style="display:block;"  width="200px"><br/>
       <figcaption align="center">
           Grain Storage Didactic Silo
       </figcaption>
@@ -49,7 +49,7 @@ of grains within storage silos.
     </td>
     <td>
       <figure>
-      <img src="./__readme/sensors.png" style="display:block;" width="200px">
+      <img src="./__readme/sensors.png" style="display:block;" width="200px"><br/>
       <figcaption align="center">
         Sensors Disposition in the Silo <br/>(by: João Gabriel)
       </figcaption>
