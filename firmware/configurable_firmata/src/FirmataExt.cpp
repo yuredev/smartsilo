@@ -5,14 +5,11 @@
   Copyright (C) 2009 Shigeru Kobayashi.  All rights reserved.
   Copyright (C) 2013 Norbert Truchsess. All rights reserved.
   Copyright (C) 2009-2015 Jeff Hoefs.  All rights reserved.
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
-
   See file LICENSE.txt for further informations on licensing terms.
-
   Last updated by Jeff Hoefs: November 15th, 2015
 */
 
@@ -69,29 +66,32 @@ boolean FirmataExt::handleSysex(byte command, byte argc, byte* argv)
       
       pinMode(digitalPin, OUTPUT);
       digitalWrite(digitalPin, pinState);
+     
       Firmata.sendSysex(command, argc, argv); // callback
       
       break;
     }
     case 0x02: { // Analog Read Command
       byte adcPin = argv[0];
-      byte rawAdcReading[9];
-      int readedValue = analogRead(adcPin);
-      int i = 0;
-      if (readedValue > 127) {
-        int rest = readedValue % 127;
-        int quotient = readedValue / 127;
-        while (i < quotient) {
-          rawAdcReading[i++] = 127;
-        }
-        rawAdcReading[i] = rest;
-      } else {
-        rawAdcReading[i] = readedValue;
+      
+      unsigned short rawV;
+      rawV = analogRead(adcPin); //0-1023
+      // pin does not need to callback, therefore argv is modified here
+      byte i = 0;
+      byte nBytes = rawV / 127;
+      byte lastByte = rawV % 127;
+      //nBytes is the number of full 7 bit bytes and lastByte is the offset (difference) for the last 7-bit byte
+      for (; i<nBytes;i++) {
+        argv[i] = 127;
       }
-      for (int j = i + 1; j < 9; j++) {
-        rawAdcReading[j] = 0;
-      }
-      Firmata.sendSysex(command, 9, rawAdcReading);
+      // generates dynamic argv with 127 slices
+      if (nBytes >= 1) {
+        argv[i] = lastByte;
+      } else argv[i] = rawV;
+
+      argc = i+1;
+   
+      Firmata.sendSysex(command, argc, argv);
       break; 
     }
     case 0x03: { // Digital Read Command
@@ -107,7 +107,12 @@ boolean FirmataExt::handleSysex(byte command, byte argc, byte* argv)
       byte pwmChannel = argv[1];
       byte pwmFreq = argv[2];
       byte pwmResolution = argv[3];
-      byte pwmValue = argv[4];
+      unsigned short pwmValue = 0;
+      
+      for (byte i = 4; i < argc; i++) {
+          pwmValue += argv[i]; //from buffer[4]...
+      }
+      
       ledcSetup(pwmChannel, pwmFreq*1000, pwmResolution);
       ledcAttachPin(pwmPin, pwmChannel);
       ledcWrite(pwmChannel, pwmValue);
