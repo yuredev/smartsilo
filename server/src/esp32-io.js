@@ -38,8 +38,8 @@ class Esp32IO {
     @param {Function} callback A function to call when we have the analog data.
    */
   analogRead(pin, callback) {
-    if (!pin || !callback) {
-      throw new Error('Missing arguments');
+    if (!callback) {
+      throw new Error('Missing callback');
     }
     this.firmata.sysexCommand([ADC_READ, pin]);
     this.firmata.sysexResponse(ADC_READ, (data) => {
@@ -53,9 +53,6 @@ class Esp32IO {
     @param {number} pwmValue The data to write to the pin between 0 and 255
    */
   analogWrite(pin, pwmValue) {
-    if (!pin || !pwmValue) {
-      throw new Error('Missing arguments');
-    }
     const maxValue = 2 ** this.pwmResolution - 1;
     if (pwmValue > maxValue) {
       throw new Error('Value to high for the pwm resolution');
@@ -76,8 +73,8 @@ class Esp32IO {
     @param {Function} callback The function to call when data has been received
    */
   digitalRead(pin, callback) {
-    if (!pin || !callback) {
-      throw new Error('Missing arguments');
+    if (callback) {
+      throw new Error('Missing callback');
     }
     this.firmata.sysexCommand([DIGITAL_READ, pin]);
     this.firmata.sysexResponse(DIGITAL_READ, (data) => {
@@ -90,9 +87,6 @@ class Esp32IO {
     @param {number} value The value you want to write. Must be 0 or 1
    */
   digitalWrite(pin, value) {
-    if (!pin || !value) {
-      throw new Error('Missing arguments');
-    }
     if (value !== 0 && value !== 1) {
       throw new Error('Invalid digital value. Must be 0 or 1');
     }
