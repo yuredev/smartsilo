@@ -59,7 +59,7 @@ void setup()
   //Firmata.parse(SYSTEM_RESET);
   //Firmata.parse(START_SYSEX);
 
-  analogReadResolution(10);
+  analogReadResolution(12);
   // if you want to directly test specific esp-32 pins (without framework)
   //pinMode(2, OUTPUT);
   

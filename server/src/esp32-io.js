@@ -5,8 +5,6 @@ const ADC_READ = 0x02;
 const DIGITAL_READ = 0x03;
 const PWM_OUTPUT = 0x04;
 const PWM_CHANNEL = 0;
-const PWM_FREQ = 10;
-const PWM_RESOLUTION = 8;
 
 /**
  * A Class to handle with the ESP32 inputs and outputs
@@ -14,18 +12,24 @@ const PWM_RESOLUTION = 8;
 class Esp32IO {
   /**
    * The default constructor of the Esp32IO class
-   * @param {string} usbPath the usb path for the board
+   * @param {string} usbPath The usb path for the board
+   * @param {Object} config The esp32 configuration
    */
-  constructor(usbPath) {
+  constructor(usbPath, { pwmFreq = 10, pwmResolution = 8 }) {
     this.firmata = new Firmata(usbPath);
     this.HIGH = 1;
     this.LOW = 0;
+    this.pwmFreq = pwmFreq;
+    this.pwmResolution = pwmResolution;
   }
   /**
    * Execute something after the board is ready
    * @param {Function} callback the callback to be called when the board is ready
    */
   onReady(callback) {
+    if (!callback) {
+      throw new Error('Missing callback');
+    }
     this.firmata.on('ready', callback);
   }
   /**
@@ -34,8 +38,8 @@ class Esp32IO {
     @param {Function} callback A function to call when we have the analog data.
    */
   analogRead(pin, callback) {
-    if (!callback) {
-      throw new Error('Missing Callback');
+    if (!pin || !callback) {
+      throw new Error('Missing arguments');
     }
     this.firmata.sysexCommand([ADC_READ, pin]);
     this.firmata.sysexResponse(ADC_READ, (data) => {
@@ -49,13 +53,21 @@ class Esp32IO {
     @param {number} pwmValue The data to write to the pin between 0 and 255
    */
   analogWrite(pin, pwmValue) {
+    if (!pin || !pwmValue) {
+      throw new Error('Missing arguments');
+    }
+    const maxValue = 2 ** this.pwmResolution - 1;
+    if (pwmValue > maxValue) {
+      throw new Error('Value to high for the pwm resolution');
+    }
+    const pwmArray = splicePwmValue(pwmValue);
     this.firmata.sysexCommand([
       PWM_OUTPUT,
       pin,
       PWM_CHANNEL,
-      PWM_FREQ,
-      PWM_RESOLUTION,
-      pwmValue,
+      this.pwmFreq,
+      this.pwmResolution,
+      ...pwmArray,
     ]);
   }
   /**
@@ -64,6 +76,9 @@ class Esp32IO {
     @param {Function} callback The function to call when data has been received
    */
   digitalRead(pin, callback) {
+    if (!pin || !callback) {
+      throw new Error('Missing arguments');
+    }
     this.firmata.sysexCommand([DIGITAL_READ, pin]);
     this.firmata.sysexResponse(DIGITAL_READ, (data) => {
       callback(Firmata.decode(data)[0]);
@@ -75,11 +90,30 @@ class Esp32IO {
     @param {number} value The value you want to write. Must be 0 or 1
    */
   digitalWrite(pin, value) {
+    if (!pin || !value) {
+      throw new Error('Missing arguments');
+    }
     if (value !== 0 && value !== 1) {
-      throw new Error('Invalid Value. Must be 0 or 1');
+      throw new Error('Invalid digital value. Must be 0 or 1');
     }
     this.firmata.sysexCommand([DIGITAL_WRITE, pin, value]); //command, argc, argv = data
   }
-};
+}
+/**
+ * Splice the pwm value in 8 bits parts
+ * @param {number} pwmValue The pwmValue to be spliced
+ * @returns {number[]} An array containing the pwmValue
+ * spliced in 8 bit values
+ */
+function splicePwmValue(pwmValue) {
+  const quotient = Math.trunc(pwmValue / 255);
+  const rest = pwmValue % 255;
+  const splicedPwmValue = [];
+  for (let i = 0; i < quotient; i++) {
+    splicedPwmValue.push(255);
+  }
+  splicedPwmValue.push(rest);
+  return splicedPwmValue;
+}
 
 module.exports = Esp32IO;

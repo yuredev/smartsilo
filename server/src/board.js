@@ -1,5 +1,6 @@
-const Firmata = require('firmata');
+const Arduino = require('firmata');
 const Controller = require('node-pid-controller');
+const Esp32 = require('./esp32-io');
 
 module.exports = class Board {
   /**
@@ -18,7 +19,7 @@ module.exports = class Board {
     this.openLoopVoltage = 0;
     this.therms = [];
     this.isControlling = false;
-    this.board = new Firmata(boardPath);
+    this.board = new Arduino(boardPath);
     this.pidConsts = pidConsts || {
       pb: 30, // proportional band width
       ti: 1.27, // integral time
