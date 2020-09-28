@@ -57,14 +57,14 @@ class Esp32IO {
     if (pwmValue > maxValue) {
       throw new Error('Value to high for the pwm resolution');
     }
-    const pwmArray = splicePwmValue(pwmValue);
+    const slicedPwmValue = pwmValue > 255 ? slicePwmValue(pwmValue) : [pwmValue];
     this.firmata.sysexCommand([
       PWM_OUTPUT,
       pin,
       PWM_CHANNEL,
       this.pwmFreq,
       this.pwmResolution,
-      ...pwmArray,
+      ...slicedPwmValue,
     ]);
   }
   /**
@@ -94,12 +94,12 @@ class Esp32IO {
   }
 }
 /**
- * Splice the pwm value in 8 bits parts
+ * Slice the pwm value in 8 bits parts
  * @param {number} pwmValue The pwmValue to be spliced
  * @returns {number[]} An array containing the pwmValue
  * spliced in 8 bit values
  */
-function splicePwmValue(pwmValue) {
+function slicePwmValue(pwmValue) {
   const quotient = Math.trunc(pwmValue / 255);
   const rest = pwmValue % 255;
   const splicedPwmValue = [];
