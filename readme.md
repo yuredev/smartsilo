@@ -29,7 +29,7 @@ of grains within storage silos.
 </div>
 
 <hr/>
-<h2> Istrumentation </h2>
+<h2> Instrumentation </h2>
 
 <div align="center">
 <table>
