@@ -1,8 +1,4 @@
-
-<h1 align="center" style="font-size:40px;"> 
-  <img src="./__readme/icon.png" height="45px"></img>
-  <img src="./__readme/smartsilo.jpeg" height="45px"></img>
-</h1>
+<h1 align="center">📈 SmartSilo 🔌</h1>
 
 <p align="center">
 SmartSilo is a research project from
@@ -29,7 +25,7 @@ of grains within storage silos.
 </div>
 
 <hr/>
-<h2> Istrumentation </h2>
+<h2> Instrumentation </h2>
 
 <div align="center">
 <table>
@@ -47,14 +43,6 @@ of grains within storage silos.
       <img src="./__readme/didatic-silo.jpeg" style="display:block;"  width="200px"><br/>
       <figcaption align="center">
           Grain Storage Didactic Silo
-      </figcaption>
-      </figure>
-    </td>
-    <td>
-      <figure>
-      <img src="./__readme/sensors.png" style="display:block;" width="200px"><br/>
-      <figcaption align="center">
-        Sensors Disposition in the Silo <br/>(image: João Gabriel Quaresma)
       </figcaption>
       </figure>
     </td>
